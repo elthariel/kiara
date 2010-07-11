@@ -1,6 +1,15 @@
 %module kiara
 %{
 #include "engine.hh"
+#include "bus.hh"
+#include "engine.hh"
+#include "playlist.hh"
+#include "pattern.hh"
+#include "phrase.hh"
+#include "event.hh"
+#include "events_merger.hh"
+#include "event_scheduler.hh"
+#include "midi_out.hh"
 %}
 
 // %include "note.hh"

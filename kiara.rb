@@ -1,7 +1,7 @@
 #! /usr/bin/env ruby1.9
-## test_kiara.rb
+## kiara.rb
 ## Login : <elthariel@rincevent>
-## Started on  Thu Jul  8 00:31:57 2010 elthariel
+## Started on  Sun Jul 11 15:06:33 2010 elthariel
 ## $Id$
 ##
 ## Author(s):
@@ -23,13 +23,11 @@
 ## Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 ##
 
-require 'kiara'
-
-#puts Kiara.constants
-#puts Kiara::Engine.class
+require 'lib/kiara'
+require 'gtk2'
+require 'ui'
 
 engine = Kiara::Engine.new
-#gets
 engine.start
 
 Signal.trap('SIGINT') do
@@ -37,17 +35,6 @@ Signal.trap('SIGINT') do
   exit 0
 end
 
-puts engine.playlist.methods.sort;
-#puts engine.playlist.connect
-
-i = 0
-while (d = Kiara::Pm_GetDeviceInfo(i))
-  puts "#{d.interf}: #{d.name}"
-  puts " => in(#{d.input}),out(#{d.output})"
-  i += 1
-end
-
-while (true) do
-  sleep 10
-end
+ui = Ui.new
+ui.run
 

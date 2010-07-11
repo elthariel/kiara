@@ -27,7 +27,7 @@
 RUBYINC =	/usr/include/ruby-1.9.0
 RUBYARCH =	x86_64-linux
 SWIG =		/usr/bin/swig
-SWIGFLAGS =	-c++ -ruby -importall -ignoremissing
+SWIGFLAGS =	-c++ -ruby -ignoremissing
 RUBY =		/usr/bin/ruby1.9
 CXX =		/usr/bin/g++
 LDADD =		-lportmidi -lboost_thread
