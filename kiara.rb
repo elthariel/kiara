@@ -23,7 +23,11 @@
 ## Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 ##
 
-# $:.unshift File.dirname(File.expand_path(__FILE__)) + '/lib'
+$:.unshift File.dirname(File.expand_path(__FILE__)) + '/lib'
+$:.unshift File.dirname(File.expand_path(__FILE__)) + '/lib/ui'
+$:.unshift File.dirname(File.expand_path(__FILE__)) + '/conf'
+
+puts File.dirname(File.expand_path(__FILE__))
 
 require 'engine/kiara'
 require 'settings'

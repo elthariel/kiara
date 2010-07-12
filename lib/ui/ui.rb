@@ -41,7 +41,7 @@ class Ui
     @builder = Gtk::Builder.new
     # FIXME small hack to shorten code
     @builder.class.instance_eval "alias_method :o, :get_object"
-    @builder << 'ui.glade'
+    @builder << File.dirname(__FILE__) + '/ui.glade'
 
     @mw = @builder.o('mainw')
     @status = @builder.o 'statusbar'

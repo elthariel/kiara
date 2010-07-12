@@ -197,6 +197,9 @@ class PianoRoll < Gtk::DrawingArea
     Color.block @cairo
     @cairo.rectangle pos_x, (127 - note.data1) * blockw, blockh, note.duration * tick_size
     @cairo.fill
+    Color.block_border @cairo
+    @cairo.rectangle pos_x, (127 - note.data1) * blockw, blockh, note.duration * tick_size
+    @cairo.stroke
   end
 
   def get_note(e)
