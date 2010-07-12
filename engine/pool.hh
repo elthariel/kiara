@@ -29,8 +29,8 @@ namespace Rt
     ~Chunk();
 
     /// \return 0 if there is no more memory available in this chunk.
-    void                        *alloc();
-    void                        dealloc(void *);
+    T                           *alloc();
+    void                        dealloc(T *);
 
     void                        debug_free(); /// \internal display the free chunk lifo.
   protected:

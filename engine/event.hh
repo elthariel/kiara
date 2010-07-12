@@ -36,11 +36,20 @@ struct Event
   Event         *next;
   char          midi[3];
   char          flags[1];
-  uint16_t      duration; // will store duration for notes.
+  unsigned short duration; // will store duration for notes.
 
   void          reset();
-  uint8_t       get_chan();
-  void          set_chan(uint8_t);
+
+  void          set_chan(unsigned char);
+  unsigned char get_chan();
+  void          set_data1(unsigned char);
+  unsigned char get_data1();
+  void          set_data2(unsigned char);
+  unsigned char get_data2();
+  void          noteon();
+  void          noteoff();
+  void          cc();
+
   bool          is_noteon();
   bool          is_noteoff();
   bool          is_cc();

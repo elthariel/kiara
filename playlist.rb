@@ -173,12 +173,15 @@ class PlaylistView < Gtk::DrawingArea
       puts "Head bar."
     else
       block = get_block e
-      puts "Click on clock; track #{block[0]}, bar #{block[1]}"
-      if @engine.playlist.get_pos(block[0], block[1]) == 0
+
+      if @engine.playlist.get_pos(block[0], block[1]) == 0 and e.button == 1
         @engine.playlist.set_pos(block[0], block[1], @ui.patterns.selected)
-        a = Gdk::Rectangle.new 0, 0, allocation.width, allocation.height
-        window.invalidate a, false
+      elsif @engine.playlist.get_pos(block[0], block[1]) > 0 and e.button == 3
+        @engine.playlist.set_pos(block[0], block[1], 0)
       end
+      # FIXME Handle pattern with more than one bar
+      a = Gdk::Rectangle.new 0, 0, allocation.width, allocation.height
+      window.invalidate a, false
     end
   end
 

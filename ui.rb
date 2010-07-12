@@ -28,6 +28,7 @@ require 'main_actions'
 require 'playlist'
 require 'pattern_list'
 require 'ui_settings'
+require 'piano_roll'
 
 class Ui
   include MainActions
@@ -52,6 +53,11 @@ class Ui
     @builder.o('vbx_edit').reorder_child @playlist, 0
     @patterns = PatternList.new(self, engine)
     @builder.o('scroll_pattern').add_with_viewport @patterns
+    @roll = PianoRoll.new(self, engine)
+    @builder.o('scroll_pianoroll').add_with_viewport @roll
+
+    @builder.o('spin_bpm').adjustment = @builder.o('adj_bpm')
+    @builder.o('adj_bpm').value = 140
 
     Settings.i.init(@ui, @engine)
 
@@ -66,11 +72,10 @@ class Ui
 
   def connect_signals
     @mw.signal_connect("destroy") {quit}
-    # @builder.o('act_quit').signal_connect('activate') {act_quit}
-    # @builder.o('act_about').signal_connect('activate') {act_about}
+    @builder.o('adj_bpm').signal_connect('value-changed') { |w, bpm| act_bpm_changed w}
 
     @builder.objects.each do |x|
-      if x.name[0, 4] == "act_"
+      if x.respond_to? :name and x.name[0, 4] =~ /act_/
         x.signal_connect('activate') { |w| self.send(x.name.to_s, w) }
       end
     end

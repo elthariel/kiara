@@ -36,8 +36,13 @@ class Phrase
 public:
   Phrase();
   ~Phrase();
-  Event         *&operator[](unsigned int tick);
+  Event         *operator[](unsigned int tick);
+  Event         *get_note_on_tick(unsigned int tick,
+                                  unsigned int max_bar,
+                                  unsigned char note);
 
+
+  bool          insert(unsigned int tick, Event *e);
 protected:
   Event         *data[KIARA_PPQ * 4 * KIARA_MAXBARS];
 };

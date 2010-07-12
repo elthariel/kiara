@@ -5,7 +5,11 @@
 using namespace std;
 
 MidiOut::MidiOut() :out(0), id(0) {}
-MidiOut::~MidiOut() {}
+MidiOut::~MidiOut()
+{
+  if (out)
+    Pm_Close(out);
+}
 
 // Call from the gui thread
 unsigned MidiOut::get_out()
@@ -51,5 +55,5 @@ void    MidiOut::tick(TransportPosition pos)
   static int zzz = 0;
   zzz = (zzz + 1) % 50;
   if (zzz == 0)
-    cout << "MidiOut: tick" << endl;
+    cout << "MidiOut: should not be ticking" << endl;
 }

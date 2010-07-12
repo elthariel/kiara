@@ -54,12 +54,15 @@ public:
   TransportPosition     get_loop_end();
   TransportPosition     get_position();
 
+  EventBus              &midi_clock();
+
 protected:
   bool                  playing;
   bool                  looping;
   TransportPosition     position;
   TransportPosition     loop_start;
   TransportPosition     loop_end;
+  EventBus              m_midi_clock;
 
 };
 

@@ -61,12 +61,9 @@ module MainActions
     @settings.run
   end
 
-  def act_set_ok(w)
+  def act_bpm_changed(w)
+    @engine.timer.bpm = w.value.to_i;
   end
-
-  def act_set_cancel(w)
-  end
-
 
   def act_(w)
   end

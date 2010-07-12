@@ -26,7 +26,7 @@ namespace Rt
   }
 
   template <class T>
-  void                *Chunk<T>::alloc()
+  T                   *Chunk<T>::alloc()
   {
     address               p;
     ///  \todo support chunk chaining
@@ -34,17 +34,17 @@ namespace Rt
       {
         p = m_free[m_free_chunks - 1];
         m_free_chunks--;
-        return ((void *)((char *)m_heap + p * sizeof(T)));
+        return ((T *)((char *)m_heap + p * sizeof(T)));
       }
     else
       return (0);
   }
 
   template <class T>
-  void                Chunk<T>::dealloc(void *p)
+  void                Chunk<T>::dealloc(T *p)
   {
     address a = (address) p;
-    if ((p < m_heap) | (p > (((char *)m_heap) + m_chunk_capacity * sizeof(T))))
+    if (((char *)p < m_heap) | ((char *)p > (((char *)m_heap) + m_chunk_capacity * sizeof(T))))
       return;
     a -= (address) m_heap;
     a /= sizeof(T);

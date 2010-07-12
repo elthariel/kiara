@@ -39,14 +39,34 @@ void          Event::reset()
   memset(this, 0, sizeof(Event));
 }
 
-uint8_t       Event::get_chan()
+unsigned char Event::get_chan()
 {
   return midi[0] & 0x0F;
 }
 
-void          Event::set_chan(uint8_t chan)
+void          Event::set_chan(unsigned char chan)
 {
   midi[0] = (midi[0] & 0xF0) | (0x0F & chan);
+}
+
+void          Event::set_data1(unsigned char d)
+{
+  midi[1] = d;
+}
+
+unsigned char Event::get_data1()
+{
+  return midi[1];
+}
+
+void          Event::set_data2(unsigned char d)
+{
+  midi[2] = d;
+}
+
+unsigned char Event::get_data2()
+{
+  return midi[2];
 }
 
 bool          Event::is_noteon()
@@ -62,5 +82,20 @@ bool          Event::is_noteoff()
 bool          Event::is_cc()
 {
   return (midi[0] & 0xF0 ) == 0xB0;
+}
+
+void          Event::noteon()
+{
+  midi[0] = (midi[0] & 0x0F) | 0x90;
+}
+
+void          Event::noteoff()
+{
+  midi[0] = (midi[0] & 0x0F) | 0x80;
+}
+
+void          Event::cc()
+{
+  midi[0] = (midi[0] & 0x0F) | 0xB0;
 }
 

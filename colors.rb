@@ -78,6 +78,14 @@ class Color
     self.color context, "720c5b"
   end
 
+  def self.note(context)
+    self.color context, "e5efe4"
+  end
+
+  def self.note_sharp(context)
+    self.color context, "121412"
+  end
+
   def self.color(context, color)
     if color.size == 8
       alpha = color[6, 2].to_i(16) / 255.0
