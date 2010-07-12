@@ -1,0 +1,38 @@
+== Introduction
+
+This is proof-of-concept/early-aplha material. You can have a look at
+the code and play a little bit around. But this is not yet usable in
+real conditions.
+
+=== Why Kiara ?
+
+The name is really crappy for a midi sequencer project, i know, but i
+wasn't much inspired. Since i'm kind of fond of the recursive
+acronyms, i found this one was nearly funny.
+
+== Requirements
+
+* ruby 1.9 and the development headers
+* swig (a recent version might be necessary, i'm using 1.3.40)
+* (?GNU) Make
+* g++
+* portmidi and porttime
+* ruby cairo gem (build this before building ruby gtk2)
+* ruby-gtk2, with cairo support (you'll probably need to build it yourself for ruby1.9)
+* glade 3 if you want to hack the gui code.
+* boost (utility.hpp and thread.hpp currently)
+
+== Build and run (*nix)
+
+There is not any automatic build system configuration at the time this
+document is written. If you want to build it, you'll have to edit
+manually the 'engine/Makefile' file, especially the RUBYINC and
+RUBYARCH variables and maybe RUBY and CXX vars.
+
+  $> cd /path/to/kiara/sources
+  $> $ EDITOR engine/Makefile #(Edit the Makefile)
+  $> make
+  $> ./kiara.rb
+
+
+
