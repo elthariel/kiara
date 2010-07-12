@@ -23,35 +23,76 @@
 ## Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 ##
 
+require 'gtk2'
+require 'main_actions'
+require 'playlist'
+require 'pattern_list'
+require 'ui_settings'
+
 class Ui
+  include MainActions
+
+  attr_reader :engine, :status, :about, :tools, :playlist
+  attr_reader :patterns, :builder
+
   def initialize(engine)
     @engine = engine
     @builder = Gtk::Builder.new
+    # FIXME small hack to shorten code
+    @builder.class.instance_eval "alias_method :o, :get_object"
     @builder << 'ui.glade'
 
-    @mw = @builder.get_object('maiw')
-    # @playlist = UiPlaylist.new(@builder)
-    # @settings = UiSettings.new(@builder)
+    @mw = @builder.o('mainw')
+    @status = @builder.o 'statusbar'
+    @about = @builder.o 'aboutdialog'
+    @tools = @builder.o 'maintoolbar'
+    @settings = UiSettings.new(self, @builder.o('settings'))
+    @playlist = PlaylistView.new(self, engine)
+    @builder.o('vbx_edit').pack_start @playlist
+    @builder.o('vbx_edit').reorder_child @playlist, 0
+    @patterns = PatternList.new(self, engine)
+    @builder.o('scroll_pattern').add_with_viewport @patterns
+
+    Settings.i.init(@ui, @engine)
 
     connect_signals
   end
 
   def run
     @mw.show_all
+    @status.push 0, "Kiara started !"
     Gtk.main
   end
 
   def connect_signals
-    @mw.signal_connect("destroy") do
-      @engine.stop
-      Gtk.main_quit
-    end
-    # @builder.get_object('settings_button').signal_connect('clicked') {@settings.run}
-    @builder.get_object('about_button').signal_connect('clicked') do
-      @builder.get_object('about').run
-      @builder.get_object('about').hide
+    @mw.signal_connect("destroy") {quit}
+    # @builder.o('act_quit').signal_connect('activate') {act_quit}
+    # @builder.o('act_about').signal_connect('activate') {act_about}
+
+    @builder.objects.each do |x|
+      if x.name[0, 4] == "act_"
+        x.signal_connect('activate') { |w| self.send(x.name.to_s, w) }
+      end
     end
   end
+
+  def quit
+    @engine.stop
+    Gtk.main_quit
+  end
+
+  def init_pattern_list
+    store = @patterns.model
+
+    (0..Kiara::KIARA_MAXPATTERNS).each do |n|
+      i = store.append
+      i.set_value 0, "Pattern #{n}"
+      i.set_value 1, n
+    end
+
+    store.each { |x, y, z| puts z }
+  end
+
 end
 
 

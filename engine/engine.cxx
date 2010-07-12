@@ -49,6 +49,11 @@ EventScheduler                &Engine::scheduler()
   return m_scheduler;
 }
 
+MidiOut                       &Engine::midi_out()
+{
+  return m_out;
+}
+
 void            Engine::start()
 {
   std::cout << "Starting Kiara Engine" << std::endl;

@@ -26,6 +26,7 @@ void          PatternStorage::set_event_merger(EventMerger &merger)
 
 Pattern       &PatternStorage::operator[](unsigned int id)
 {
+  id--;
   if (id >= size())
     return patterns[0];
   else

@@ -35,8 +35,8 @@ public:
   MidiOut();
   ~MidiOut();
 
-  PortMidiStream        *get_out();
-  void                  set_out(PortMidiStream *);
+  unsigned              get_out();
+  void                  set_out(unsigned id);
 
   virtual void          send(Event &e);
   virtual void          connect(EventBus *a_bus,
@@ -45,6 +45,7 @@ public:
 
 protected:
   PortMidiStream        *out;
+  unsigned              id;
 };
 
 #endif	    /* !MIDI_OUT_HH_ */

@@ -4,17 +4,29 @@
 
 using namespace std;
 
-MidiOut::MidiOut() :out(0) {}
+MidiOut::MidiOut() :out(0), id(0) {}
 MidiOut::~MidiOut() {}
 
-PortMidiStream  *MidiOut::get_out()
+// Call from the gui thread
+unsigned MidiOut::get_out()
 {
-  return out;
+  return id;
 }
 
-void    MidiOut::set_out(PortMidiStream *a_out)
+// Call from the gui thread
+void    MidiOut::set_out(unsigned a_id)
 {
-  out = a_out;
+  PortMidiStream *new_stream = 0, *old_stream = 0;;
+
+  if (!Pm_OpenOutput(&new_stream, a_id, 0, 10, 0, 0, 0))
+  {
+    cout << "Opened a new MidiOut" << endl;
+    id = a_id;
+    old_stream = out;
+    out = new_stream;
+    if (old_stream)
+      Pm_Close(old_stream);
+  }
 }
 
 void    MidiOut::send(Event &e)

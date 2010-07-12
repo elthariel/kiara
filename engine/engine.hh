@@ -49,6 +49,7 @@ public:
   Playlist                      &playlist();
   EventMerger                   &merger();
   EventScheduler                &scheduler();
+  MidiOut                       &midi_out();
 protected:
   Timer                         m_timer;
   Transport                     m_transport;

@@ -40,7 +40,7 @@ public:
    * x < 0 if overlapped by a previous pattern
    * x > 0, pos contains the start of a pattern.
    */
-  int32_t       get_pos(unsigned int track,
+  int           get_pos(unsigned int track,
                         unsigned int bar);
   /*
    * return false if the place is already occupied
@@ -48,21 +48,21 @@ public:
    */
   bool          set_pos(unsigned int track,
                         unsigned int bar,
-                        uint32_t pattern_id);
+                        unsigned int pattern_id);
 
   virtual void  tick(TransportPosition pos);
 protected:
   // Return the position of the start of the pattern
   // overlapping the given positon
   // or 0 if there is no overlapping pattern here.
-  uint32_t      get_pattern_start(unsigned int track,
+  unsigned      get_pattern_start(unsigned int track,
                                   unsigned int bar);
 
 
   // Pattern positioning granularity is bar.
   // negative value means the bar is overlapped
   // by a previous pattern.
-  int32_t       patterns[KIARA_PLSTRACKS][KIARA_PLSLEN];
+  int           patterns[KIARA_PLSTRACKS][KIARA_PLSLEN];
 };
 
 #endif	    /* !PLAYLIST_HH_ */

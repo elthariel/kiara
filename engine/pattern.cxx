@@ -5,7 +5,7 @@
 using namespace std;
 
 Pattern::Pattern()
-  :size(0)
+  :size(1)
 {
 }
 
@@ -28,6 +28,10 @@ void          Pattern::tick(TransportPosition pos)
   if (pos.bar >= size)
     return;
 
+  // if (pos.tick == 0)
+  // cout << "Playing a pattern. cool"
+  //      << pos.bar << ":"
+  //      << pos.beat << endl;
   for (i = 0; i < KIARA_TRACKS; i++)
     play_track(i, pos);
 }

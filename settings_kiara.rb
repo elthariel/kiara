@@ -1,7 +1,7 @@
 ##
-## Makefile
+## settings_kiara.rb
 ## Login : <elthariel@rincevent>
-## Started on  Wed Jul  7 22:39:05 2010 elthariel
+## Started on  Mon Jul 12 03:25:26 2010 elthariel
 ## $Id$
 ##
 ## Author(s):
@@ -23,17 +23,19 @@
 ## Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 ##
 
-SUBFOLDERS = engine
+module SettingsKiara
+  def apply
+    apply_midi_out
+  end
 
-all:
-	$(foreach dir, $(SUBFOLDERS), cd $(dir) && make $@)
+  def apply_midi_out
+    @engine.midi_out.set_out(@data['midi_out'])
+  end
 
-clean:
-	$(foreach dir, $(SUBFOLDERS), cd $(dir) && make $@)
-
-re: clean all
-c : clean
-
-.PHONY: all, clean, re, c
-
-
+  def midi_out=(out)
+    if out != @data['midi_out']
+      @data['midi_out'] = out
+      apply_midi_out
+    end
+  end
+end

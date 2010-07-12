@@ -23,9 +23,13 @@
 ## Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 ##
 
-require 'lib/kiara'
-require 'gtk2'
+# $:.unshift File.dirname(File.expand_path(__FILE__)) + '/lib'
+
+require 'engine/kiara'
+require 'settings'
 require 'ui'
+
+Settings.i
 
 engine = Kiara::Engine.new
 engine.start
@@ -35,6 +39,6 @@ Signal.trap('SIGINT') do
   exit 0
 end
 
-ui = Ui.new
+ui = Ui.new(engine)
 ui.run
 

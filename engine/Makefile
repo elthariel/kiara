@@ -47,10 +47,10 @@ all: $(NAME)
 $(NAME): $(OBJS)
 	$(CXX) $(CXXFLAGS) $(LDADD) $(LDFLAGS) -o $@ $(OBJS)
 
-%.o: %.cxx
-	$(CXX) $(CXXFLAGS) -c -o $@ $<
-
 %_wrap.o: %_wrap.cxx
+	$(CXX) $(CXXFLAGS) -w -c -o $@ $<
+
+%.o: %.cxx
 	$(CXX) $(CXXFLAGS) -c -o $@ $<
 
 %_wrap.cxx: %.i
@@ -58,6 +58,7 @@ $(NAME): $(OBJS)
 
 clean:
 	rm -rf $(NAME) $(OBJS)
+	rm -f kiara_wrap.cxx
 
 re: clean all
 c : clean

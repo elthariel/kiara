@@ -11,7 +11,7 @@ Playlist::Playlist()
   memset(&patterns, 0, sizeof(patterns));
 }
 
-int32_t       Playlist::get_pos(unsigned int track,
+int           Playlist::get_pos(unsigned int track,
                                 unsigned int bar)
 {
   if (track < KIARA_PLSTRACKS && bar < KIARA_PLSLEN)
@@ -21,7 +21,7 @@ int32_t       Playlist::get_pos(unsigned int track,
 
 bool          Playlist::set_pos(unsigned int track,
                       unsigned int bar,
-                      uint32_t pattern_id)
+                      unsigned pattern_id)
 {
   // FIXME handle pattern longer that 1 bar
   //  using the negative value stuff
@@ -31,10 +31,10 @@ bool          Playlist::set_pos(unsigned int track,
 
 void          Playlist::tick(TransportPosition pos)
 {
-  static int z = 0;
-  z = (z + 1) % 20;
-  if (z == 0)
-    cout << "Playlist: tick" << endl;
+  // static int z = 0;
+  // z = (z + 1) % 20;
+  // if (z == 0)
+  //   cout << "Playlist: tick" << endl;
 
   unsigned int i;
 
@@ -57,7 +57,7 @@ void          Playlist::tick(TransportPosition pos)
   }
 }
 
-uint32_t      Playlist::get_pattern_start(unsigned int track,
+unsigned      Playlist::get_pattern_start(unsigned int track,
                                           unsigned int bar)
 {
   if (track >= KIARA_PLSTRACKS && bar >= KIARA_PLSLEN

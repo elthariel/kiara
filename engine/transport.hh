@@ -47,6 +47,7 @@ public:
   bool                  is_playing();
   bool                  is_looping();
 
+// FIXME ruby binding memory leak?
   void                  set_loop_start(TransportPosition start);
   void                  set_loop_end(TransportPosition end);
   TransportPosition     get_loop_start();

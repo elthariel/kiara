@@ -23,15 +23,15 @@ void                  Transport::trigger_tick()
     if (looping && position >= loop_end)
     {
       position = loop_start;
-      cout << "Looping !" << endl;
+      // cout << "Looping !" << endl;
     }
 
     // Using EventBus to trigger linked busses.
     tick(position);
 
-    if (position.tick == 0)
-      cout << "Pos: " << position.bar
-           << "-" << position.beat << endl;
+    // if (position.tick == 0)
+      // cout << "Pos: " << position.bar
+      //      << "-" << position.beat << endl;
   }
 }
 

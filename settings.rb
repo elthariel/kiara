@@ -24,7 +24,10 @@
 ##
 
 require 'singleton'
+require 'fileutils'
 require 'yaml'
+
+require 'settings_kiara'
 
 #
 # Settings persistence and default facility
@@ -34,23 +37,30 @@ require 'yaml'
 
 class Settings
   include Singleton
+  include SettingsKiara
 
   def self.i
     self.instance
   end
 
-  def initialize()
-    @cfg_path = ENV['HOME'] + '/.kiara/settings.yaml'
-    @data = Hash.new
+  def init(ui, engine)
+    @ui = ui
+    @engine = engine
 
+    defaults
     if !File.exists? @cfg_path
-      defaults
       save
     end
     load
   end
 
+  def initialize()
+    @cfg_path = ENV['HOME'] + '/.kiara/settings.yaml'
+    @data = Hash.new
+  end
+
   def defaults
+    @data['midi_out'] = 0
   end
 
   def save
@@ -65,8 +75,10 @@ class Settings
 
   def load
     if File.readable? @cfg_path
-      @data = YAML.load_file(@cfg_path)
+      loaded = YAML.load_file(@cfg_path)
+      @data.merge! loaded
     end
+    apply
   end
 
   def method_missing(sym, *args)
@@ -77,5 +89,4 @@ class Settings
       @data[sym.to_s]
     end
   end
-
 end

@@ -1,7 +1,7 @@
-##
-## Makefile
+#! /usr/bin/env ruby1.9
+## cat_kiara_constants.rb
 ## Login : <elthariel@rincevent>
-## Started on  Wed Jul  7 22:39:05 2010 elthariel
+## Started on  Sun Jul 11 17:08:34 2010 elthariel
 ## $Id$
 ##
 ## Author(s):
@@ -23,17 +23,13 @@
 ## Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 ##
 
-SUBFOLDERS = engine
+require 'engine/kiara'
 
-all:
-	$(foreach dir, $(SUBFOLDERS), cd $(dir) && make $@)
-
-clean:
-	$(foreach dir, $(SUBFOLDERS), cd $(dir) && make $@)
-
-re: clean all
-c : clean
-
-.PHONY: all, clean, re, c
-
+if ARGV[0]
+  puts Kiara.const_get(ARGV[0].to_s).instance_methods.sort
+else
+  Kiara.constants.sort.each do |x|
+    puts "#{x} :: #{Kiara.const_get x.to_s}"
+  end
+end
 

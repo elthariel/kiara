@@ -1,7 +1,7 @@
 ##
-## Makefile
+## main_actions.rb
 ## Login : <elthariel@rincevent>
-## Started on  Wed Jul  7 22:39:05 2010 elthariel
+## Started on  Sun Jul 11 16:43:39 2010 elthariel
 ## $Id$
 ##
 ## Author(s):
@@ -23,17 +23,54 @@
 ## Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 ##
 
-SUBFOLDERS = engine
+require 'gtk2'
 
-all:
-	$(foreach dir, $(SUBFOLDERS), cd $(dir) && make $@)
+module MainActions
 
-clean:
-	$(foreach dir, $(SUBFOLDERS), cd $(dir) && make $@)
+  def act_notimpl(w)
+    puts "Not Implemented."
+  end
 
-re: clean all
-c : clean
+  def act_about(w)
+    @about.run
+    @about.hide
+  end
 
-.PHONY: all, clean, re, c
+  def act_quit(w)
+    quit
+  end
 
+  def act_play(w)
+    @engine.transport.start
+  end
+
+  def act_pause(w)
+    @engine.transport.pause
+  end
+
+  def act_stop(w)
+    @engine.transport.stop
+  end
+
+  def act_loop(w)
+    toogle = @builder.get_object('toolloop')
+    @engine.transport.loop(toogle.active?)
+  end
+
+  def act_settings(w)
+    @settings.run
+  end
+
+  def act_set_ok(w)
+  end
+
+  def act_set_cancel(w)
+  end
+
+
+  def act_(w)
+  end
+
+
+end
 

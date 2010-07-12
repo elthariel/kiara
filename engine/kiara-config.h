@@ -33,8 +33,8 @@
 #define         KIARA_MAXEVENTS         1000000
 // FIXME rename to KIARA_CHANNELS
 #define         KIARA_TRACKS            16
-#define         KIARA_PLSLEN            64
-#define         KIARA_PLSTRACKS         32
+#define         KIARA_PLSLEN            32
+#define         KIARA_PLSTRACKS         20
 #define         KIARA_TRACK_POLY        32
 
 #define         KIARA_DEFAULTBPM        120
