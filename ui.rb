@@ -81,18 +81,6 @@ class Ui
     Gtk.main_quit
   end
 
-  def init_pattern_list
-    store = @patterns.model
-
-    (0..Kiara::KIARA_MAXPATTERNS).each do |n|
-      i = store.append
-      i.set_value 0, "Pattern #{n}"
-      i.set_value 1, n
-    end
-
-    store.each { |x, y, z| puts z }
-  end
-
 end
 
 
