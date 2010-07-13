@@ -27,6 +27,8 @@ require 'gtk2'
 require 'colors'
 
 class PlaylistView < Gtk::DrawingArea
+  include ColorMixin
+
   def initialize(ui, engine)
     super()
 
@@ -61,7 +63,7 @@ class PlaylistView < Gtk::DrawingArea
     @cairo.clip
 
     # Background
-    Color.background @cairo
+    color.background
     @cairo.rectangle 0, 0, a.width, a.height
     @cairo.fill
 
@@ -77,11 +79,11 @@ class PlaylistView < Gtk::DrawingArea
   end
 
   def draw_header(a)
-    Color.header @cairo
+    color.header
     @cairo.rectangle(0, 0, a.width, 20)
     @cairo.fill
 
-    Color.separator(@cairo)
+    color.separator
     @cairo.move_to 0, 21
     @cairo.line_to a.width, 21
     @cairo.stroke
@@ -90,9 +92,9 @@ class PlaylistView < Gtk::DrawingArea
       @cairo.move_to i * blockw, 0
       @cairo.line_to i * blockw, 20
       if i % 4 == 0
-        Color.header_grid_high(@cairo)
+        color.header_grid_high
       else
-        Color.header_grid_low(@cairo)
+        color.header_grid_low
       end
       @cairo.stroke
     end
@@ -103,9 +105,9 @@ class PlaylistView < Gtk::DrawingArea
       @cairo.move_to i * blockw, @head_size
       @cairo.line_to i * blockw, a.height
       if i % 4 == 0
-        Color.vgrid_high(@cairo)
+        color.vgrid_high
       else
-        Color.vgrid_low(@cairo)
+        color.vgrid_low
       end
       @cairo.stroke
     end
@@ -113,7 +115,7 @@ class PlaylistView < Gtk::DrawingArea
     (1..Kiara::KIARA_PLSTRACKS).each do |i|
       @cairo.move_to 0, i * blockh + @head_size
       @cairo.line_to a.width, i * blockh + @head_size
-      Color.hgrid(@cairo)
+      color.hgrid
       @cairo.stroke
     end
   end
@@ -124,12 +126,12 @@ class PlaylistView < Gtk::DrawingArea
         if (pattern_id = @engine.playlist.get_pos(t, b)) > 0
           pattern = Kiara::Memory.pattern.get(pattern_id)
           @cairo.rectangle(b * blockw, t * blockh + @head_size, pattern.get_size * blockw, blockh)
-          Color.block @cairo
+          color.block
           @cairo.fill
-          Color.block_border @cairo
+          color.block_border
           @cairo.stroke
 
-          Color.text @cairo
+          color.text
           @cairo.move_to b * blockw + 3, (t + 1) * blockh + @head_size - 3
           @cairo.set_font_size(11)
           @cairo.text_path "#{pattern_id}"
@@ -151,7 +153,7 @@ class PlaylistView < Gtk::DrawingArea
     pos_tick = pos.bar * 4 * Kiara::KIARA_PPQ + pos.beat * Kiara::KIARA_PPQ + pos.tick
     pos_x = (pos_tick.to_f / max_ticks) * self.window.size[0]
 
-    Color.playbar @cairo
+    color.playbar
     @cairo.move_to pos_x, 0
     @cairo.line_to pos_x, self.window.size[1]
     @cairo.stroke

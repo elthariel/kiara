@@ -29,6 +29,7 @@ require 'piano_roll_attributes'
 require 'piano_roll_events'
 
 class PianoRoll < Gtk::DrawingArea
+  include ColorMixin
   include PianoRollEvents
   include PianoRollAttributes
 
@@ -89,7 +90,7 @@ class PianoRoll < Gtk::DrawingArea
     @cairo.clip
 
     # Background
-    Color.background @cairo
+    color.background
     @cairo.rectangle 0, 0, a.width, a.height
     @cairo.fill
 
@@ -102,7 +103,7 @@ class PianoRoll < Gtk::DrawingArea
     a = allocation
 
     @cairo.set_line_width(0.7)
-    Color.hgrid @cairo
+    color.hgrid
     (1..128).each do |y|
       @cairo.move_to @pianow, y * self.blockh
       @cairo.line_to a.width, y * self.blockh
@@ -113,9 +114,9 @@ class PianoRoll < Gtk::DrawingArea
     bars = Kiara::Memory.pattern.get(@pattern).get_size
     (1.. bars * 16).each do |x|
       if x % 4 == 0
-        Color.vgrid_high @cairo
+        color.vgrid_high
       else
-        Color.vgrid_low @cairo
+        color.vgrid_low
       end
       @cairo.move_to x * self.blockw + @pianow, 0
       @cairo.line_to x * self.blockw + @pianow, a.height
@@ -131,19 +132,19 @@ class PianoRoll < Gtk::DrawingArea
 
     (0..128).each do |i|
       if note_map[i%12] == 1
-        Color.note_sharp @cairo
+        color.note_sharp
       else
-        Color.note @cairo
+        color.note
       end
 
       @cairo.rectangle 0, (128 - i - 1) * blockh, @pianow, blockh
       @cairo.fill
       @cairo.rectangle 0, (128 - i - 1) * blockh, @pianow, blockh
-      Color.note_sharp @cairo
+      color.note_sharp
       @cairo.set_line_width 0.5
       @cairo.stroke
 
-      Color.text @cairo
+      color.text
       @cairo.set_font_size 10
       @cairo.move_to 20, (128 - i - 1) * blockh + 11
       @cairo.text_path "#{note_text[i%12]} #{i/12 - 2}"
@@ -166,10 +167,10 @@ class PianoRoll < Gtk::DrawingArea
   def draw_note(tick, note)
     pos_x = tick * tick_size + @pianow
 
-    Color.block @cairo
+    color.block
     @cairo.rectangle pos_x, (127 - note.data1) * blockw, blockh, note.duration * tick_size
     @cairo.fill
-    Color.block_border @cairo
+    color.block_border
     @cairo.rectangle pos_x, (127 - note.data1) * blockw, blockh, note.duration * tick_size
     @cairo.stroke
   end

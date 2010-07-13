@@ -21,34 +21,48 @@ void                  Transport::trigger_tick()
   {
     ++position;
     if (looping && position >= loop_end)
-    {
       position = loop_start;
-      // cout << "Looping !" << endl;
-    }
 
     // Using EventBus to trigger linked busses.
     tick(position);
 
-    // if (position.tick == 0)
-      // cout << "Pos: " << position.bar
-      //      << "-" << position.beat << endl;
+    // FIXME This only works for PPQ = 48
+    // Out ppq = 48, midi clock one's 24
+    if (position.tick % 2 == 0)
+    {
+      Event     midi_tick;
+      midi_tick.midi[0] = 0xF8;
+      m_midi_clock.send(midi_tick);
+    }
   }
 }
 
 void                  Transport::start()
 {
   playing = true;
+
+  Event     clock;
+  clock.midi[0] = 0xFA;
+  m_midi_clock.send(clock);
 }
 
 void                  Transport::stop()
 {
   playing = false;
   position = loop_start;
+
+  Event     clock;
+  clock.midi[0] = 0xFC;
+  m_midi_clock.send(clock);
 }
 
 void                  Transport::pause()
 {
   playing = !playing;
+
+  Event     clock;
+  clock.midi[0] = playing ? 0xFB : 0xFC;
+  m_midi_clock.send(clock);
 }
 
 void                  Transport::loop(bool enable_loop)
@@ -95,5 +109,10 @@ TransportPosition     Transport::get_loop_end()
 TransportPosition     Transport::get_position()
 {
   return position;
+}
+
+EventBus              &Transport::midi_clock()
+{
+  return m_midi_clock;
 }
 

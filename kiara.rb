@@ -25,7 +25,6 @@
 
 $:.unshift File.dirname(File.expand_path(__FILE__)) + '/lib'
 $:.unshift File.dirname(File.expand_path(__FILE__)) + '/lib/ui'
-$:.unshift File.dirname(File.expand_path(__FILE__)) + '/conf'
 
 puts File.dirname(File.expand_path(__FILE__))
 

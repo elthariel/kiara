@@ -28,6 +28,8 @@ require 'gtk2'
 require 'colors'
 
 class PatternList < Gtk::DrawingArea
+  include ColorMixin
+
   attr_reader :height, :width, :selected
 
   def initialize(ui, engine)
@@ -57,14 +59,14 @@ class PatternList < Gtk::DrawingArea
     @cairo.clip
 
     # Background
-    Color.background @cairo
+    color.background
     @cairo.rectangle 0, 0, a.width, a.height
     @cairo.fill
 
     @cairo.set_font_size(15)
     @cairo.set_line_width(1)
     (0..Kiara::KIARA_MAXPATTERNS).each do |i|
-      Color.separator @cairo
+      color.separator
       if @selected - 1 == i
         @cairo.rectangle(0, i * @height, @width, @height)
         @cairo.fill
@@ -73,7 +75,7 @@ class PatternList < Gtk::DrawingArea
       @cairo.line_to @width, i * @height
       @cairo.stroke
 
-      Color.text @cairo
+      color.text
       @cairo.move_to 4, i * @height - 5
       @cairo.text_path "Pattern #{i}"
       @cairo.fill

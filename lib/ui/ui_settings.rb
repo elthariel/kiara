@@ -66,10 +66,12 @@ class UiSettings
 
   def load
     @midi_out.active = find_midi_out
+    @ui.builder.o('set_midi_clock').active = Settings.i.midi_clock
   end
 
   def save
     Settings.i.midi_out = @midi_out.active_text.to_i
+    Settings.i.midi_clock = @ui.builder.o('set_midi_clock').active?
     Settings.i.save
   end
 

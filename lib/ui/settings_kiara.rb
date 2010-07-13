@@ -26,10 +26,26 @@
 module SettingsKiara
   def apply
     apply_midi_out
+    apply_midi_clock
   end
 
   def apply_midi_out
     @engine.midi_out.set_out(@data['midi_out'])
+  end
+
+  def apply_midi_clock
+    if @data['midi_clock']
+      @engine.transport.midi_clock.connect(@engine.midi_out);
+    else
+      @engine.transport.midi_clock.connect(nil);
+    end
+  end
+
+  def midi_clock=(active)
+    if @data['midi_clock'] != active
+      @data['midi_clock'] = active
+      apply_midi_clock
+    end
   end
 
   def midi_out=(out)

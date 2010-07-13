@@ -25,68 +25,36 @@
 
 require 'gtk2'
 
+module ColorMixin
+
+def initialize(*args)
+  def color
+    @__color
+  end
+
+  @__color = Color.new(self)
+  super
+end
+
 class Color
-  def self.background(context)
-    self.color context, "1a1a2e"
+  def initialize(mod)
+    @mod = mod
   end
 
-  def self.header(context)
-    self.color context, "494863"
+  def context
+    # FIXME this break encapsulation
+    @mod.instance_variable_get :@cairo
   end
 
-  def self.separator(context)
-    self.color context, "6d3811"
+  def method_missing(sym, *args, &block)
+    if Settings.i.colors.has_key? sym.to_s
+      color Settings.i.colors[sym.to_s]
+    else
+      raise "Colors: Method (or color) missing"
+    end
   end
 
-  def self.header_grid_high(context)
-    self.color context, "d2691b90"
-  end
-
-  def self.header_grid_low(context)
-    self.color context, "9b4f1890"
-  end
-
-  def self.vgrid_high(context)
-    self.color context, "d2691b90"
-  end
-
-  def self.vgrid_low(context)
-    self.color context, "9b4f1890"
-  end
-
-  def self.hgrid(context)
-    self.color context, "554b44"
-  end
-
-  def self.separator(context)
-    self.color context, "6d3811"
-  end
-
-  def self.playbar(context)
-    self.color context, "cb0000"
-  end
-
-  def self.text(context)
-    self.color context, "a6a6a6"
-  end
-
-  def self.block(context)
-    self.color context, "940374"
-  end
-
-  def self.block_border(context)
-    self.color context, "720c5b"
-  end
-
-  def self.note(context)
-    self.color context, "e5efe4"
-  end
-
-  def self.note_sharp(context)
-    self.color context, "121412"
-  end
-
-  def self.color(context, color)
+  def color color
     if color.size == 8
       alpha = color[6, 2].to_i(16) / 255.0
     else
@@ -96,7 +64,10 @@ class Color
     green = color[2, 2].to_i(16) / 255.0
     blue = color[4, 2].to_i(16) / 255.0
 
-    #puts "Color is #{red}:#{green}:#{blue}:#{alpha}"
+    #puts "Color on #{context} ## #{red}:#{green}:#{blue}:#{alpha}"
     context.set_source_rgba red, green, blue, alpha
   end
 end
+
+end
+
