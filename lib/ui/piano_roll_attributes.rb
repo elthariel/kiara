@@ -1,7 +1,7 @@
-#! /usr/bin/env ruby1.9
-## kiara.rb
+##
+## piano_roll_attributes.rb
 ## Login : <elthariel@rincevent>
-## Started on  Sun Jul 11 15:06:33 2010 elthariel
+## Started on  Tue Jul 13 00:05:26 2010 elthariel
 ## $Id$
 ##
 ## Author(s):
@@ -23,32 +23,44 @@
 ## Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 ##
 
-$:.unshift File.dirname(File.expand_path(__FILE__)) + '/lib'
-$:.unshift File.dirname(File.expand_path(__FILE__)) + '/lib/ui'
-$:.unshift File.dirname(File.expand_path(__FILE__)) + '/conf'
+require 'gtk2'
 
-puts File.dirname(File.expand_path(__FILE__))
+module PianoRollAttributes
 
-require 'logger'
+  attr_reader :zoomh, :zoomw
 
-require 'engine/kiara'
-require 'settings'
-require 'ui'
+  def phrase
+    Kiara::Memory.pattern.get(@pattern).get(@phrase)
+  end
 
-Settings.i
-$log = Logger.new(STDOUT)
-$log.progname = 'kiara'
-# $log.level = Logger.const_get Settings.i.loglevel.to_s
-$log.level = Logger::DEBUG
+  def pattern
+    Kiara::Memory.pattern.get(@pattern)
+  end
 
-engine = Kiara::Engine.new
-engine.start
+  def blockh
+    (@blockh * @zoomh).to_i
+  end
 
-Signal.trap('SIGINT') do
-  engine.stop
-  exit 0
+  def blockw
+    (@blockw * @zoomw).to_i
+  end
+
+  def zoomh=(z)
+    @zoomh = z
+    full_redraw
+  end
+
+  def zoomw=(z)
+    @zoomw = z
+    full_redraw
+  end
+
+  def tick_size
+    block_ticks = Kiara::KIARA_PPQ / 4
+    #puts "Block = #{block_ticks} ticks = #{blockw} pixels"
+    blockw / block_ticks.to_f
+  end
+
 end
 
-ui = Ui.new(engine)
-ui.run
 

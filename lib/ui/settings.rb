@@ -61,6 +61,7 @@ class Settings
 
   def defaults
     @data['midi_out'] = 0
+    @data['loglevel'] = "DEBUG"
   end
 
   def save

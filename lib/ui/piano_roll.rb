@@ -25,8 +25,14 @@
 
 require 'gtk2'
 require 'colors'
+require 'piano_roll_attributes'
+require 'piano_roll_events'
 
 class PianoRoll < Gtk::DrawingArea
+  include PianoRollEvents
+  include PianoRollAttributes
+
+
   def initialize(ui, engine)
     super()
     @ui = ui
@@ -40,10 +46,8 @@ class PianoRoll < Gtk::DrawingArea
     @pianow = 50
     zoom_changed
 
-    add_events Gdk::Event::BUTTON_PRESS_MASK
-    add_events Gdk::Event::BUTTON_RELEASE_MASK
     self.signal_connect('expose-event') {|s, e| on_expose e}
-    self.signal_connect('button-press-event') {|s, e| on_clicked e}
+    event_initialize
   end
 
   def pattern=(p)
@@ -60,14 +64,6 @@ class PianoRoll < Gtk::DrawingArea
     end
   end
 
-  def phrase
-    Kiara::Memory.pattern.get(@pattern).get(@phrase)
-  end
-
-  def pattern
-    Kiara::Memory.pattern.get(@pattern)
-  end
-
   def full_redraw
     if realized?
       a = Gdk::Rectangle.new 0, 0, allocation.width, allocation.height
@@ -79,30 +75,6 @@ class PianoRoll < Gtk::DrawingArea
     psize = Kiara::Memory.pattern.get(@pattern).get_size
     set_size_request(blockw * 16 * psize + @pianow, blockh * 128)
     full_redraw
-  end
-
-  def blockh
-    (@blockh * @zoomh).to_i
-  end
-
-  def blockw
-    (@blockw * @zoomw).to_i
-  end
-
-  def zoomh=(z)
-    @zoomh = z
-    full_redraw
-  end
-
-  def zoomw=(z)
-    @zoomw = z
-    full_redraw
-  end
-
-  def tick_size
-    block_ticks = Kiara::KIARA_PPQ / 4
-    #puts "Block = #{block_ticks} ticks = #{blockw} pixels"
-    blockw / block_ticks.to_f
   end
 
   def x_to_tick(x)
@@ -132,8 +104,8 @@ class PianoRoll < Gtk::DrawingArea
     @cairo.set_line_width(0.7)
     Color.hgrid @cairo
     (1..128).each do |y|
-      @cairo.move_to @pianow, y * blockh
-      @cairo.line_to a.width, y * blockh
+      @cairo.move_to @pianow, y * self.blockh
+      @cairo.line_to a.width, y * self.blockh
       @cairo.stroke
     end
 
@@ -145,8 +117,8 @@ class PianoRoll < Gtk::DrawingArea
       else
         Color.vgrid_low @cairo
       end
-      @cairo.move_to x * blockw + @pianow, 0
-      @cairo.line_to x * blockw + @pianow, a.height
+      @cairo.move_to x * self.blockw + @pianow, 0
+      @cairo.line_to x * self.blockw + @pianow, a.height
       @cairo.stroke
     end
   end
@@ -202,43 +174,7 @@ class PianoRoll < Gtk::DrawingArea
     @cairo.stroke
   end
 
-  def get_note(e)
-    tick = x_to_tick e.x - @pianow
-    note = 127 - (e.y / blockh).to_i
 
-    bars = Kiara::Memory.pattern.get(@pattern).get_size
-    p = Kiara::Memory.pattern.get(@pattern).get(@phrase)
-    p.get_note_on_tick(tick, bars, note)
-  end
-
-  def on_clicked(e)
-    bars = Kiara::Memory.pattern.get(@pattern).get_size
-    tick = (x_to_tick e.x - @pianow)
-    tick -= tick % 12
-    note = 127 - (e.y / blockh).to_i
-
-    puts "x#{e.x},y#{e.y}"
-    puts "Note: #{note}, tick: #{tick}"
-
-    if e.x > @pianow and e.x < bars * 16 * blockw + @pianow
-      if e.button == 1
-        if !get_note e
-          return true unless (event = Kiara::Memory.event.alloc)
-          event.reset!
-          event.noteon!
-          event.data1 = note
-          event.data2 = 100
-          event.duration = Kiara::KIARA_PPQ / 4
-          Kiara::Memory.event.dealloc(event) unless phrase.insert!(tick, event)
-          full_redraw
-        end
-      elsif e.button == 3
-        puts "should delete"
-      end
-
-    end
-    true
-  end
 end
 
 
