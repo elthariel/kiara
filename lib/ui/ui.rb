@@ -29,12 +29,13 @@ require 'playlist'
 require 'pattern_list'
 require 'ui_settings'
 require 'piano_roll'
+require 'controller/controller'
 
 class Ui
   include MainActions
 
   attr_reader :engine, :status, :about, :tools, :playlist
-  attr_reader :patterns, :builder
+  attr_reader :patterns, :builder, :controller
 
   def initialize(engine)
     @engine = engine
@@ -62,6 +63,10 @@ class Ui
     Settings.i.init(@ui, @engine)
 
     connect_signals
+
+    @controller = Controller.new(self)
+    @mw.signal_connect('key-press-event') { |w, e| @controller.entry_point e }
+    @mw.signal_connect('key-release-event') { |w, e| @controller.entry_point e }
   end
 
   def run

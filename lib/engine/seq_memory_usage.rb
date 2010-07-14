@@ -57,3 +57,11 @@ puts "--------------------------------------"
 puts "Memory Consumption:"
 puts "\tPhrases:\t#{phrase_mem / (1024*1024)} Mb."
 puts "\tNotes:\t#{event_mem / (1024*1024)} Mb."
+# puts "--------------------------------------"
+# puts "--------------  Tests ----------------"
+# puts "--------------------------------------"
+
+# newphrase = pointer * ppq * 4 * bars * 127
+# puts newphrase / 1024
+
+
