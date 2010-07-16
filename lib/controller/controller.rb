@@ -30,6 +30,8 @@ require 'controller/mapping_context'
 require 'test_mapping'
 
 class Controller
+  DEBUG = true
+
   def initialize(ui)
     @engine = ui.engine
     @ui = ui
@@ -54,6 +56,10 @@ class Controller
       @chain.delete(e)
     end
     true
+  end
+
+  def focus_change(e)
+    @chain = []
   end
 
 end

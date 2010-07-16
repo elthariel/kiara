@@ -67,6 +67,7 @@ class Ui
     @controller = Controller.new(self)
     @mw.signal_connect('key-press-event') { |w, e| @controller.entry_point e }
     @mw.signal_connect('key-release-event') { |w, e| @controller.entry_point e }
+    @mw.signal_connect('focus-in-event') { |w, e| @controller.focus_change e }
   end
 
   def run

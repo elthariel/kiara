@@ -103,27 +103,11 @@ class MappingEngine
     @keychain.push chain
 
     # keychain should be reversed if we want to pop the first element
-    reset_chain if !rec_eval(@keychain, @map)
     puts "-------------" if DEBUG
+    result = !rec_eval(@keychain, @map)
+    reset_chain if result
+    result
 
-
-    # c = current_chain
-    # @keychain.push chain
-    # puts @keychain.join ' '
-    # if c.has_key? chain
-    #   c[chain].each do |item|
-    #     if item.has_key? :action and ((!item.has_key? :context) or (item.has_key? :context and valid_context?(item[:context])))
-    # =>        item [:action].call fake_context
-    #       reset_chain
-    #       return
-    #     end
-    #   end
-    #   # FIXME. Only the last level could have more than one action for a keychain
-    #   @chain.push c[chain][0]
-    # else
-    #   puts "Unknown chain"
-    #   reset_chain
-    # end
   end
 end
 

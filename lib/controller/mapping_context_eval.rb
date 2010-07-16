@@ -25,10 +25,10 @@
 
 module MappingContextEval
   def valid_context?(node)
-    puts "#{self} valid_context?"
+    #puts "#{self} valid_context?"
     if node.has_key? :context
       # FIXME should truly validate_context
-      puts "not evaluating existing context"
+      #puts "not evaluating existing context"
       true
     else
       true
