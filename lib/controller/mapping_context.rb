@@ -1,7 +1,7 @@
 ##
-## test_mapping.rb
+## mapping_context.rb
 ## Login : <elthariel@rincevent>
-## Started on  Wed Jul 14 16:46:40 2010 elthariel
+## Started on  Fri Jul 16 17:21:09 2010 elthariel
 ## $Id$
 ##
 ## Author(s):
@@ -23,23 +23,13 @@
 ## Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 ##
 
-require 'controller/mapping'
+require 'controller/mapping_context_eval'
 
-module TestMapping
-  include Mapping
+class MappingContext
+  include MappingContextEval
 
-  mapping do
-    chain 'C-x' do
-      chain 'C-f' do
-        action { puts "super chain new file" }
-      end
-    end
-    chain 'C-o' do
-      action { puts "chain test open" }
-    end
-    chain 'C-s' do
-      action { puts "chain test save" }
-    end
+  def initialize(ui)
+    @ui = ui
+    @engine = ui.engine
   end
 end
-

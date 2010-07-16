@@ -24,12 +24,18 @@
 ##
 
 class MappingEngine
+  DEBUG = false
 
-  def initialize(mappings)
-    @map = mappings.reverse
-    @chain = []
+  def initialize(mappings, context)
+    @context = context
+    @map = mappings
+    @chain = [@map]
+    @keychain = []
     chain_filter_init
     puts @map
+
+
+    @valid = true
   end
 
   def chain_filter_init
@@ -44,28 +50,80 @@ class MappingEngine
   end
 
   def current_chain
-    iter = @map[0]
-    @chain.each { |x| iter = iter[x] }
-    iter
+    @chain[@chain.length - 1]
+  end
+
+  def reset_chain
+    puts "resetting chain #{@keychain.join ' '}"
+    @keychain = []
+    @chain = [@map]
+  end
+
+  # Recursively browse the mapping tree trying to find a corresponding mapping
+  # Return true if a mapping still could be find (unexplored nodes) should not reset_chain
+  # Return false if an action was executed or of there is no mapping (the branch doesn't exist)
+  def rec_eval(chain, node)
+    # found!, chain.len == 0, and has_key? :action and valid_context
+    # continue!, chain.len == 0 and node.has_key? :subchains
+    # elsif chain.len == 0, you lose
+    # if chain.len > 0 and node.has_key? chain[0] -> :rec_eval
+    # else loose return false
+    if @context.valid_context? node
+      puts "Valid context #{chain}" if DEBUG
+      if chain.length == 0 and node.has_key? :action
+        puts "Calling action" if DEBUG
+        node[:action].call @context
+        reset_chain
+        true
+      elsif chain.length == 0 and node.has_key? :subchains
+        puts "Still having unexplored subkeys" if DEBUG
+        true
+      elsif chain.length == 0
+        puts "Not any subchains to explore" if DEBUG
+        false
+      elsif chain.length > 0 and node.has_key? chain[0]
+        puts "find the current chain #{chain[0]}, iterating child" if DEBUG
+        node[chain[0]].each do |o|
+          return true if rec_eval chain[1..-1], o
+        end
+        false
+      else
+        puts "The chain we are looking for doesn't exists" if DEBUG
+        false
+      end
+    else
+      puts "Invalid context #{chain}" if DEBUG
+      false
+    end
   end
 
   def event(chain)
     return false if @chain_filter.include?(chain)
 
-    c = current_chain
-    puts @chain.join ' '
-    puts chain
-    if c.has_key? chain
-      if c[chain].has_key? :action
-        c[chain][:action].call
-        @chain = []
-      else
-        @chain.push chain
-      end
-    else
-      puts "Unknown chain"
-      @chain = []
-    end
+    @keychain.push chain
+
+    # keychain should be reversed if we want to pop the first element
+    reset_chain if !rec_eval(@keychain, @map)
+    puts "-------------" if DEBUG
+
+
+    # c = current_chain
+    # @keychain.push chain
+    # puts @keychain.join ' '
+    # if c.has_key? chain
+    #   c[chain].each do |item|
+    #     if item.has_key? :action and ((!item.has_key? :context) or (item.has_key? :context and valid_context?(item[:context])))
+    # =>        item [:action].call fake_context
+    #       reset_chain
+    #       return
+    #     end
+    #   end
+    #   # FIXME. Only the last level could have more than one action for a keychain
+    #   @chain.push c[chain][0]
+    # else
+    #   puts "Unknown chain"
+    #   reset_chain
+    # end
   end
 end
 

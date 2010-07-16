@@ -26,7 +26,8 @@
 require 'controller/event'
 require 'controller/mapping'
 require 'controller/mapping_engine'
-require '/home/elthariel/code/audio/kiara/lib/mappings/test_mapping'
+require 'controller/mapping_context'
+require 'test_mapping'
 
 class Controller
   def initialize(ui)
@@ -34,7 +35,8 @@ class Controller
     @ui = ui
     @chain = []
 
-    @map_engine = MappingEngine.new Mapping.get
+    @context = MappingContext.new(ui)
+    @map_engine = MappingEngine.new Mapping.get, @context
   end
 
   def chain
@@ -55,16 +57,3 @@ class Controller
   end
 
 end
-
-# Dsl Example :
-# mapping do
-#   chain 'C-x C-f' do
-#     context.is? :piano_roll
-#     context.state.is? :playing
-#     context.has_selection?
-#     action do
-#       @context.reset_selection
-#       @context.select_first
-#     end
-#   end
-# end

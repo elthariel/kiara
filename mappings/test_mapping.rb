@@ -1,7 +1,7 @@
-#! /usr/bin/env ruby1.9
-## kiara.rb
+##
+## test_mapping.rb
 ## Login : <elthariel@rincevent>
-## Started on  Sun Jul 11 15:06:33 2010 elthariel
+## Started on  Wed Jul 14 16:46:40 2010 elthariel
 ## $Id$
 ##
 ## Author(s):
@@ -23,33 +23,36 @@
 ## Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 ##
 
-$:.unshift File.dirname(File.expand_path(__FILE__)) + '/lib'
-$:.unshift File.dirname(File.expand_path(__FILE__)) + '/lib/ui'
-# This is where you'll find the keyboards mappings
-$:.unshift File.dirname(File.expand_path(__FILE__)) + '/mappings'
+require 'controller/mapping'
 
-puts File.dirname(File.expand_path(__FILE__))
+module TestMapping
+  include Mapping
 
-require 'logger'
-
-require 'engine/kiara'
-require 'settings'
-require 'ui'
-
-Settings.i
-$log = Logger.new(STDOUT)
-$log.progname = 'kiara'
-# $log.level = Logger.const_get Settings.i.loglevel.to_s
-$log.level = Logger::DEBUG
-
-engine = Kiara::Engine.new
-engine.start
-
-Signal.trap('SIGINT') do
-  engine.stop
-  exit 0
+  mapping do
+    on_chain 'C-x' do
+      on_chain 'C-f' do
+        if_context :is => :piano_roll
+        action 'action_name' do |context|
+          puts "super chain new file"
+        end
+      end
+      on_chain 'C-f' do
+        if_context :is_not => :piano_roll
+        action 'action_name' do |context|
+          puts "other super chain, Sens ton doigt!"
+        end
+      end
+    end
+    on_chain 'C-o' do
+      action 'action_name' do |context|
+        puts "chain test open"
+      end
+    end
+    on_chain 'C-s' do
+      action 'action_name' do |context|
+        puts "chain test save"
+      end
+    end
+  end
 end
-
-ui = Ui.new(engine)
-ui.run
 
