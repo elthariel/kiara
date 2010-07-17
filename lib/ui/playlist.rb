@@ -29,7 +29,7 @@ require 'colors'
 class PlaylistView < Gtk::DrawingArea
   include ColorMixin
 
-  attr_accessor :selected
+  attr_reader :cursor, :selected
 
   def initialize(ui, engine)
     super()
@@ -45,6 +45,8 @@ class PlaylistView < Gtk::DrawingArea
     # Context related stuff
     # The selected block, array of pos [[x, y], ...]
     @selected = []
+    # [x, y] coordonate of the cursor (in blocks)
+    @cursor = [0,0]
     @controller_focus = false
 
     add_events Gdk::Event::BUTTON_PRESS_MASK
@@ -211,6 +213,12 @@ class PlaylistView < Gtk::DrawingArea
     @controller_focus = focused
     full_redraw
   end
-
+  def cursor=(a)
+    @cursor=(a)
+    full_redraw
+  end
+  def selected=(a)
+    @selected=a
+    full_redraw
 end
 
