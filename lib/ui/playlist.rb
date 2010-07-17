@@ -220,5 +220,6 @@ class PlaylistView < Gtk::DrawingArea
   def selected=(a)
     @selected=a
     full_redraw
+  end
 end
 
