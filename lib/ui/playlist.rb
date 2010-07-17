@@ -226,6 +226,7 @@ class PlaylistView < Gtk::DrawingArea
     full_redraw
   end
   def cursor=(a)
+    puts "Moving cursor to #{a[0]}:#{a[1]}"
     @cursor=(a)
     full_redraw
   end
