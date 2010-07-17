@@ -120,10 +120,22 @@ class PlaylistView < Gtk::DrawingArea
   end
 
   def draw_grid(a)
+	#CAMOO DESTRUCTIVE ADDS
+	if @controller_focus
+		@cairo.rectangle 0, @head_size + @cursor[1] * blockh, a.width, blockh
+	   color.note_sharp
+		@cairo.fill
+		@cairo.rectangle @cursor[0] * blockw, @head_size, blockw, a.height
+	   color.note_sharp
+		@cairo.fill
+	end
+
+    @cairo.set_line_width(0.5)
     (1..Kiara::KIARA_PLSLEN).each do |i|
       @cairo.move_to i * blockw, @head_size
       @cairo.line_to i * blockw, a.height
-      if i % 4 == 0
+
+	if i % 4 == 0
         color.vgrid_high
       else
         color.vgrid_low

@@ -115,15 +115,7 @@ class PianoRoll < Gtk::DrawingArea
   def draw_grid(e)
     a = allocation
 
-    @cairo.set_line_width(0.7)
-    color.hgrid
-    (1..128).each do |y|
-      @cairo.move_to @pianow, y * self.blockh
-      @cairo.line_to a.width, y * self.blockh
-      @cairo.stroke
-    end
-
-    @cairo.set_line_width(1)
+    @cairo.set_line_width(0.5)
     bars = Kiara::Memory.pattern.get(@pattern).get_size
     (1.. bars * 16).each do |x|
       if x % 4 == 0
@@ -135,6 +127,16 @@ class PianoRoll < Gtk::DrawingArea
       @cairo.line_to x * self.blockw + @pianow, a.height
       @cairo.stroke
     end
+
+    @cairo.set_line_width(0.5)
+    color.hgrid
+    (1..128).each do |y|
+      @cairo.move_to @pianow, y * self.blockh
+      @cairo.line_to a.width, y * self.blockh
+      @cairo.stroke
+    end
+
+
   end
 
   def draw_piano(e)
@@ -157,8 +159,12 @@ class PianoRoll < Gtk::DrawingArea
       @cairo.set_line_width 0.5
       @cairo.stroke
 
-      color.text
-      @cairo.set_font_size 10
+      if note_map[i%12] == 1
+	color.text_sharp
+      else
+	color.text
+      end
+      @cairo.set_font_size 8
       @cairo.move_to 20, (128 - i - 1) * blockh + 11
       @cairo.text_path "#{note_text[i%12]} #{i/12 - 2}"
       @cairo.fill
@@ -181,11 +187,36 @@ class PianoRoll < Gtk::DrawingArea
     pos_x = tick * tick_size + @pianow
 
     color.block
-    @cairo.rectangle pos_x, (127 - note.data1) * blockw, blockh, note.duration * tick_size
+
+# try to do something like this :
+#		1'	   2'
+#	1	/      \	2
+#		\______/	
+#		1''	  2''
+
+	#set the current point to 1'
+	@cairo.move_to pos_x + blockh / 2, (127 - note.data1) * blockw
+	#TODO draw the line between 1' & 2'
+#	@cairo.rel_line_to blockh, 0
+	#draw the line from 2' to 2
+	@cairo.rel_curve_to blockh / 2, 0, blockh / 2, 0, blockh / 2 , blockh / 2
+	#draw the line from 2 to 2''
+	@cairo.rel_curve_to 0, blockh / 2, 0, blockh / 2, -blockh / 2, blockh / 2
+	#TODO draw the line between 2'' & 1''
+#	@cairo.rel_line_to -blockh, 0
+	#draw the line from 1'' to 1
+	@cairo.rel_curve_to -blockh / 2, 0, -blockh / 2, 0, -blockh / 2 , -blockh / 2
+	#draw the line from 1 to 1'
+	@cairo.rel_curve_to 0, -blockh / 2, 0, -blockh / 2,  blockh / 2, -blockh / 2
+
+	@cairo.rel_line_to 0, (note.duration * tick_size)
+#	@cairo.rel_line_to -blockh, 0
+#	@cairo.rel_line_to 0, -(note.duration * tick_size)
+
     @cairo.fill
     color.block_border
-    @cairo.rectangle pos_x, (127 - note.data1) * blockw, blockh, note.duration * tick_size
-    @cairo.stroke
+#    @cairo.stroke
+#	@cairo.close_path();
   end
 
   def controller_focus?

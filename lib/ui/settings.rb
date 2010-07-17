@@ -80,9 +80,10 @@ class Settings
     @data['colors']['hgrid'] = "6d3811"
     @data['colors']['playbar'] = "cb0000"
     @data['colors']['text'] = "a6a6a6"
+    @data['colors']['text_sharp'] = '000000'
     @data['colors']['block'] = "940374"
     @data['colors']['block_border'] = "720c5b"
-    @data['colors']['note'] = "e5efe4"
+    @data['colors']['note'] = "FF3300"
     @data['colors']['note_sharp'] = "121412"
   end
 

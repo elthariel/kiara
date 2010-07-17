@@ -30,7 +30,7 @@ SWIG =		/usr/bin/swig
 SWIGFLAGS =	-c++ -ruby -ignoremissing
 RUBY =		/usr/bin/ruby1.9
 CXX =		/usr/bin/g++
-LDADD =		-lportmidi -lboost_thread
+LDADD =		-lportmidi -lboost_thread-mt
 LDFLAGS =	-shared
 CXXFLAGS =	-g -O0 -fPIC -I$(RUBYINC) -I$(RUBYINC)/$(RUBYARCH)
 
