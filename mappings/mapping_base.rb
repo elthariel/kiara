@@ -216,6 +216,52 @@ module BaseMapping
 
 
 
+
+
+
+
+    ########################
+    #  PianoRoll
+    ########################
+
+    # PianoRoll Cursor movement
+    on_chain 'Up' do
+      if_context :is? => :pianoroll
+      action 'roll-cursor-up' do |c|
+        cursor = c.pianoroll.cursor
+        cursor[1] += 1
+        c.pianoroll.cursor = cursor
+      end
+    end
+    on_chain 'Down' do
+      if_context :is? => :pianoroll
+      action 'roll-cursor-down' do |c|
+        cursor = c.pianoroll.cursor
+        cursor[1] -= 1
+        c.pianoroll.cursor = cursor
+      end
+    end
+    on_chain 'Left' do
+      if_context :is? => :pianoroll
+      action 'roll-cursor-up' do |c|
+        cursor = c.pianoroll.cursor
+        cursor[0] -= Kiara::KIARA_PPQ / 4
+        c.pianoroll.cursor = cursor
+      end
+    end
+    on_chain 'Right' do
+      if_context :is? => :pianoroll
+      action 'roll-cursor-down' do |c|
+        cursor = c.pianoroll.cursor
+        cursor[0] += Kiara::KIARA_PPQ / 4
+        c.pianoroll.cursor = cursor
+      end
+    end
+
+
+
+
+
   end
 end
 

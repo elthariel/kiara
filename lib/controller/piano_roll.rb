@@ -28,11 +28,11 @@ require 'controller/phrase'
 class PianoRollController
   def initialize(context)
     @context = context
-    @roll_ui = context.ui.playlist
+    @roll_ui = context.ui.roll
   end
 
   def cursor
-    @roll_ui.ui.cursor
+    @roll_ui.cursor
   end
 
   def cursor=(a)
@@ -42,7 +42,7 @@ class PianoRollController
     a[0] = Kiara::Memory.pattern.get(@context.patterns.selected).get_size * Kiara::KIARA_PPQ * 4 - 1
     end
     a[1] = 127 if a[1] > 127
-    @playlist_ui.cursor = a
+    @roll_ui.cursor = a
   end
 
 end

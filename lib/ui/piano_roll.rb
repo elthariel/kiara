@@ -80,6 +80,7 @@ class PianoRoll < Gtk::DrawingArea
   end
 
   def cursor=(a)
+    puts "Roll: cursor moved to tick #{a[0]}, note #{a[1]}"
     @cursor = a
     full_redraw
   end
