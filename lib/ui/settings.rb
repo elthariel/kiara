@@ -71,6 +71,7 @@ class Settings
     @data['colors'] = {}
     @data['colors']['background'] = "1a1a2e"
     @data['colors']['background_focus'] = "142912"
+    @data['colors']['cursor'] = "611c87"
     @data['colors']['header'] = "494863"
     @data['colors']['separator'] = "6d3811"
     @data['colors']['header_grid_high'] = "d2691b90"

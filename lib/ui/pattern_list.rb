@@ -61,7 +61,6 @@ class PatternList < Gtk::DrawingArea
     @cairo = self.window.create_cairo_context
     @cairo.rectangle e.area.x, e.area.y, e.area.width, e.area.height
     @cairo.clip
-
     # Background
     color.background unless controller_focus?
     color.background_focus if controller_focus?
@@ -73,6 +72,8 @@ class PatternList < Gtk::DrawingArea
     (0..Kiara::KIARA_MAXPATTERNS).each do |i|
       color.separator
       if @selected - 1 == i
+		color.separator unless controller_focus?
+		color.cursor if controller_focus?
         @cairo.rectangle(0, i * @height, @width, @height)
         @cairo.fill
       end

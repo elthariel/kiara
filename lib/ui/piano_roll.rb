@@ -228,11 +228,7 @@ class PianoRoll < Gtk::DrawingArea
 
     @cairo.fill
     color.block_border
-#<<<<<<< Updated upstream:lib/ui/piano_roll.rb
-#    @cairo.stroke
-#=======
     @cairo.stroke
-#>>>>>>> Stashed changes:lib/ui/piano_roll.rb
 #	@cairo.close_path();
   end
 
