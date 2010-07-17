@@ -24,7 +24,7 @@
 ##
 
 class MappingEngine
-  DEBUG = false
+  DEBUG = true
 
   def initialize(mappings, context)
     @context = context

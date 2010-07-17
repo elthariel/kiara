@@ -70,6 +70,7 @@ class Settings
   def default_colors
     @data['colors'] = {}
     @data['colors']['background'] = "1a1a2e"
+    @data['colors']['background_focus'] = "142912"
     @data['colors']['header'] = "494863"
     @data['colors']['separator'] = "6d3811"
     @data['colors']['header_grid_high'] = "d2691b90"
@@ -101,6 +102,11 @@ class Settings
       @data.merge! loaded
     end
     apply
+
+    puts "----------------------"
+    puts "Dumping Kiara Settings"
+    puts @data
+    puts "----------------------"
   end
 
   def method_missing(sym, *args)

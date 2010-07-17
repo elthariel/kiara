@@ -30,25 +30,29 @@ require 'colors'
 class PatternList < Gtk::DrawingArea
   include ColorMixin
 
-  attr_reader :height, :width, :selected
+  attr_reader :height, :width
+  attr_accessor :selected
 
   def initialize(ui, engine)
     super()
     @engine = engine
     @ui = ui
+
     add_events Gdk::Event::BUTTON_PRESS_MASK
     self.signal_connect('expose-event') {|s, e| on_expose e}
     self.signal_connect('button-press-event') {|s, e| on_click e}
     @selected = 1
+    @controller_focus = true
+
     @height = 24
     @width = 100
-    @selected_procs = []
 
     set_size_request(@width, Kiara::KIARA_MAXPATTERNS * @height)
   end
 
-  def selected_connect(&block)
-    @selected_procs.push block
+  def selected=(i)
+    @selected = i
+    full_redraw
   end
 
   def on_expose(e)
@@ -59,7 +63,8 @@ class PatternList < Gtk::DrawingArea
     @cairo.clip
 
     # Background
-    color.background
+    color.background unless controller_focus?
+    color.background_focus if controller_focus?
     @cairo.rectangle 0, 0, a.width, a.height
     @cairo.fill
 
@@ -87,13 +92,28 @@ class PatternList < Gtk::DrawingArea
 
     if selection != @selected
       @selected = selection
-      @selected_procs.each { |x| x.call @selected }
 
       a = Gdk::Rectangle.new 0, 0, allocation.width, allocation.height
       window.invalidate a, false
     end
 
     true
+  end
+
+  def full_redraw
+    if realized?
+      a = Gdk::Rectangle.new 0, 0, allocation.width, allocation.height
+      window.invalidate a, false
+    end
+  end
+
+  def controller_focus?
+    @controller_focus
+  end
+
+  def controller_focus=(focused)
+    @controller_focus = focused
+    full_redraw
   end
 end
 

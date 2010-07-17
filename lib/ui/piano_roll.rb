@@ -33,6 +33,7 @@ class PianoRoll < Gtk::DrawingArea
   include PianoRollEvents
   include PianoRollAttributes
 
+  attr_accessor :selected
 
   def initialize(ui, engine)
     super()
@@ -47,6 +48,10 @@ class PianoRoll < Gtk::DrawingArea
     @pianow = 50
     zoom_changed
 
+    # Selected is an array of Event *
+    @selected = []
+    @controller_focus = false
+
     self.signal_connect('expose-event') {|s, e| on_expose e}
     event_initialize
   end
@@ -55,6 +60,7 @@ class PianoRoll < Gtk::DrawingArea
     if p < Kiara::KIARA_MAXPATTERNS
       @pattern = p
       full_redraw
+      update_label
     end
   end
 
@@ -62,7 +68,13 @@ class PianoRoll < Gtk::DrawingArea
     if p < Kiara::KIARA_TRACKS
       @phrase = p
       full_redraw
+      update_label
     end
+  end
+
+  def update_label
+    text = "Pattern #{@pattern}, Phrase #{@phrase}"
+    @ui.builder.o('piano_roll_label').set_text text
   end
 
   def full_redraw
@@ -90,7 +102,8 @@ class PianoRoll < Gtk::DrawingArea
     @cairo.clip
 
     # Background
-    color.background
+    color.background unless controller_focus?
+    color.background_focus if controller_focus?
     @cairo.rectangle 0, 0, a.width, a.height
     @cairo.fill
 
@@ -175,6 +188,14 @@ class PianoRoll < Gtk::DrawingArea
     @cairo.stroke
   end
 
+  def controller_focus?
+    @controller_focus
+  end
+
+  def controller_focus=(focused)
+    @controller_focus = focused
+    full_redraw
+  end
 
 end
 

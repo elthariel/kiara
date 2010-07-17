@@ -35,7 +35,7 @@ class Ui
   include MainActions
 
   attr_reader :engine, :status, :about, :tools, :playlist
-  attr_reader :patterns, :builder, :controller
+  attr_reader :patterns, :builder, :controller, :roll
 
   def initialize(engine)
     @engine = engine

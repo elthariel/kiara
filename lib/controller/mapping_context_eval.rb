@@ -27,12 +27,18 @@ module MappingContextEval
   def valid_context?(node)
     #puts "#{self} valid_context?"
     if node.has_key? :context
-      # FIXME should truly validate_context
-      #puts "not evaluating existing context"
+      node[:context].each do |k, v|
+        return false unless __send__(k, v)
+      end
       true
     else
       true
     end
   end
+
+  def is?(v)
+    @focus_list[@focus] == v
+  end
+
 end
 

@@ -27,7 +27,7 @@ require 'controller/event'
 require 'controller/mapping'
 require 'controller/mapping_engine'
 require 'controller/mapping_context'
-require 'test_mapping'
+require 'mapping_base'
 
 class Controller
   DEBUG = true

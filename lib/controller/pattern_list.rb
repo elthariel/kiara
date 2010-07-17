@@ -1,7 +1,7 @@
 ##
-## test_mapping.rb
+## pattern_list.rb
 ## Login : <elthariel@rincevent>
-## Started on  Wed Jul 14 16:46:40 2010 elthariel
+## Started on  Fri Jul 16 23:33:38 2010 elthariel
 ## $Id$
 ##
 ## Author(s):
@@ -23,36 +23,26 @@
 ## Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 ##
 
-require 'controller/mapping'
+class PatternListController
+  def initialize(context)
+    @context = context
+  end
 
-module TestMapping
-  include Mapping
+  def next(i = 1)
+    if @context.ui.patterns.selected + i >= Kiara::KIARA_MAXPATTERNS
+      @context.ui.patterns.selected = Kiara::KIARA_MAXPATTERNS
+    else
+      @context.ui.patterns.selected = @context.ui.patterns.selected + i
+    end
+    @context.ui.roll.pattern = @context.ui.patterns.selected
+  end
 
-  mapping do
-    on_chain 'C-x' do
-      on_chain 'C-f' do
-        if_context :is => :piano_roll
-        action 'action_name' do |context|
-          puts "super chain new file"
-        end
-      end
-      on_chain 'C-f' do
-        if_context :is_not => :piano_roll
-        action 'action_name' do |context|
-          puts "other super chain, Sens ton doigt!"
-        end
-      end
+  def prev(i = 1)
+    if @context.ui.patterns.selected - i < 1
+      @context.ui.patterns.selected = 1
+    else
+      @context.ui.patterns.selected = @context.ui.patterns.selected - i
     end
-    on_chain 'C-o' do
-      action 'action_name' do |context|
-        puts "chain test open"
-      end
-    end
-    on_chain 'C-s' do
-      action 'action_name' do |context|
-        puts "chain test save"
-      end
-    end
+    @context.ui.roll.pattern = @context.ui.patterns.selected
   end
 end
-

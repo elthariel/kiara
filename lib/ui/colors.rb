@@ -54,15 +54,15 @@ class Color
     end
   end
 
-  def color color
-    if color.size == 8
-      alpha = color[6, 2].to_i(16) / 255.0
+  def color(a_color)
+    if a_color.size == 8
+      alpha = a_color[6, 2].to_i(16) / 255.0
     else
       alpha = 1.0
     end
-    red = color[0, 2].to_i(16) / 255.0
-    green = color[2, 2].to_i(16) / 255.0
-    blue = color[4, 2].to_i(16) / 255.0
+    red = a_color[0, 2].to_i(16) / 255.0
+    green = a_color[2, 2].to_i(16) / 255.0
+    blue = a_color[4, 2].to_i(16) / 255.0
 
     #puts "Color on #{context} ## #{red}:#{green}:#{blue}:#{alpha}"
     context.set_source_rgba red, green, blue, alpha

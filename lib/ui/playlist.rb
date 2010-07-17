@@ -29,14 +29,23 @@ require 'colors'
 class PlaylistView < Gtk::DrawingArea
   include ColorMixin
 
+  attr_accessor :selected
+
   def initialize(ui, engine)
     super()
 
+    # Reference to Kiara god objects...
     @engine = engine
     @ui = ui
+
+    # Drawing related vars
     @playbar_lastpos = 0
-    @selected = []
     @head_size = 22
+
+    # Context related stuff
+    # The selected block, array of pos [[x, y], ...]
+    @selected = []
+    @controller_focus = false
 
     add_events Gdk::Event::BUTTON_PRESS_MASK
     add_events Gdk::Event::BUTTON_RELEASE_MASK
@@ -55,6 +64,13 @@ class PlaylistView < Gtk::DrawingArea
     (a.height - @head_size) / Kiara::KIARA_PLSTRACKS.to_f
   end
 
+  def full_redraw
+    if realized?
+      a = Gdk::Rectangle.new 0, 0, allocation.width, allocation.height
+      window.invalidate a, false
+    end
+  end
+
   def on_expose(e)
     # Initialization
     a = allocation
@@ -63,7 +79,8 @@ class PlaylistView < Gtk::DrawingArea
     @cairo.clip
 
     # Background
-    color.background
+    color.background unless controller_focus?
+    color.background_focus if controller_focus?
     @cairo.rectangle 0, 0, a.width, a.height
     @cairo.fill
 
@@ -185,6 +202,14 @@ class PlaylistView < Gtk::DrawingArea
       a = Gdk::Rectangle.new 0, 0, allocation.width, allocation.height
       window.invalidate a, false
     end
+  end
+
+  def controller_focus?
+    @controller_focus
+  end
+  def controller_focus=(focused)
+    @controller_focus = focused
+    full_redraw
   end
 
 end

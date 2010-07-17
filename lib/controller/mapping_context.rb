@@ -24,12 +24,82 @@
 ##
 
 require 'controller/mapping_context_eval'
+require 'controller/pattern_list'
+
+class PlaylistController
+  def initialize(context)
+    @context = context
+  end
+end
 
 class MappingContext
   include MappingContextEval
 
+  attr_reader :ui, :engine
+
   def initialize(ui)
+    # Reference to god objects
     @ui = ui
     @engine = ui.engine
+
+    # internal state
+    @focus_list = [:patterns, :playlist, :piano_roll]
+    @controllers = [PatternListController.new(self),
+                    PlaylistController.new(self),
+                    nil]
+    @focus = 0
   end
+
+  def next
+    focused.controller_focus = false
+    @focus = (@focus + 1) % @focus_list.length
+    focused.controller_focus = true
+  end
+
+  def prev
+    focused.controller_focus = false
+    @focus = (@focus - 1) % @focus_list.length
+    focused.controller_focus = true
+  end
+
+  def focus=(v)
+    if v.class == Symbol
+      new_focus = @focus_list.index(v) if @focus_list.index(v)
+    else
+      new_focus = v
+    end
+    if new_focus and new_focus != @focus
+      focused.controller_focus = false
+      @focus = new_focus
+      focused.controller_focus = true
+    end
+  end
+
+  def focus
+    @focus_list[@focus]
+  end
+
+  def focused
+    case @focus_list[@focus]
+      when :patterns; @ui.patterns
+      when :playlist; @ui.playlist
+      when :piano_roll; @ui.roll
+    end
+  end
+
+  def controller
+    @controllers[@focus]
+  end
+
+  def patterns
+    @controllers[0]
+  end
+
+  def playlist
+    @controllers[1]
+  end
+
+  def pianoroll
+  end
+
 end
