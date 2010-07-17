@@ -1,7 +1,7 @@
 ##
-## playlist.rb
+## piano_roll.rb
 ## Login : <elthariel@rincevent>
-## Started on  Sat Jul 17 15:43:26 2010 elthariel
+## Started on  Sat Jul 17 18:49:03 2010 elthariel
 ## $Id$
 ##
 ## Author(s):
@@ -23,42 +23,27 @@
 ## Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 ##
 
-class PlaylistController
+require 'controller/phrase'
+
+class PianoRollController
   def initialize(context)
     @context = context
-    @playlist = context.ui.engine.playlist
-    @playlist_ui = context.ui.playlist
+    @roll_ui = context.ui.playlist
   end
 
   def cursor
-    @playlist_ui.cursor
+    @roll_ui.ui.cursor
   end
 
   def cursor=(a)
     a[0] = 0 if a[0] < 0
     a[1] = 0 if a[1] < 0
-    a[0] = Kiara::KIARA_PLSLEN - 1 if a[0] >=  Kiara::KIARA_PLSLEN
-    a[1] = Kiara::KIARA_PLSTRACKS - 1 if a[1] >=  Kiara::KIARA_PLSLEN
+    if a[0] >= Kiara::Memory.pattern.get(@context.patterns.selected).get_size * Kiara::KIARA_PPQ * 4
+    a[0] = Kiara::Memory.pattern.get(@context.patterns.selected).get_size * Kiara::KIARA_PPQ * 4 - 1
+    end
+    a[1] = 127 if a[1] > 127
     @playlist_ui.cursor = a
   end
 
-  def occupied?(pos)
-    @playlist.get_pos(pos[1], pos[0]) != 0
-  end
-
-  def add(pattern_id, pos = nil)
-    pos = cursor unless pos
-    @playlist.set_pos(pos[1], pos[0], pattern_id);
-  end
-
-  def remove(pos = nil)
-    pos = cursor unless pos
-    if occupied? pos
-      @playlist.set_pos(pos[1], pos[0], 0);
-    end
-  end
-
-
 end
-
 

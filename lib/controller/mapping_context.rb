@@ -26,6 +26,7 @@
 require 'controller/mapping_context_eval'
 require 'controller/pattern_list'
 require 'controller/playlist'
+require 'controller/piano_roll'
 
 
 class MappingContext
@@ -39,10 +40,10 @@ class MappingContext
     @engine = ui.engine
 
     # internal state
-    @focus_list = [:patterns, :playlist, :piano_roll]
+    @focus_list = [:patterns, :playlist, :pianoroll]
     @controllers = [PatternListController.new(self),
                     PlaylistController.new(self),
-                    nil]
+                    PianoRollController.new(self)]
     @focus = 0
   end
 
@@ -79,7 +80,7 @@ class MappingContext
     case @focus_list[@focus]
       when :patterns; @ui.patterns
       when :playlist; @ui.playlist
-      when :piano_roll; @ui.roll
+      when :pianoroll; @ui.roll
     end
   end
 
@@ -96,6 +97,7 @@ class MappingContext
   end
 
   def pianoroll
+    @controllers[2]
   end
 
 end

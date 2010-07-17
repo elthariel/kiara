@@ -33,7 +33,7 @@ class PianoRoll < Gtk::DrawingArea
   include PianoRollEvents
   include PianoRollAttributes
 
-  attr_accessor :selected
+  attr_reader :selected, :cursor
 
   def initialize(ui, engine)
     super()
@@ -48,8 +48,10 @@ class PianoRoll < Gtk::DrawingArea
     @pianow = 50
     zoom_changed
 
-    # Selected is an array of Event *
+    # ?? Selected is an array of Event *
     @selected = []
+    # Cursor is [tick, note]
+    @cursor = [0, 127]
     @controller_focus = false
 
     self.signal_connect('expose-event') {|s, e| on_expose e}
@@ -70,6 +72,16 @@ class PianoRoll < Gtk::DrawingArea
       full_redraw
       update_label
     end
+  end
+
+  def selected=(a)
+    @selected = a
+    full_redraw
+  end
+
+  def cursor=(a)
+    @cursor = a
+    full_redraw
   end
 
   def update_label
@@ -191,7 +203,7 @@ class PianoRoll < Gtk::DrawingArea
 # try to do something like this :
 #		1'	   2'
 #	1	/      \	2
-#		\______/	
+#		\______/
 #		1''	  2''
 
 	#set the current point to 1'
