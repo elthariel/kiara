@@ -66,6 +66,75 @@ module BaseMapping
         context.patterns.next(10)
       end
     end
+
+    # Playlist Cursor movement
+    on_chain 'Left' do
+      if_context :is? => :playlist
+      action 'pls-cursor-move-left' do |context|
+        cursor = context.playlist.cursor
+        cursor[0] -= 1
+        context.playlist.cursor = cursor
+      end
+    end
+    on_chain 'Right' do
+      if_context :is? => :playlist
+      action 'pls-cursor-move-right' do |context|
+        cursor = context.playlist.cursor
+        cursor[0] += 1
+        context.playlist.cursor = cursor
+      end
+    end
+    on_chain 'Up' do
+      if_context :is? => :playlist
+      action 'pls-cursor-move-up' do |context|
+        cursor = context.playlist.cursor
+        cursor[1] -= 1
+        context.playlist.cursor = cursor
+      end
+    end
+    on_chain 'Down' do
+      if_context :is? => :playlist
+      action 'pls-cursor-move-down' do |context|
+        cursor = context.playlist.cursor
+        cursor[1] += 1
+        context.playlist.cursor = cursor
+      end
+    end
+    # Playlist fast Cursor movement
+    on_chain 'C-Left' do
+      if_context :is? => :playlist
+      action 'pls-cursor-move-left-fast' do |context|
+        cursor = context.playlist.cursor
+        cursor[0] = cursor[0] - 4 + (cursor[0] - 4) % 4
+        context.playlist.cursor = cursor
+      end
+    end
+    on_chain 'C-Right' do
+      if_context :is? => :playlist
+      action 'pls-cursor-move-right-fast' do |context|
+        cursor = context.playlist.cursor
+        cursor[0] = cursor[0] + 4 - (cursor[0] + 4) % 4
+        context.playlist.cursor = cursor
+      end
+    end
+    on_chain 'C-Up' do
+      if_context :is? => :playlist
+      action 'pls-cursor-move-up-fast' do |context|
+        cursor = context.playlist.cursor
+        cursor[1] = cursor[1] - 4 + (cursor[1] - 4) % 4
+        #cursor[1] = cursor[1] - 4 + (cursor[1] + 4) % 4
+        context.playlist.cursor = cursor
+      end
+    end
+    on_chain 'C-Down' do
+      if_context :is? => :playlist
+      action 'pls-cursor-move-down-fast' do |context|
+        cursor = context.playlist.cursor
+        cursor[1] = cursor[1] + 4 - (cursor[1] + 4) % 4
+        context.playlist.cursor = cursor
+      end
+    end
+
   end
 end
 

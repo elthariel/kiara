@@ -25,12 +25,8 @@
 
 require 'controller/mapping_context_eval'
 require 'controller/pattern_list'
+require 'controller/playlist'
 
-class PlaylistController
-  def initialize(context)
-    @context = context
-  end
-end
 
 class MappingContext
   include MappingContextEval
