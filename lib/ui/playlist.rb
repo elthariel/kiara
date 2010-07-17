@@ -123,16 +123,6 @@ class PlaylistView < Gtk::DrawingArea
   end
 
   def draw_grid(a)
-	#CAMOO DESTRUCTIVE ADDS
-	if @controller_focus
-		@cairo.rectangle 0, @head_size + @cursor[1] * blockh, a.width, blockh
-	   color.note_sharp
-		@cairo.fill
-		@cairo.rectangle @cursor[0] * blockw, @head_size, blockw, a.height
-	   color.note_sharp
-		@cairo.fill
-	end
-
     @cairo.set_line_width(0.5)
     (1..Kiara::KIARA_PLSLEN).each do |i|
       @cairo.move_to i * blockw, @head_size
@@ -152,6 +142,16 @@ class PlaylistView < Gtk::DrawingArea
       color.hgrid
       @cairo.stroke
     end
+	#CAMOO DESTRUCTIVE ADDS
+	if @controller_focus
+		@cairo.rectangle 0, @head_size + @cursor[1] * blockh, a.width, blockh
+	   color.cursor
+		@cairo.fill
+		@cairo.rectangle @cursor[0] * blockw, @head_size, blockw, a.height
+	   color.cursor
+		@cairo.fill
+	end
+
   end
 
   def draw_patterns(a)
