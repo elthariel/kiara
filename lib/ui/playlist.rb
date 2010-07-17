@@ -66,6 +66,9 @@ class PlaylistView < Gtk::DrawingArea
     (a.height - @head_size) / Kiara::KIARA_PLSTRACKS.to_f
   end
 
+  def redraw
+    full_redraw
+  end
   def full_redraw
     if realized?
       a = Gdk::Rectangle.new 0, 0, allocation.width, allocation.height

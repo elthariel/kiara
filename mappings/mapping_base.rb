@@ -29,6 +29,9 @@ module BaseMapping
   include Mapping
 
   mapping do
+    ########################
+    #  GLOBAL
+    ########################
     # Context/Focus Switching
     on_chain 'C-Tab' do
       action 'focus-next' do |context|
@@ -40,6 +43,14 @@ module BaseMapping
         context.prev
       end
     end
+
+
+
+
+
+    ########################
+    #  Pattern list
+    ########################
 
     # Current pattern selection
     on_chain 'Up' do
@@ -66,6 +77,35 @@ module BaseMapping
         context.patterns.next(10)
       end
     end
+
+
+
+    # Pattern stacking
+    @pattern_stack = []
+    on_chain 'C-space' do
+      if_context :is? => :patterns
+      action 'reset-pattern-stack' do |c|
+        @pattern_stack.clear
+        puts "Reset pattern stack"
+      end
+    end
+    on_chain 'space' do
+      if_context :is? => :patterns
+      action 'reset-pattern-stack' do |c|
+        @pattern_stack.push c.controller.selected
+        puts "I've stacked a new pattern : #{c.controller.selected}"
+      end
+    end
+
+
+
+
+
+
+
+    ########################
+    #  Playlist
+    ########################
 
     # Playlist Cursor movement
     on_chain 'Left' do
@@ -134,6 +174,47 @@ module BaseMapping
         context.playlist.cursor = cursor
       end
     end
+
+    # Pattern add
+    on_chain 'space' do
+      if_context :is? => :playlist
+      action 'playlist-add-pattern' do |c|
+        if @pattern_stack.length > 0
+          @pattern_stack.each do |id|
+            c.playlist.add(id)
+            cursor = c.playlist.cursor
+            cursor[0] += c.patterns.size(id)
+            c.playlist.cursor = cursor
+          end
+        else
+          # Only add selected pattern
+          c.playlist.add(c.patterns.selected)
+          cursor = c.playlist.cursor
+          cursor[0] += c.patterns.size(c.patterns.selected)
+          c.playlist.cursor = cursor
+        end
+      end
+    end
+    on_chain 'C-space' do
+      if_context :is? => :playlist
+      action 'playlist-remove-pattern' do |c|
+        c.playlist.remove
+        cursor = c.playlist.cursor
+        cursor[0] += 1
+        c.playlist.cursor = cursor
+      end
+    end
+    on_chain 'C-S-space' do
+      if_context :is? => :playlist
+      action 'playlist-remove-pattern-backward' do |c|
+        c.playlist.remove
+        cursor = c.playlist.cursor
+        cursor[0] -= 1
+        c.playlist.cursor = cursor
+      end
+    end
+
+
 
   end
 end

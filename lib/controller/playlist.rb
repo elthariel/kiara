@@ -41,6 +41,23 @@ class PlaylistController
     a[1] = Kiara::KIARA_PLSTRACKS - 1 if a[1] >=  Kiara::KIARA_PLSLEN
     @playlist_ui.cursor = a
   end
+
+  def occupied?(pos)
+    @playlist.get_pos(pos[1], pos[0]) != 0
+  end
+
+  def add(pattern_id, pos = nil)
+    pos = cursor unless pos
+    @playlist.set_pos(pos[1], pos[0], pattern_id);
+  end
+
+  def remove(pos = nil)
+    pos = cursor unless pos
+    if occupied? pos
+      @playlist.set_pos(pos[1], pos[0], 0);
+    end
+  end
+
 end
 
 

@@ -45,4 +45,13 @@ class PatternListController
     end
     @context.ui.roll.pattern = @context.ui.patterns.selected
   end
+
+  def selected
+    @context.ui.patterns.selected
+  end
+
+  def size(pattern_id)
+    Kiara::Memory.pattern.get(pattern_id).get_size
+  end
+
 end
