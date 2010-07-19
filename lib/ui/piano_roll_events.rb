@@ -40,12 +40,12 @@ module PianoRollEvents
     tick = self.x_to_tick e.x - @pianow
     note = 127 - (e.y / self.blockh).to_i
 
-    bars = self.pattern.get_size
-    self.phrase.get_note_on_tick(tick, bars, note)
+    bars = Kiara::Memory.pattern.get(@pattern).get_size
+    Kiara::Memory.pattern.get(@pattern).get(@phrase).get_note_on_tick(tick, bars, note)
   end
 
   def on_clicked(e)
-    bars = self.pattern.get_size
+    bars = Kiara::Memory.pattern.get(@pattern).get_size
     tick = (x_to_tick e.x - @pianow)
     tick -= tick % 12
     note = 127 - (e.y / blockh).to_i
@@ -62,7 +62,7 @@ module PianoRollEvents
           event.data1 = note
           event.data2 = 100
           event.duration = Kiara::KIARA_PPQ / 4
-          Kiara::Memory.event.dealloc(event) unless phrase.insert!(tick, event)
+          Kiara::Memory.event.dealloc(event) unless Kiara::Memory.pattern.get(@pattern).get(@phrase).insert!(tick, event)
           full_redraw
         end
       elsif e.button == 3
