@@ -29,11 +29,11 @@ module PianoRollAttributes
 
   attr_reader :zoomh, :zoomw
 
-  def phrase
+  def current_phrase
     Kiara::Memory.pattern.get(@pattern).get(@phrase)
   end
 
-  def pattern
+  def current_pattern
     Kiara::Memory.pattern.get(@pattern)
   end
 

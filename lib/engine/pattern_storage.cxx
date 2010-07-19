@@ -15,6 +15,14 @@ unsigned int  PatternStorage::size()
   return KIARA_MAXPATTERNS;
 }
 
+void          PatternStorage::reset()
+{
+  unsigned int i;
+
+  for (i = 0; i < KIARA_MAXPATTERNS; i++)
+    patterns[i].reset();
+}
+
 void          PatternStorage::set_event_merger(EventMerger &merger)
 {
   unsigned int i, j;

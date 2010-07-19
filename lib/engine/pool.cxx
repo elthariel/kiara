@@ -11,12 +11,9 @@ namespace Rt
      m_chunk_capacity(a_chunk_capacity),
      m_next_chunk(0) // Unused for the moment
   {
-    unsigned int i;
-
     m_heap = malloc(sizeof(T) * a_chunk_capacity);
     m_free = (address *)malloc(a_chunk_capacity * sizeof(address));
-    for (i = 0; i < a_chunk_capacity; i++)
-      m_free[i] = i;
+    reset();
   }
 
   template <class T>
@@ -65,6 +62,14 @@ namespace Rt
           std::cout << " *";
         std::cout << std::endl;
       }
+  }
+
+  template <class T>
+  void                        Chunk<T>::reset()
+  {
+    unsigned int i;
+    for (i = 0; i < m_chunk_capacity; i++)
+      m_free[i] = i;
   }
 
 };

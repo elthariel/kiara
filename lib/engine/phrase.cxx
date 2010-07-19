@@ -7,7 +7,7 @@ using namespace std;
 
 Phrase::Phrase()
 {
-  memset(&data, 0, sizeof(data));
+  reset();
 }
 
 Phrase::~Phrase()
@@ -48,7 +48,7 @@ Event         *Phrase::get_note_on_tick(unsigned int tick,
 
 bool          Phrase::insert(unsigned int tick, Event *e)
 {
-  if (tick > KIARA_MAXBARS * KIARA_PPQ * 4)
+  if (tick > KIARA_MAXBARS * KIARA_PPQ * 4 || e == 0)
     return false;
 
   Event *iter = data[tick];
@@ -64,4 +64,45 @@ bool          Phrase::insert(unsigned int tick, Event *e)
 
   return true;
 }
+
+bool          Phrase::remove(unsigned int tick, Event *e)
+{
+  if (tick > KIARA_MAXBARS * KIARA_PPQ * 4 || e == 0)
+    return false;
+
+  Event *iter = data[tick];
+
+  if (iter == e)
+  {
+    data[tick] = iter->next;
+    return true;
+  }
+
+  while (iter->next)
+  {
+    if (iter->next == e)
+    {
+      iter->next == iter->next->next;
+      return true;
+    }
+    iter = iter->next;
+  }
+  return false;
+}
+
+int           Phrase::next_used_tick(unsigned int tick)
+{
+  unsigned int i;
+
+  for (i = tick; i < KIARA_MAXBARS * KIARA_PPQ * 4; i++)
+    if (data[i])
+      return i;
+  return -1;
+}
+
+void          Phrase::reset()
+{
+  memset(&data, 0, sizeof(data));
+}
+
 

@@ -45,6 +45,8 @@ public:
 
   unsigned int  get_size();
   void          set_size(unsigned int a_size);
+
+  void          reset();
 protected:
   void          play_track(unsigned int track,
                            TransportPosition pos);

@@ -41,6 +41,8 @@ public:
   unsigned int  size();
 
   void          set_event_merger(EventMerger &merger);
+
+  void          reset();
 protected:
   Pattern       patterns[KIARA_MAXPATTERNS];
 };

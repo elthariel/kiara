@@ -24,5 +24,76 @@
 ##
 
 class PhraseController
+  attr_reader :pattern, :track
+
+  def initialize(context, pattern_id, track_id)
+    @context = context
+    @roll_ui = context.ui.roll
+    @pattern_id = pattern_id
+    @track = track_id
+    @pattern = Kiara::Memory.pattern.get(@pattern_id)
+    @phrase = @pattern.get(track_id)
+  end
+
+  def alloc_event!
+    Kiara::Memory.event.alloc
+  end
+
+  def dealloc_event!(e)
+    Kiara::Memory.event.dealloc(e)
+  end
+
+  # Pos has the same syntax than cursor
+  def occupied?(pos)
+    @phrase.get_note_on_tick pos[0], @pattern.get_size, pos[1]
+  end
+
+  def insert!(tick, event)
+    @phrase.insert!(tick, event) if event
+  end
+
+  # Delete a note with data1=note starting precisely at tick=tick
+  # Returns true if correctly deleted
+  def delete_note_on_tick!(tick, note)
+    iter = @phrase.get(tick)
+    while iter and iter.data1 != note do
+      iter = iter.next
+    end
+    if iter
+      res = @phrase.remove!(tick, iter)
+      iter if res
+    else
+      nil
+    end
+  end
+
+  # Delete a note with data1=note starting at or overlapping tick=tick
+  # Return true if the event was deleted
+  def delete_note_on_tick_overlapping!(pos)
+    event = occupied?(pos)
+    @phrase.remove!(pos[0], event) if event
+    event
+  end
+
+  def each
+    (0..(Kiara::KIARA_PPQ * 4 * @pattern.get_size)).each do |i|
+      iter = @phrase.get(i)
+      while iter
+        yield iter
+        iter = iter.next
+      end
+    end
+  end
+
+  def each_pos
+    (0..(Kiara::KIARA_PPQ * 4 * @pattern.get_size)).each do |i|
+      iter = @phrase.get(i)
+      while iter
+        yield i, iter
+        iter = iter.next
+      end
+    end
+  end
+
 end
 

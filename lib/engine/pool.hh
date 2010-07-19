@@ -33,6 +33,7 @@ namespace Rt
     void                        dealloc(T *);
 
     void                        debug_free(); /// \internal display the free chunk lifo.
+    void                        reset();
   protected:
     unsigned int                m_chunk_capacity;
     volatile unsigned int       m_free_chunks;

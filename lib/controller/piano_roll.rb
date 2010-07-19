@@ -26,9 +26,16 @@
 require 'controller/phrase'
 
 class PianoRollController
+  attr_reader :mark
+
   def initialize(context)
     @context = context
     @roll_ui = context.ui.roll
+    @mark = cursor
+  end
+
+  def redraw
+    @roll_ui.redraw
   end
 
   def cursor
@@ -43,6 +50,24 @@ class PianoRollController
     end
     a[1] = 127 if a[1] > 127
     @roll_ui.cursor = a
+  end
+
+  def selected_phrase
+    @roll_ui.phrase
+  end
+
+  def selected_phrase=(id)
+    id = 0 if id < 0
+    id = Kiara::KIARA_TRACKS - 1 if id >= Kiara::KIARA_TRACKS
+    @roll_ui.phrase = id
+  end
+
+  # Create and return a phrase controller for the specified phrase and pattern
+  # When a parameter is nil, the current selected item is used
+  def phrase(pattern = nil, phrase_id = nil)
+    pattern = @context.patterns.selected unless pattern
+    phrase_id = selected_phrase unless phrase_id
+    PhraseController.new(@context, pattern, phrase_id)
   end
 
 end

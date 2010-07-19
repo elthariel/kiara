@@ -51,6 +51,8 @@ public:
                         unsigned int pattern_id);
 
   virtual void  tick(TransportPosition pos);
+
+  void          reset();
 protected:
   // Return the position of the start of the pattern
   // overlapping the given positon

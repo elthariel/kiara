@@ -32,7 +32,7 @@ RUBY =		/usr/bin/ruby1.9
 CXX =		/usr/bin/g++
 LDADD =		-lportmidi -lboost_thread-mt
 LDFLAGS =	-shared
-CXXFLAGS =	-g -O0 -fPIC -I$(RUBYINC) -I$(RUBYINC)/$(RUBYARCH)
+CXXFLAGS =	-O2 -fPIC -I$(RUBYINC) -I$(RUBYINC)/$(RUBYARCH)
 
 NAME =		kiara.so
 OBJS =		kiara_wrap.o event.o engine.o timer.o \

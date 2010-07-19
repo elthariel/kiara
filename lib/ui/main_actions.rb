@@ -65,6 +65,14 @@ module MainActions
     @engine.timer.bpm = w.value.to_i;
   end
 
+  def act_open(w)
+    puts "Opening..."
+  end
+
+  def act_save(w)
+    puts "Saving..."
+  end
+
   def act_(w)
   end
 

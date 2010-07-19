@@ -49,6 +49,16 @@ void          Event::set_chan(unsigned char chan)
   midi[0] = (midi[0] & 0xF0) | (0x0F & chan);
 }
 
+void          Event::set_status(unsigned char status)
+{
+  midi[0] = status;
+}
+
+unsigned char Event::get_status()
+{
+  return midi[0];
+}
+
 void          Event::set_data1(unsigned char d)
 {
   midi[1] = d;

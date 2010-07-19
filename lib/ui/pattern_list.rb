@@ -44,8 +44,8 @@ class PatternList < Gtk::DrawingArea
     @selected = 1
     @controller_focus = true
 
-    @height = 24
-    @width = 100
+    @height = 20
+    @width = 88
 
     set_size_request(@width, Kiara::KIARA_MAXPATTERNS * @height)
   end
@@ -67,7 +67,7 @@ class PatternList < Gtk::DrawingArea
     @cairo.rectangle 0, 0, a.width, a.height
     @cairo.fill
 
-    @cairo.set_font_size(15)
+    @cairo.set_font_size(13)
     @cairo.set_line_width(1)
     (0..Kiara::KIARA_MAXPATTERNS).each do |i|
       color.separator

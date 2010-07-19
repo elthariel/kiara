@@ -33,7 +33,7 @@ class PianoRoll < Gtk::DrawingArea
   include PianoRollEvents
   include PianoRollAttributes
 
-  attr_reader :selected, :cursor
+  attr_reader :selected, :cursor, :phrase
 
   def initialize(ui, engine)
     super()
@@ -81,13 +81,31 @@ class PianoRoll < Gtk::DrawingArea
 
   def cursor=(a)
     puts "Roll: cursor moved to tick #{a[0]}, note #{a[1]}"
+    hadj = parent.hadjustment
+    vadj = parent.vadjustment
     @cursor = a
     full_redraw
+
+    # Compute position of the cursor in pixel
+    cursor_xpos = a[0] * tick_size
+    cursor_ypos = (127 - a[1]) * blockh
+
+    # Limit scroll down to scrollwindow_size - viewport / 2
+    # because gtk allows us to scroll below the widget :-/
+    if cursor_ypos > vadj.upper - parent.allocation.height / 2
+      vadj.value = vadj.upper - parent.allocation.height
+    else
+      vadj.value = cursor_ypos - parent.allocation.height / 2
+    end
   end
 
   def update_label
-    text = "Pattern #{@pattern}, Phrase #{@phrase}"
+    text = "Pattern #{@pattern}, Track #{@phrase + 1}"
     @ui.builder.o('piano_roll_label').set_text text
+  end
+
+  def redraw
+    full_redraw
   end
 
   def full_redraw
@@ -123,6 +141,7 @@ class PianoRoll < Gtk::DrawingArea
     draw_piano(e)
     draw_grid(e)
     draw_notes(e)
+    draw_cursor(e)
   end
 
   def draw_grid(e)
@@ -178,17 +197,17 @@ class PianoRoll < Gtk::DrawingArea
 	color.text
       end
       @cairo.set_font_size 8
-      @cairo.move_to 20, (128 - i - 1) * blockh + 11
+      @cairo.move_to 20, (128 - i - 1) * blockh + 12
       @cairo.text_path "#{note_text[i%12]} #{i/12 - 2}"
       @cairo.fill
     end
   end
 
   def draw_notes(e)
-    ticks = Kiara::KIARA_PPQ * 4 * pattern.get_size
+    ticks = Kiara::KIARA_PPQ * 4 * current_pattern.get_size
 
     (0..ticks).each do |t|
-      event = phrase.get(t)
+      event = current_phrase.get(t)
       while event && event.is_noteon do
         draw_note(t, event)
         event = event.next
@@ -230,6 +249,26 @@ class PianoRoll < Gtk::DrawingArea
     color.block_border
     @cairo.stroke
 #	@cairo.close_path();
+  end
+
+  def draw_cursor(e)
+    if @controller_focus
+      color.cursor
+      @cairo.rectangle(@cursor[0] * tick_size + @pianow, 0,
+                       blockw, allocation.height)
+      @cairo.fill
+      @cairo.rectangle(0 + @pianow,
+                       (127 - @cursor[1]) * blockh,
+                       allocation.width, blockh)
+      @cairo.fill
+      color.note_sharp
+      @cairo.move_to(@cursor[0] * tick_size + @pianow,
+                     (127 - @cursor[1]) * blockh)
+      @cairo.line_to(@cursor[0] * tick_size + @pianow,
+                     (127 - @cursor[1] + 1) * blockh)
+      @cairo.set_line_width(0.8)
+      @cairo.stroke
+    end
   end
 
   def controller_focus?

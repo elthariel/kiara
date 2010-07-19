@@ -8,6 +8,11 @@ using namespace std;
 
 Playlist::Playlist()
 {
+  reset();
+}
+
+void          Playlist::reset()
+{
   memset(&patterns, 0, sizeof(patterns));
 }
 

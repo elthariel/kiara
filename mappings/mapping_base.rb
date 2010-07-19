@@ -24,6 +24,7 @@
 ##
 
 require 'controller/mapping'
+require 'zlib'
 
 module BaseMapping
   include Mapping
@@ -41,6 +42,57 @@ module BaseMapping
     on_chain 'C-S-Tab' do
       action 'focus-prev' do |context|
         context.prev
+      end
+    end
+
+    # File Management and stuff like that
+    on_chain 'C-x' do
+      on_chain 'C-s' do
+        action 'save' do |c|
+          dialog = Gtk::FileChooserDialog.new("Open Kiara Project...", @mw,
+                                              Gtk::FileChooser::ACTION_SAVE, nil,
+                                              [Gtk::Stock::CANCEL, Gtk::Dialog::RESPONSE_CANCEL],
+                                              [Gtk::Stock::SAVE, Gtk::Dialog::RESPONSE_ACCEPT])
+          filter = Gtk::FileFilter.new
+          filter.name = "Kiara Projects"
+          filter.add_pattern("*.kseq")
+          dialog.add_filter filter
+          if dialog.run == Gtk::Dialog::RESPONSE_ACCEPT
+            filename = dialog.filename
+            filename += ".kseq" unless filename =~ /.kseq\Z/
+
+            File.open(filename, "w") do |f|
+              puts "Saving to #{filename}"
+              zf = Zlib::GzipWriter.new(f, 3, 0)
+              zf << c.engine.to_yaml
+              zf.close
+            end
+          end
+          dialog.destroy
+        end
+      end
+      on_chain 'C-f' do
+        action 'open' do |c|
+          dialog = Gtk::FileChooserDialog.new("Open Kiara Project...", @mw,
+                                              Gtk::FileChooser::ACTION_OPEN, nil,
+                                              [Gtk::Stock::CANCEL, Gtk::Dialog::RESPONSE_CANCEL],
+                                              [Gtk::Stock::OPEN, Gtk::Dialog::RESPONSE_ACCEPT])
+          filter = Gtk::FileFilter.new
+          filter.name = "Kiara Projects"
+          filter.add_pattern("*.kseq")
+          dialog.add_filter filter
+          if dialog.run == Gtk::Dialog::RESPONSE_ACCEPT
+            filename = dialog.filename
+            puts "filename = #{filename}"
+            Zlib::GzipReader.open(filename) do |zf|
+              puts "Saving to #{filename}"
+              c.engine.from_yaml zf
+              c.pianoroll.redraw
+              c.playlist.redraw
+            end
+          end
+          dialog.destroy
+        end
       end
     end
 
@@ -141,7 +193,7 @@ module BaseMapping
       end
     end
     # Playlist fast Cursor movement
-    on_chain 'C-Left' do
+    on_chain 'S-Left' do
       if_context :is? => :playlist
       action 'pls-cursor-move-left-fast' do |context|
         cursor = context.playlist.cursor
@@ -149,7 +201,7 @@ module BaseMapping
         context.playlist.cursor = cursor
       end
     end
-    on_chain 'C-Right' do
+    on_chain 'S-Right' do
       if_context :is? => :playlist
       action 'pls-cursor-move-right-fast' do |context|
         cursor = context.playlist.cursor
@@ -157,7 +209,7 @@ module BaseMapping
         context.playlist.cursor = cursor
       end
     end
-    on_chain 'C-Up' do
+    on_chain 'S-Up' do
       if_context :is? => :playlist
       action 'pls-cursor-move-up-fast' do |context|
         cursor = context.playlist.cursor
@@ -166,7 +218,7 @@ module BaseMapping
         context.playlist.cursor = cursor
       end
     end
-    on_chain 'C-Down' do
+    on_chain 'S-Down' do
       if_context :is? => :playlist
       action 'pls-cursor-move-down-fast' do |context|
         cursor = context.playlist.cursor
@@ -257,42 +309,162 @@ module BaseMapping
         c.pianoroll.cursor = cursor
       end
     end
+    # PianoRoll PRECISE Cursor movement
+    on_chain 'M-Left' do
+      if_context :is? => :pianoroll
+      action 'roll-cursor-up' do |c|
+        cursor = c.pianoroll.cursor
+        cursor[0] -= 1
+        c.pianoroll.cursor = cursor
+      end
+    end
+    on_chain 'M-Right' do
+      if_context :is? => :pianoroll
+      action 'roll-cursor-down' do |c|
+        cursor = c.pianoroll.cursor
+        cursor[0] += 1
+        c.pianoroll.cursor = cursor
+      end
+    end
+    # PianoRoll FAST Cursor movement
+    on_chain 'S-Up' do
+      if_context :is? => :pianoroll
+      action 'roll-cursor-up' do |c|
+        cursor = c.pianoroll.cursor
+        cursor[1] += 12
+        c.pianoroll.cursor = cursor
+      end
+    end
+    on_chain 'S-Down' do
+      if_context :is? => :pianoroll
+      action 'roll-cursor-down' do |c|
+        cursor = c.pianoroll.cursor
+        cursor[1] -= 12
+        c.pianoroll.cursor = cursor
+      end
+    end
+    on_chain 'S-Left' do
+      if_context :is? => :pianoroll
+      action 'roll-cursor-up' do |c|
+        cursor = c.pianoroll.cursor
+        cursor[0] -= Kiara::KIARA_PPQ
+        cursor[0] += cursor[0] % Kiara::KIARA_PPQ
+        c.pianoroll.cursor = cursor
+      end
+    end
+    on_chain 'S-Right' do
+      if_context :is? => :pianoroll
+      action 'roll-cursor-down' do |c|
+        cursor = c.pianoroll.cursor
+        cursor[0] += Kiara::KIARA_PPQ
+        cursor[0] -= cursor[0] % Kiara::KIARA_PPQ
+        c.pianoroll.cursor = cursor
+      end
+    end
+    # PianoRoll Phrase Switch
+    on_chain 'Prior' do
+      if_context :is? => :pianoroll
+      action 'phrase-prev' do |c|
+        c.pianoroll.selected_phrase = c.pianoroll.selected_phrase - 1
+      end
+    end
+    on_chain 'Next' do
+      if_context :is? => :pianoroll
+      action 'phrase-prev' do |c|
+        c.pianoroll.selected_phrase = c.pianoroll.selected_phrase + 1
+      end
+    end
+    on_chain 'S-Prior' do
+      if_context :is? => :pianoroll
+      action 'phrase-prev' do |c|
+        c.pianoroll.selected_phrase = c.pianoroll.selected_phrase - 4
+      end
+    end
+    on_chain 'S-Next' do
+      if_context :is? => :pianoroll
+      action 'phrase-prev' do |c|
+        c.pianoroll.selected_phrase = c.pianoroll.selected_phrase + 4
+      end
+    end
 
 
 
 
 
+    ########################
+    #  Phrase
+    ########################
+    # Note add
+    @@last_note_duration = Kiara::KIARA_PPQ / 4
+    @@last_note_velocity = 100
+    on_chain 'space' do
+      if_context :is? => :pianoroll
+      action 'node-add' do |c|
+        p = c.pianoroll.phrase
+        pos = c.pianoroll.cursor
+        unless p.occupied? (pos)
+          e = p.alloc_event!
+          e.noteon!
+          e.chan = p.track
+          e.data1 = pos[1]
+          e.data2 = @@last_note_velocity
+          e.duration = @@last_note_duration
+          if p.insert! pos[0], e
+            c.pianoroll.cursor=[pos[0] + e.duration, pos[1]]
+          else
+            p.dealloc_event! e
+          end
+        end
+      end
+    end
+    # Note remove on cursor
+    on_chain 'C-space' do
+      if_context :is? => :pianoroll
+      action 'note-del-at-cursor' do |c|
+        p = c.pianoroll.phrase
+        pos = c.pianoroll.cursor
+        e = p.delete_note_on_tick_overlapping!(pos)
+        if e
+          c.pianoroll.cursor=[pos[0] + e.duration, pos[1]]
+          p.dealloc_event! e
+        end
+      end
+    end
+
+    # Step edition
+    [[0, '1'], [1, 'q'], [2, '2'], [3, 'w'], [4, '3'], [5, 'e'], [6, '4'], [7, 'r'],
+     [8, '5'], [9, 't'], [10, '6'], [11, 'y'], [12, '7'], [13, 'u'], [14, '8'], [15, 'i']].each do |x|
+      on_chain x[1] do
+        if_context :is? => :pianoroll
+        action "tr-edit-#{x[0]}" do |c|
+          p = c.pianoroll.phrase
+          cursor = c.pianoroll.cursor
+          bar = (cursor[0] / (Kiara::KIARA_PPQ * 4)) * Kiara::KIARA_PPQ * 4
+          pos = [bar + x[0] * (Kiara::KIARA_PPQ / 4), cursor[1]]
+          # This checks is there's a note on the "step"
+          if (p.occupied? pos)
+            e = p.delete_note_on_tick_overlapping! pos
+            p.dealloc_event! e
+            c.pianoroll.redraw
+          else
+            e = p.alloc_event!
+            e.noteon!
+            e.chan = p.track
+            e.data1 = pos[1]
+            e.data2 = 100
+            e.duration = Kiara::KIARA_PPQ / 4
+            p.dealloc_event! e unless p.insert! pos[0], e
+            c.pianoroll.redraw
+          end
+        end
+      end
+    end
+
+
+
+
+##############################
   end
 end
 
-# module TestMapping
-#   include Mapping
-
-#   mapping do
-#     on_chain 'C-x' do
-#       on_chain 'C-f' do
-#         if_context :is => :piano_roll
-#         action 'action_name' do |context|
-#           puts "super chain new file"
-#         end
-#       end
-#       on_chain 'C-f' do
-#         if_context :is_not => :piano_roll
-#         action 'action_name' do |context|
-#           puts "other super chain, Sens ton doigt!"
-#         end
-#       end
-#     end
-#     on_chain 'C-o' do
-#       action 'action_name' do |context|
-#         puts "chain test open"
-#       end
-#     end
-#     on_chain 'C-s' do
-#       action 'action_name' do |context|
-#         puts "chain test save"
-#       end
-#     end
-#   end
-# end
 

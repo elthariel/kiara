@@ -40,7 +40,7 @@ class PlaylistView < Gtk::DrawingArea
 
     # Drawing related vars
     @playbar_lastpos = 0
-    @head_size = 22
+    @head_size = 12
 
     # Context related stuff
     # The selected block, array of pos [[x, y], ...]
@@ -64,6 +64,10 @@ class PlaylistView < Gtk::DrawingArea
   def blockh
     a = allocation
     (a.height - @head_size) / Kiara::KIARA_PLSTRACKS.to_f
+  end
+
+  def tick_size
+    blockw / (Kiara::KIARA_PPQ * 4)
   end
 
   def redraw
@@ -95,24 +99,25 @@ class PlaylistView < Gtk::DrawingArea
     draw_grid a
     # Draw Patterns
     draw_patterns a
-
+    # Draw the transparent cursor on top of it
+    draw_cursor a
     # Or we won't get called again iirc.
     true
   end
 
   def draw_header(a)
     color.header
-    @cairo.rectangle(0, 0, a.width, 20)
+    @cairo.rectangle(0, 0, a.width, @head_size)
     @cairo.fill
 
     color.separator
-    @cairo.move_to 0, 21
-    @cairo.line_to a.width, 21
+    @cairo.move_to 0, @head_size + 1
+    @cairo.line_to a.width, @head_size + 1
     @cairo.stroke
 
     (1..Kiara::KIARA_PLSLEN).each do |i|
       @cairo.move_to i * blockw, 0
-      @cairo.line_to i * blockw, 20
+      @cairo.line_to i * blockw, @head_size
       if i % 4 == 0
         color.header_grid_high
       else
@@ -120,6 +125,21 @@ class PlaylistView < Gtk::DrawingArea
       end
       @cairo.stroke
     end
+
+    ## Now drawing loop point
+    # FIXME We ignore beats and tick
+    loop_start = @engine.transport.get_loop_start
+    loop_end = @engine.transport.get_loop_end
+    color.cursor
+    #Drawing 2 small triangles for loop points
+    @cairo.move_to(loop_start.bar * blockw, 0)
+    @cairo.line_to(loop_start.bar * blockw + 5 , @head_size / 2)
+    @cairo.line_to(loop_start.bar * blockw , @head_size)
+    @cairo.fill
+    @cairo.move_to(loop_end.bar * blockw, 0)
+    @cairo.line_to(loop_end.bar * blockw - 5 , @head_size / 2)
+    @cairo.line_to(loop_end.bar * blockw , @head_size)
+    @cairo.fill
   end
 
   def draw_grid(a)
@@ -142,16 +162,6 @@ class PlaylistView < Gtk::DrawingArea
       color.hgrid
       @cairo.stroke
     end
-	#CAMOO DESTRUCTIVE ADDS
-	if @controller_focus
-		@cairo.rectangle 0, @head_size + @cursor[1] * blockh, a.width, blockh
-	   color.cursor
-		@cairo.fill
-		@cairo.rectangle @cursor[0] * blockw, @head_size, blockw, a.height
-	   color.cursor
-		@cairo.fill
-	end
-
   end
 
   def draw_patterns(a)
@@ -193,7 +203,20 @@ class PlaylistView < Gtk::DrawingArea
     @cairo.stroke
 
     @playbar_lastpos = pos_x
-    true
+   true
+  end
+
+  def draw_cursor(a)
+    if @controller_focus
+      @cairo.rectangle(0, @head_size + @cursor[1] * blockh,
+                       a.width, blockh)
+      color.cursor
+      @cairo.fill
+      @cairo.rectangle(@cursor[0] * blockw, @head_size,
+                       blockw, a.height)
+      color.cursor
+      @cairo.fill
+    end
   end
 
   def get_block(e)

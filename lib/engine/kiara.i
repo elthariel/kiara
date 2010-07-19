@@ -27,6 +27,8 @@
 // Event rules
 %rename("chan") Event::get_chan();
 %rename("chan=") Event::set_chan(unsigned char);
+%rename("status") Event::get_status();
+%rename("status=") Event::set_status(unsigned char);
 %rename("data1") Event::get_data1();
 %rename("data1=") Event::set_data1(unsigned char);
 %rename("data2") Event::get_data2();
@@ -36,8 +38,14 @@
 %bang Event::noteon();
 %bang Event::noteoff();
 
+%bang Playlist::reset();
+%bang PatternStorage::reset();
+%bang Pattern::reset();
+%bang Phrase::reset();
+
 // Phrase rules
 %bang Phrase::insert(unsigned int, Event *);
+%bang Phrase::remove(unsigned int, Event *);
 
 // Timer rules
 %rename("bpm") Timer::get_bpm();

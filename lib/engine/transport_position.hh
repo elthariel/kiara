@@ -42,6 +42,7 @@ public:
   TransportPosition     &operator=(TransportPosition&);
   TransportPosition     &operator=(unsigned int);
   operator unsigned int() const;
+  unsigned int          to_i() {*this;}
   void                  reset();
 
 

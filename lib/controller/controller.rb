@@ -27,6 +27,7 @@ require 'controller/event'
 require 'controller/mapping'
 require 'controller/mapping_engine'
 require 'controller/mapping_context'
+require 'controller/save'
 require 'mapping_base'
 
 class Controller
@@ -39,6 +40,8 @@ class Controller
 
     @context = MappingContext.new(ui)
     @map_engine = MappingEngine.new Mapping.get, @context
+
+    #Gtk.timeout_add(200) {key_repeat}
   end
 
   def chain
@@ -48,6 +51,7 @@ class Controller
   end
 
   def entry_point(native_event)
+    puts "Sent event !!!!!!!!!!!" if native_event.send_event?
     e = native_event.to_e
     if e.type == Event::KEY_PRESS
       @chain << e
@@ -57,6 +61,13 @@ class Controller
     end
     true
   end
+
+  # def key_repeat
+  #   if chain.length > 0
+  #     @map_engine.event(chain)
+  #   end
+  #   true
+  # end
 
   def focus_change(e)
     @chain = []

@@ -42,6 +42,8 @@ struct Event
 
   void          set_chan(unsigned char);
   unsigned char get_chan();
+  void          set_status(unsigned char);
+  unsigned char get_status();
   void          set_data1(unsigned char);
   unsigned char get_data1();
   void          set_data2(unsigned char);

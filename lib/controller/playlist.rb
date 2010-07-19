@@ -58,7 +58,9 @@ class PlaylistController
     end
   end
 
-
+  def redraw
+    @playlist_ui.redraw
+  end
 end
 
 

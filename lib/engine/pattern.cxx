@@ -13,6 +13,14 @@ Pattern::~Pattern()
 {
 }
 
+void          Pattern::reset()
+{
+  unsigned int i;
+
+  for (i = 0; i < KIARA_TRACKS; i++)
+    phrases[i].reset();
+}
+
 Phrase        &Pattern::operator[](unsigned int track_id)
 {
   if (track_id >= KIARA_TRACKS)

@@ -37,12 +37,34 @@ public:
   Phrase();
   ~Phrase();
   Event         *operator[](unsigned int tick);
+
+  /*
+   * Return the first found note that is at or overlaps the position
+   * 'tick' It only search the first max_bar bars. The max_bar
+   * parameter is mainly used to hint the function about the pattern
+   * length of which the phrase has no knowledge
+   */
   Event         *get_note_on_tick(unsigned int tick,
                                   unsigned int max_bar,
                                   unsigned char note);
 
 
   bool          insert(unsigned int tick, Event *e);
+  bool          remove(unsigned int tick, Event *e);
+
+  /*
+   * Used to improve save performance
+   * Return the first tick >= tick where data[tick] != 0
+   *   or -1 the end of the phrase has been reached
+   */
+  int           next_used_tick(unsigned int tick);
+
+  /*
+   * Entirely empties the phrase. Used when loading a file.
+   * Event are not deallocated, because memory pool is
+   * reset as well when loading a file.
+   */
+  void          reset();
 protected:
   Event         *data[KIARA_PPQ * 4 * KIARA_MAXBARS];
 };
