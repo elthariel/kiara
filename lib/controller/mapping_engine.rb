@@ -23,6 +23,9 @@
 ## Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 ##
 
+class MappingEngineError < StandardError
+end
+
 class MappingEngine
   DEBUG = true
 
@@ -102,12 +105,16 @@ class MappingEngine
 
     @keychain.push chain
 
-    # keychain should be reversed if we want to pop the first element
-    puts "-------------" if DEBUG
-    result = !rec_eval(@keychain, @map)
-    reset_chain if result
-    result
-
+    begin
+      puts "-------------" if DEBUG
+      result = !rec_eval(@keychain, @map)
+      reset_chain if result
+      result
+    rescue => e
+      reset_chain
+      puts e.backtrace
+      false
+    end
   end
 end
 

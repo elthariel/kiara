@@ -28,7 +28,6 @@ require 'controller/pattern_list'
 require 'controller/playlist'
 require 'controller/piano_roll'
 
-
 class MappingContext
   include MappingContextEval
 
