@@ -75,23 +75,32 @@ class PhraseController
     event
   end
 
+  # phrase.each_pos { |event| ... } Iterates on all events of
+  # the phrase, passing each event to the given block
   def each
-    (0..(Kiara::KIARA_PPQ * 4 * @pattern.get_size)).each do |i|
-      iter = @phrase.get(i)
-      while iter
-        yield iter
-        iter = iter.next
+    iter = 0
+    while (iter = next_used_tick iter) >= 0 do
+      e = get(iter)
+      while e do
+        yield e
+        e = e.next
       end
+      iter += 1
     end
   end
 
+  # phrase.each_pos { |tick, event| ... } Iterates on all events of
+  # the phrase, passing the tick of the current event and the event to
+  # the block
   def each_pos
-    (0..(Kiara::KIARA_PPQ * 4 * @pattern.get_size)).each do |i|
-      iter = @phrase.get(i)
-      while iter
-        yield i, iter
-        iter = iter.next
+    iter = 0
+    while (iter = next_used_tick iter) >= 0 do
+      e = get(iter)
+      while e do
+        yield iter, e
+        e = e.next
       end
+      iter += 1
     end
   end
 

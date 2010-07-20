@@ -25,70 +25,65 @@
 
 require 'gtk2'
 
-# module KeyMapGdkLinux
-#   @@code = {}
-#   @@name = {}
+module KeyMapUSLinux
+  def initialize()
+    @map = {
+      'exclam' => '1',
+      'at' => '2',
+      'numbersign' => '3',
+      'dollar' => '4',
+      'percent' => '5',
+      'asciicircum' => '6',
+      'ampersand' => '7',
+      'asterisk' => '8',
+      'parenleft' => '9',
+      'parenright' => '0',
+      'underscore' => 'minus',
+      'plus' => 'equal',
+      'bar' => 'backslash',
+      'braceleft' => 'bracketleft',
+      'braceright' => 'bracketright',
+      'colon' => 'semicolon',
+      'quotedbl' => 'apostrophe',
+      'question' => 'slash',
+      'greater' => 'period',
+      'less' => 'comma',
+      'asciitilde' => 'grave',
+      'ISO_Left_Tab' => 'Tab'
+    }
+    @skip = {
+      'Control_L' => "C",
+      'Control_R' => "rC",
+      'Shift_L' => "S",
+      'Shift_R' => "rS",
+      'Alt_L' => "M",
+      'Alt_R' => "rM",
+      'Super_L' => "L",
+      'Super_R' => "rL"
+    }
+  end
 
-#   Gdk::Keyval.constants.each do |k|
-#     keyname = k.to_s.gsub("GDK_", "K_")
-#     kval = Gdk::Keyval.const_get(k.to_sym)
-#     self.const_set keyname.to_sym, kval
-#     @@code[keyname] = kval
-#     @@name[kval] = keyname
-#   end
+  def _map(ne)
+    kname = Gdk::Keyval.to_name Gdk::Keyval.to_lower ne.keyval
+    kname = @map[kname] if @map.has_key? kname
+    return "" if @skip.has_key? kname
 
-# end
+    kname = "S-" + kname if ne.state & Gdk::Window::SHIFT_MASK != 0
+    kname = "L-" + kname if ne.state & Gdk::Window::SUPER_MASK != 0
+    kname = "M-" + kname if ne.state & Gdk::Window::MOD1_MASK != 0
+    kname = "C-" + kname if ne.state & Gdk::Window::CONTROL_MASK != 0
 
-module KeyMapX86Linux
-  @@const_name = {}
-  @@name = {}
-  @@code = {}
-  @@namemap = {
-    'Control_L' => "C",
-    'Control_R' => "rC",
-    'Shift_L' => "S",
-    'Shift_R' => "rS",
-    'Alt_L' => "M",
-    'Alt_R' => "rM",
-    'Super_L' => "L",
-    'Super_R' => "rL",
-  }
-
-  modmap = `xmodmap -pk`.split "\n"
-  modmap.each do |line|
-    if line =~ /([\d]+)[\s]+0x([\dabcdef]+) \(([\w]+)\)/
-      code = $1.to_i
-      name = $3
-
-      # Removing ugly X86 prefix
-      name.gsub!("XF86", "")
-      # Mapping ugly Shift_L to S and other stuff like that
-      name = @@namemap[name] if @@namemap.has_key? name
-
-
-      kconst = "K_" + name
-      self.const_set(kconst.to_sym, code) unless @@code[kconst]
-      @@const_name[code] = kconst
-      @@name[code] = name
-      @@code[kconst] = code
-    end
+    kname
   end
 
 end
 
-module KeyMap
-  include KeyMapX86Linux
+class KeyMap
+  include KeyMapUSLinux
 
-  def KeyMap.kcode
-    @@code
+  # This method should return for any key, the lower key that has the
+  # same position on an US keyboard.
+  def map_key(native_event)
+    self._map(native_event)
   end
-
-  def KeyMap.kname
-    @@name
-  end
-
-  def KeyMap.kconst
-    @@const_name
-  end
-
 end

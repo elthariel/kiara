@@ -276,6 +276,20 @@ module BaseMapping
     #  PianoRoll
     ########################
 
+    # PianoRoll Reset
+    on_chain 'C-g' do
+      if_context :is? => :pianoroll
+      action 'roll-reset' do |c|
+        c.pianoroll.mark_reset
+      end
+    end
+    # PianoRoll Mark set
+    on_chain 'C-s' do
+      if_context :is? => :pianoroll
+      action 'roll-set-mark' do |c|
+        c.pianoroll.mark_set
+      end
+    end
     # PianoRoll Cursor movement
     on_chain 'Up' do
       if_context :is? => :pianoroll
@@ -362,13 +376,13 @@ module BaseMapping
       end
     end
     # PianoRoll Phrase Switch
-    on_chain 'Prior' do
+    on_chain 'Page_Up' do
       if_context :is? => :pianoroll
       action 'phrase-prev' do |c|
         c.pianoroll.selected_phrase = c.pianoroll.selected_phrase - 1
       end
     end
-    on_chain 'Next' do
+    on_chain 'Page_Down' do
       if_context :is? => :pianoroll
       action 'phrase-prev' do |c|
         c.pianoroll.selected_phrase = c.pianoroll.selected_phrase + 1

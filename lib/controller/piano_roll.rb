@@ -52,6 +52,21 @@ class PianoRollController
     @roll_ui.cursor = a
   end
 
+  def mark_set
+    @roll_ui.mark = cursor.clone
+    redraw
+  end
+
+  def mark_reset
+    @roll_ui.mark = nil
+    redraw
+  end
+
+  def mark
+    @roll_ui.mark
+    redraw
+  end
+
   def selected_phrase
     @roll_ui.phrase
   end

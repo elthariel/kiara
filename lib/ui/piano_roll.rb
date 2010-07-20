@@ -33,7 +33,7 @@ class PianoRoll < Gtk::DrawingArea
   include PianoRollEvents
   include PianoRollAttributes
 
-  attr_reader :selected, :cursor, :phrase
+  attr_reader :selected, :cursor, :mark, :phrase
 
   def initialize(ui, engine)
     super()
@@ -52,6 +52,7 @@ class PianoRoll < Gtk::DrawingArea
     @selected = []
     # Cursor is [tick, note]
     @cursor = [0, 127]
+    @mark = nil
     @controller_focus = false
 
     self.signal_connect('expose-event') {|s, e| on_expose e}
@@ -76,6 +77,12 @@ class PianoRoll < Gtk::DrawingArea
 
   def selected=(a)
     @selected = a
+    full_redraw
+  end
+
+  def mark=(m)
+    puts "Set mark, #{m[0]}:#{m[1]}" if m
+    @mark = m
     full_redraw
   end
 
@@ -216,43 +223,61 @@ class PianoRoll < Gtk::DrawingArea
   end
 
   def draw_note(tick, note)
+    # Position of the note in pixels
     pos_x = tick * tick_size + @pianow
+    # Width of the note in pixels
+    w = note.duration * tick_size
 
     color.block
+    # Rounded cube 2.0
+    # _ -> move_to and line_to
+    # / or \ -> rel_curve
+    #		1'	   2'
+    #            ______
+    #	1	/      \	2
+    #		\______/
+    #		1''	  2''
 
-# try to do something like this :
-#		1'	   2'
-#	1	/      \	2
-#		\______/
-#		1''	  2''
+    #set the current point to 1'
+    @cairo.move_to pos_x + blockh / 2, (127 - note.data1) * blockw
+    #TODO draw the line between 1' & 2'
+    #	@cairo.rel_line_to blockh, 0
+    #draw the line from 2' to 2
+    @cairo.rel_curve_to blockh / 2, 0, blockh / 2, 0, blockh / 2 , blockh / 2
+    #draw the line from 2 to 2''
+    @cairo.rel_curve_to 0, blockh / 2, 0, blockh / 2, -blockh / 2, blockh / 2
+    #TODO draw the line between 2'' & 1''
+    #	@cairo.rel_line_to -blockh, 0
+    #draw the line from 1'' to 1
+    @cairo.rel_curve_to -blockh / 2, 0, -blockh / 2, 0, -blockh / 2 , -blockh / 2
+    #draw the line from 1 to 1'
+    @cairo.rel_curve_to 0, -blockh / 2, 0, -blockh / 2,  blockh / 2, -blockh / 2
 
-	#set the current point to 1'
-	@cairo.move_to pos_x + blockh / 2, (127 - note.data1) * blockw
-	#TODO draw the line between 1' & 2'
-#	@cairo.rel_line_to blockh, 0
-	#draw the line from 2' to 2
-	@cairo.rel_curve_to blockh / 2, 0, blockh / 2, 0, blockh / 2 , blockh / 2
-	#draw the line from 2 to 2''
-	@cairo.rel_curve_to 0, blockh / 2, 0, blockh / 2, -blockh / 2, blockh / 2
-	#TODO draw the line between 2'' & 1''
-#	@cairo.rel_line_to -blockh, 0
-	#draw the line from 1'' to 1
-	@cairo.rel_curve_to -blockh / 2, 0, -blockh / 2, 0, -blockh / 2 , -blockh / 2
-	#draw the line from 1 to 1'
-	@cairo.rel_curve_to 0, -blockh / 2, 0, -blockh / 2,  blockh / 2, -blockh / 2
-
-	@cairo.rel_line_to 0, (note.duration * tick_size)
-#	@cairo.rel_line_to -blockh, 0
-#	@cairo.rel_line_to 0, -(note.duration * tick_size)
+    @cairo.rel_line_to 0, (note.duration * tick_size)
+    #	@cairo.rel_line_to -blockh, 0
+    #	@cairo.rel_line_to 0, -(note.duration * tick_size)
 
     @cairo.fill
     color.block_border
     @cairo.stroke
-#	@cairo.close_path();
   end
 
   def draw_cursor(e)
     if @controller_focus
+      if @mark
+        color.cursor
+        x = @mark[0] * tick_size + @pianow
+        y = (127 - @mark[1]) * blockh
+        w = @cursor[0] * tick_size - @mark[0] * tick_size
+        h = (127 - @cursor[1]) * blockh - (127 - @mark[1]) * blockh
+        puts "Trying to draw selection #{x}:#{y}:#{w}:#{h}"
+        @cairo.rectangle x, y, w, h
+        @cairo.fill
+        color.note_sharp
+        @cairo.rectangle x, y, w, h
+        @cairo.set_line_width(0.5)
+        @cairo.stroke
+      end
       color.cursor
       @cairo.rectangle(@cursor[0] * tick_size + @pianow, 0,
                        blockw, allocation.height)
