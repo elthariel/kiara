@@ -1,14 +1,35 @@
+Kiara : MIDI Sequencer for geeks (and a bridge between audio and The
+Editor War)
+
 == Introduction
 
-This is proof-of-concept/early-aplha material. You can have a look at
-the code and play a little bit around. But this is not yet usable in
-real conditions.
+This is aplha material. You can have a look at the code and play a
+little bit around. But this is not yet fully usable in real
+conditions.
 
 === Why Kiara ?
 
 The name is really crappy for a midi sequencer project, i know, but i
-wasn't much inspired. Since i'm kind of fond of the recursive
-acronyms, i found this one was nearly funny.
+wasn't much inspired. Since i'm kind of fond of recursive acronyms, i
+found this one was nearly funny. Sorry for you KDE guys, this is a GTK
+based project. This is quite unusual to have a gtk based project
+starting by the K letter and i'm sorry to break the convention, but
+once i noticed my mistake it was too late.
+
+I started to develop kiara in order to have a portable sequencer
+really oriented towards live performance and improvisation. There are
+plenty of really good sequencers out there, allowing to do precise and
+powerfull sequencing. The problem is that most of those i'm aware of
+are either too complex to be really usefull when improvising or too
+simple for what i'm wanting to do. Some others are large machines with
+audio sequencing features and are introduction glitches during
+performance. The goal of kiara is to find another balance between all
+these elements.
+
+Finally, since most of us have an experience with hardware sequencer
+and some of us are developpers, we are used to edit sequences only
+with keyboard-like devices (i.e. with only buttons). Kiara then aims
+to be controlled only by keyboard.
 
 == Requirements
 
@@ -16,11 +37,11 @@ acronyms, i found this one was nearly funny.
 * swig (a recent version might be necessary, i'm using 1.3.40)
 * (?GNU) Make
 * g++
-* portmidi and porttime
+* portmidi (and porttime, but they're part of the same package)
 * ruby cairo gem (build this before building ruby gtk2)
 * ruby-gtk2, with cairo support (you'll probably need to build it yourself for ruby1.9)
 * glade 3 if you want to hack the gui code.
-* boost (utility.hpp and thread.hpp currently)
+* boost (utility.hpp and boost::thread currently)
 
 == Build and run (*nix)
 
@@ -30,9 +51,22 @@ manually the 'engine/Makefile' file, especially the RUBYINC and
 RUBYARCH variables and maybe RUBY and CXX vars.
 
   $> cd /path/to/kiara/sources
-  $> $ EDITOR engine/Makefile #(Edit the Makefile)
+  $> $ EDITOR lib/engine/Makefile #(Edit the Makefile)
   $> make
   $> ./kiara.rb
 
+== Build on Win32
 
+*Good* *Luck*
+
+Binaries will be available soon.
+I need to finish the keyboard event mapping code for windows
+
+== Understanding how using it
+
+I will try to write some code to automatically generates documentation
+from the mappings definition file. Until then, you'll need to read the
+mappings/mapping_base.rb file to discover the key mapping needed to
+use kiara. By editing this file you could easily customize the
+behavior of kiara.
 
