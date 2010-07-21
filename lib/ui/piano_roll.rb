@@ -186,7 +186,7 @@ class PianoRoll < Gtk::DrawingArea
 
   def draw_notes(e)
     @phrase.each_pos do |t, event|
-      draw_note t, event
+      draw_note t, event if event.noteon?
     end
   end
 
@@ -200,6 +200,7 @@ class PianoRoll < Gtk::DrawingArea
 
     # FIXME Too much rounded !
     if @roll.selected.include? [tick, note.data1]
+      #puts "selected note"
       color.block_selected
     else
       color.block

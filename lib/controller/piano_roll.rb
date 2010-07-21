@@ -49,8 +49,8 @@ class PianoRollController
     end
     a[1] = 127 if a[1] > 127
     @cursor = a
+    selected_update
     redraw
-    #_update_selection
   end
 
   def cursor
@@ -86,8 +86,35 @@ class PianoRollController
   def selected_update
     p = self.phrase
 
-    p.each_pos do |tick, event|
-
+    if @mark
+      @selected = []
+      lt = @cursor[0] <= @mark[0] ? @cursor[0] : @mark[0]
+      ht = @cursor[0] > @mark[0] ? @cursor[0] : @mark[0]
+      ln = @cursor[1] <= @mark[1] ? @cursor[1] : @mark[1]
+      hn = @cursor[1] > @mark[1] ? @cursor[1] : @mark[1]
+      puts "Selection square lt #{lt}, ht #{ht}, ln #{ln}, hn #{hn}"
+      p.each_pos do |tick, event|
+        if event.noteon?
+          if event.data1 >= ln and event.data1 <= hn
+            # FIXME, should we select overlapped notes ?
+            if (tick >= lt and tick <= ht) or (tick + event.duration >= lt and tick + event.duration <= ht)
+              #puts "controller: i selected a note"
+              @selected.push [tick, event.data1]
+            end
+          end
+        end
+      end
+    else
+      if (e = p.occupied? @cursor)
+        p.each_pos do |tick, note|
+          if note.noteon? and note.data1 == @cursor[1] and @cursor[0] >= tick and @cursor[0] <= tick + note.duration
+            puts "Gat ya !"
+            @selected = [[tick, note.data1]]
+          end
+        end
+      else
+        @selected = []
+      end
     end
   end
 end

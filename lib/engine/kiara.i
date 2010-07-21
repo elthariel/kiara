@@ -33,6 +33,9 @@
 %rename("data1=") Event::set_data1(unsigned char);
 %rename("data2") Event::get_data2();
 %rename("data2=") Event::set_data2(unsigned char);
+%rename("noteon?") Event::is_noteon();
+%rename("noteoff?") Event::is_noteoff();
+%rename("cc?") Event::is_cc();
 %bang Event::reset();
 %bang Event::cc();
 %bang Event::noteon();
