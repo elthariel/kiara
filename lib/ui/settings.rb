@@ -43,8 +43,8 @@ class Settings
     self.instance
   end
 
-  def init(ui, controller, engine)
-    @ui = ui
+  def init(controller, engine)
+    # @ui = ui
     @engine = engine
     @controller = controller
 

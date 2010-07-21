@@ -37,36 +37,47 @@ def initialize(*args)
 end
 
 class Color
-  def initialize(mod)
-    @mod = mod
-  end
-
-  def context
-    # FIXME this break encapsulation
-    @mod.instance_variable_get :@cairo
-  end
-
-  def method_missing(sym, *args, &block)
-    if Settings.i.colors.has_key? sym.to_s
-      color Settings.i.colors[sym.to_s]
-    else
-      raise "Colors: Method (or color) missing"
-    end
-  end
-
-  def color(a_color)
-    if a_color.size == 8
-      alpha = a_color[6, 2].to_i(16) / 255.0
+  def add_color(name, value)
+    if value.size == 8
+      alpha = value[6, 2].to_i(16) / 255.0
     else
       alpha = 1.0
     end
-    red = a_color[0, 2].to_i(16) / 255.0
-    green = a_color[2, 2].to_i(16) / 255.0
-    blue = a_color[4, 2].to_i(16) / 255.0
-
-    #puts "Color on #{context} ## #{red}:#{green}:#{blue}:#{alpha}"
-    context.set_source_rgba red, green, blue, alpha
+    red = value[0, 2].to_i(16) / 255.0
+    green = value[2, 2].to_i(16) / 255.0
+    blue = value[4, 2].to_i(16) / 255.0
+    eval "def self.#{name}
+      @mod.instance_variable_get(:@cairo).set_source_rgba #{red}, #{green}, #{blue}, #{alpha}
+    end"
   end
+
+  def initialize(mod)
+    @mod = mod
+
+    Settings.i.colors.each { |name, hexvalue| add_color name, hexvalue }
+  end
+
+#   def method_missing(sym, *args, &block)
+#     if Settings.i.colors.has_key? sym.to_s
+#       color Settings.i.colors[sym.to_s]
+#     else
+#       raise "Colors: Method (or color) missing"
+#     end
+#   end
+
+#   def color(a_color)
+#     if a_color.size == 8
+#       alpha = a_color[6, 2].to_i(16) / 255.0
+#     else
+#       alpha = 1.0
+#     end
+#     red = a_color[0, 2].to_i(16) / 255.0
+#     green = a_color[2, 2].to_i(16) / 255.0
+#     blue = a_color[4, 2].to_i(16) / 255.0
+
+#     #puts "Color on #{context} ## #{red}:#{green}:#{blue}:#{alpha}"
+#     context.set_source_rgba red, green, blue, alpha
+#   end
 end
 
 end

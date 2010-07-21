@@ -29,11 +29,11 @@ module PianoRollAttributes
   attr_reader :zoomh, :zoomw
 
   def blockh
-    (@blockh * @zoomh).to_i
+    (@blockh * @zoomh)
   end
 
   def blockw
-    (@blockw * @zoomw).to_i
+    (@blockw * @zoomw)
   end
 
   def zoomh=(z)

@@ -102,6 +102,7 @@ class PianoRoll < Gtk::DrawingArea
   end
 
   def on_expose(e)
+    #Profiler__.start_profile
     # Initialization
     a = allocation
     puts "Unable to create context" unless (@cairo = self.window.create_cairo_context)
@@ -124,6 +125,7 @@ class PianoRoll < Gtk::DrawingArea
     draw_cursor(e)
 
     @cairo = nil
+    #Profiler__.stop_profile
   end
 
   def draw_grid(e)
@@ -131,7 +133,7 @@ class PianoRoll < Gtk::DrawingArea
 
     @cairo.set_line_width(0.5)
     bars = @phrase.pattern.get_size
-    (1.. bars * 16).each do |x|
+    (0..bars * 16).each do |x|
       if x % 4 == 0
         color.vgrid_high
       else
@@ -144,7 +146,7 @@ class PianoRoll < Gtk::DrawingArea
 
     @cairo.set_line_width(0.5)
     color.hgrid
-    (1..128).each do |y|
+    (0..128).each do |y|
       @cairo.move_to @pianow, y * self.blockh
       @cairo.line_to a.width, y * self.blockh
       @cairo.stroke

@@ -32,6 +32,7 @@ $:.unshift KIARA_ROOT + '/mappings'
 puts KIARA_ROOT
 
 require 'logger'
+require 'profiler'
 
 require 'settings'
 require 'engine/kiara'
@@ -46,15 +47,14 @@ $log.level = Logger::DEBUG
 
 engine = Kiara::Engine.new
 controller = Controller.new(engine)
+Settings.i.init(controller, engine)
 ui = Ui.new(controller)
 
 Signal.trap('SIGINT') do
   engine.stop
+  Profiler__.print_profile STDOUT
   exit 0
 end
-
-# FIXME REFACTOR
-Settings.i.init(ui, controller, engine)
 
 engine.start
 ui.run

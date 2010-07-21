@@ -88,7 +88,10 @@ class PatternList < Gtk::DrawingArea
 
     @cairo.set_font_size(13)
     @cairo.set_line_width(1)
-    (0..Kiara::KIARA_MAXPATTERNS).each do |i|
+    # This is igly, but ruby ranges seems to be SLOW
+    i = 0
+    while i < Kiara::KIARA_MAXPATTERNS do
+#    (0..).each do |i|
       color.separator
       if @patterns.selected - 1 == i
         if focus?
@@ -107,6 +110,7 @@ class PatternList < Gtk::DrawingArea
       @cairo.move_to 4, i * @height - 5
       @cairo.text_path "Pattern #{i}"
       @cairo.fill
+      i += 1
     end
   end
 
