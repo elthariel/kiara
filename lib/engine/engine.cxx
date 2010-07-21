@@ -9,6 +9,7 @@ Engine::Engine()
 
   Memory::get();
 
+  Pm_Initialize();
   m_timer.set_transport(&m_transport);
   m_transport.connect(&m_scheduler, 0);
   m_transport.connect(&m_playlist, 1);
