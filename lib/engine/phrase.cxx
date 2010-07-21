@@ -80,6 +80,9 @@ bool          Phrase::remove(unsigned int tick, Event *e)
 
   if (iter == e)
   {
+    // cout << "Removing first element" << e
+    //      << ", next: " << iter->next
+    //      << endl;
     data[tick] = iter->next;
     return true;
   }
@@ -88,7 +91,11 @@ bool          Phrase::remove(unsigned int tick, Event *e)
   {
     if (iter->next == e)
     {
-      iter->next == iter->next->next;
+      // cout << "Removing first element" << e
+      //      << ", next: " << iter->next
+      //      << ", next: " << iter->next->next
+      //      << endl;
+      iter->next = iter->next->next;
       return true;
     }
     iter = iter->next;
