@@ -27,7 +27,7 @@ class MappingEngineError < StandardError
 end
 
 class MappingEngine
-  DEBUG = false
+  DEBUG = true
 
   def initialize(mappings, controller)
     @controller = controller
@@ -57,7 +57,7 @@ class MappingEngine
   end
 
   def reset_chain
-    puts "resetting chain #{@keychain.join ' '}"
+    puts "resetting chain #{@keychain.join ' '}" if DEBUG
     @keychain = []
     @chain = [@map]
   end
@@ -106,7 +106,7 @@ class MappingEngine
     @keychain.push chain
 
     begin
-      puts "-------------" if DEBUG
+      puts chain if DEBUG
       result = !rec_eval(@keychain, @map)
       reset_chain if result
       result

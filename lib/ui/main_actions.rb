@@ -41,20 +41,20 @@ module MainActions
   end
 
   def act_play(w)
-    @engine.transport.start
+    @controller.engine.transport.start
   end
 
   def act_pause(w)
-    @engine.transport.pause
+    @controller.engine.transport.pause
   end
 
   def act_stop(w)
-    @engine.transport.stop
+    @controller.engine.transport.stop
   end
 
   def act_loop(w)
     toogle = @builder.get_object('toolloop')
-    @engine.transport.loop(toogle.active?)
+    @controller.engine.transport.loop(toogle.active?)
   end
 
   def act_settings(w)
@@ -62,7 +62,7 @@ module MainActions
   end
 
   def act_bpm_changed(w)
-    @engine.timer.bpm = w.value.to_i;
+    @controller.engine.timer.bpm = w.value.to_i;
   end
 
   def act_open(w)

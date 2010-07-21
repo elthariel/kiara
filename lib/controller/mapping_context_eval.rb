@@ -40,5 +40,9 @@ module MappingContextEval
     @focus_list[@focus] == v
   end
 
+  def has_selection?(v)
+    (self.focused.selected.length > 0) == v
+  end
+
 end
 

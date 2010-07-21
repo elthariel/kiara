@@ -45,10 +45,11 @@ class PianoRoll < Gtk::DrawingArea
     @zoomh = 1.0
     @zoomw = 1.0
     @pianow = 50
-    @old_cursor = @roll.cursor.clone
+    @old_cursor = [0, 0]
     zoom_changed
 
     self.signal_connect('expose-event') {|s, e| on_expose e}
+    self.signal_connect('realize') { scroll }
   end
 
   def focus?
@@ -186,6 +187,7 @@ class PianoRoll < Gtk::DrawingArea
 
   def draw_notes(e)
     @phrase.each_pos do |t, event|
+      #puts "draw_notes #{t}, #{event}"
       draw_note t, event if event.noteon?
     end
   end
@@ -220,12 +222,14 @@ class PianoRoll < Gtk::DrawingArea
 
   def draw_cursor(e)
     if focus?
+      # If there is a mark set, we draw selection region
+      # FIXME selection region sometimes misses a line
       if @roll.mark
         color.cursor
         x = @roll.mark[0] * tick_size + @pianow
         y = (127 - @roll.mark[1]) * blockh
         w = @roll.cursor[0] * tick_size - @roll.mark[0] * tick_size
-        h = (127 - @roll.cursor[1]) * blockh - (127 - @roll.mark[1]) * blockh
+        h = (127 - @roll.cursor[1]) * blockh - (127 - @roll.mark[1]) * blockh + blockh
         @cairo.rectangle x, y, w, h
         @cairo.fill
         color.note_sharp

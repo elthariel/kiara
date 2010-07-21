@@ -28,7 +28,7 @@ require 'controller/phrase'
 class PianoRollController
   include WidgetAwareController
 
-  attr_reader :track, :mark, :selected
+  attr_reader :track, :mark, :selected, :pattern
 
   def initialize(controller)
     @controller = controller
@@ -38,6 +38,7 @@ class PianoRollController
     @selected = []
     # same as cursor
     @track = 0
+    @pattern = 1
     @mark = nil
   end
 
@@ -71,13 +72,24 @@ class PianoRollController
     id = 0 if id < 0
     id = Kiara::KIARA_TRACKS - 1 if id >= Kiara::KIARA_TRACKS
     @track = id
+    selected_update
     redraw
+  end
+
+  def pattern=(id)
+    unless id == @pattern
+      id = 1 if id < 1
+      id = Kiara::KIARA_MAXPATTERNS if id > Kiara::KIARA_MAXPATTERNS
+      @pattern = id
+      selected_update
+      redraw
+    end
   end
 
   # Create and return a phrase controller for the specified phrase and pattern
   # When a parameter is nil, the current selected item is used
   def phrase(pattern = nil, phrase_id = nil)
-    pattern = @controller.patterns.selected unless pattern
+    pattern = @pattern unless pattern
     phrase_id = track unless phrase_id
     PhraseController.new(@controller, pattern, phrase_id)
   end
@@ -107,8 +119,7 @@ class PianoRollController
     else
       if (e = p.occupied? @cursor)
         p.each_pos do |tick, note|
-          if note.noteon? and note.data1 == @cursor[1] and @cursor[0] >= tick and @cursor[0] <= tick + note.duration
-            puts "Gat ya !"
+          if note.noteon? and note.data1 == @cursor[1] and @cursor[0] >= tick and @cursor[0] < tick + note.duration
             @selected = [[tick, note.data1]]
           end
         end

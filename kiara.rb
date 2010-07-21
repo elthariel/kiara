@@ -38,7 +38,6 @@ require 'engine/kiara'
 require 'controller/controller'
 require 'ui'
 
-
 Settings.i
 $log = Logger.new(STDOUT)
 $log.progname = 'kiara'

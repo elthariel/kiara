@@ -35,11 +35,10 @@ class PlaylistController
   end
 
   def cursor=(a)
-    puts "updating cursor"
     a[0] = 0 if a[0] < 0
     a[1] = 0 if a[1] < 0
     a[0] = Kiara::KIARA_PLSLEN - 1 if a[0] >=  Kiara::KIARA_PLSLEN
-    a[1] = Kiara::KIARA_PLSTRACKS - 1 if a[1] >=  Kiara::KIARA_PLSLEN
+    a[1] = Kiara::KIARA_PLSTRACKS - 1 if a[1] >=  Kiara::KIARA_PLSTRACKS
     @cursor = a
     redraw
   end

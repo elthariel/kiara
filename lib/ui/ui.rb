@@ -56,12 +56,13 @@ class Ui
     @tools = @builder.o 'maintoolbar'
     @settings = UiSettings.new(self, @builder.o('settings'))
     @playlist = PlaylistView.new(self, @controller)
-    @builder.o('vbx_edit').pack_start @playlist
-    @builder.o('vbx_edit').reorder_child @playlist, 0
+    # @builder.o('vbx_edit').pack_start @playlist
+    # @builder.o('vbx_edit').reorder_child @playlist, 0
+    @builder.o('vp_playlist').add @playlist
     @patterns = PatternList.new(self, @controller)
-    @builder.o('scroll_pattern').add_with_viewport @patterns
+    @builder.o('vp_patterns').add @patterns
     @roll = PianoRoll.new(self, @controller)
-    @builder.o('scroll_pianoroll').add_with_viewport @roll
+    @builder.o('vp_pianoroll').add @roll
 
     @builder.o('spin_bpm').adjustment = @builder.o('adj_bpm')
     @builder.o('adj_bpm').value = 140

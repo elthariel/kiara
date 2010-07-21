@@ -42,12 +42,10 @@ class MappingContext
   alias :c :controller
 
   def next
-    puts :next
     self.focus = (@focus + 1) % @focus_list.length
   end
 
   def prev
-    puts :prev
     self.focus = (@focus - 1) % @focus_list.length
   end
 
@@ -57,10 +55,7 @@ class MappingContext
     else
       new_focus = v
     end
-    puts new_focus
-    puts @focus
     if new_focus and new_focus != @focus
-      puts "new focus"
       old_focused = focused
       @focus = new_focus
       old_focused.redraw

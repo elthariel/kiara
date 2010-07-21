@@ -58,15 +58,13 @@ class PatternListController
   end
 
 
-  def selected=(id)
-    unless id == @selected
-      if @selected >= Kiara::KIARA_MAXPATTERNS
-        @selected = Kiara::KIARA_MAXPATTERNS
-      elsif @selected <= 0
-        @selected = 1
-      else
-        @selected = id
-      end
+  def selected=(pattern_id)
+    unless pattern_id == @selected
+      pattern_id = Kiara::KIARA_MAXPATTERNS if pattern_id >= Kiara::KIARA_MAXPATTERNS
+      pattern_id = 1 if pattern_id < 1
+      puts pattern_id
+      @selected = pattern_id
+      @controller.pianoroll.pattern = @selected
       @controller.pianoroll.redraw
       redraw
     end

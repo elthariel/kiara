@@ -36,11 +36,16 @@ class PhraseController
   end
 
   def alloc_event!
-    Kiara::Memory.event.alloc
+    e = Kiara::Memory.event.alloc
+    e.reset!
+    e
   end
 
   def dealloc_event!(e)
-    Kiara::Memory.event.dealloc(e)
+    if e
+      e.reset!
+      Kiara::Memory.event.dealloc(e)
+    end
   end
 
   # Pos has the same syntax than cursor
@@ -69,12 +74,17 @@ class PhraseController
   def delete_note_on_tick_overlapping!(pos)
     event = occupied?(pos)
     #  if event
-    if event
-      tick = 0
-      each_pos { |t, e| tick = t; return if e == event }
-      @phrase.remove!(tick, event)
+    if event and event.noteon?
+      tick = nil
+      each_pos do |t, e|
+        if pos[0] >= t and pos[0] < t + event.duration and pos[1] == event.data1
+          tick = t
+        end
+      end
+      return event if tick and @phrase.remove!(tick, event)
+      nil
     end
-    event
+    nil
   end
 
   # phrase.each_pos { |event| ... } Iterates on all events of

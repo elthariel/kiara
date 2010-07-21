@@ -43,14 +43,32 @@ class PatternList < Gtk::DrawingArea
     add_events Gdk::Event::BUTTON_PRESS_MASK
     self.signal_connect('expose-event') {|s, e| on_expose e}
 
+
     @height = 20
     @width = 88
+    @old_selected = 1
 
     set_size_request(@width, Kiara::KIARA_MAXPATTERNS * @height)
   end
 
   def focus?
     @controller.context.focus? :patterns
+  end
+
+  def scroll
+    unless @old_selected == @patterns.selected
+      vadj = parent.vadjustment
+      s = @patterns.selected - 1
+      pos = s * @height
+
+      # Limit scroll down to scrollwindow_size - viewport / 2
+      # because gtk allows us to scroll below the widget :-/
+      if pos > vadj.upper - parent.allocation.height / 2
+        vadj.value = vadj.upper - parent.allocation.height
+      else
+        vadj.value = pos - parent.allocation.height / 2
+      end
+    end
   end
 
   def on_expose(e)
@@ -93,14 +111,12 @@ class PatternList < Gtk::DrawingArea
   end
 
   def full_redraw
-    if realized?
-      a = Gdk::Rectangle.new 0, 0, allocation.width, allocation.height
-      window.invalidate a, false
-    end
+    queue_draw if realized?
   end
 
   def redraw
     full_redraw
+    scroll
   end
 end
 

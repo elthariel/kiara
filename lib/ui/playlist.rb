@@ -42,10 +42,12 @@ class PlaylistView < Gtk::DrawingArea
     @playbar_lastpos = 0
     @head_size = 12
 
+    #set_size_request -1, 300
+
     add_events Gdk::Event::BUTTON_PRESS_MASK
     add_events Gdk::Event::BUTTON_RELEASE_MASK
     self.signal_connect('expose-event') {|s, e| on_expose e}
-    Gtk.timeout_add(100) {draw_playing_bar}
+    Gtk.timeout_add(100) {draw_playing_bar if realized?}
   end
 
   def focus?

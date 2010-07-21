@@ -145,7 +145,7 @@ module BaseMapping
       if_context :is? => :patterns
       action 'reset-pattern-stack' do |c|
         @pattern_stack.push c.patterns.selected
-        puts "I've stacked a new pattern : #{c.controller.selected}"
+        puts "I've stacked a new pattern : #{c.patterns.selected}"
       end
     end
 
@@ -444,6 +444,17 @@ module BaseMapping
         end
       end
     end
+    on_chain 'Delete' do
+      if_context :is? => :pianoroll
+      if_context :has_selection? => true
+      action 'roll-delete-selected' do |c|
+        p = c.pianoroll.phrase
+        c.pianoroll.selected.each do |item|
+          p.delete_note_on_tick! item[0], item[1]
+        end
+        c.pianoroll.redraw
+      end
+    end
 
     # Step edition
     [[0, '1'], [1, 'q'], [2, '2'], [3, 'w'], [4, '3'], [5, 'e'], [6, '4'], [7, 'r'],
@@ -463,7 +474,7 @@ module BaseMapping
           else
             e = p.alloc_event!
             e.noteon!
-            e.chan = p.track
+            e.chan = p.track_id
             e.data1 = pos[1]
             e.data2 = 100
             e.duration = Kiara::KIARA_PPQ / 4
