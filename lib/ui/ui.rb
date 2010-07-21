@@ -29,54 +29,51 @@ require 'playlist'
 require 'pattern_list'
 require 'ui_settings'
 require 'piano_roll'
-require 'controller/controller'
 
 class Ui
   include MainActions
 
-  attr_reader :engine, :status, :about, :tools, :playlist
+  attr_reader :status, :about, :tools, :playlist
   attr_reader :patterns, :builder, :controller, :roll
 
-  def initialize(engine)
-    @engine = engine
+  def initialize(controller)
+    @controller = controller
+
+    build
+    connect
+  end
+
+  def build
+    Gtk::RC.parse "#{KIARA_ROOT}/gtk-theme/gtk-2.0/gtkrc"
+    Gtk.init
+
     @builder = Gtk::Builder.new
-    # FIXME small hack to shorten code
     @builder.class.instance_eval "alias_method :o, :get_object"
-    @builder << File.dirname(__FILE__) + '/ui.glade'
+    @builder << KIARA_ROOT + '/lib/ui/ui.glade'
 
     @mw = @builder.o('mainw')
-    @status = @builder.o 'statusbar'
     @about = @builder.o 'aboutdialog'
     @tools = @builder.o 'maintoolbar'
     @settings = UiSettings.new(self, @builder.o('settings'))
-    @playlist = PlaylistView.new(self, engine)
+    @playlist = PlaylistView.new(self, @controller)
     @builder.o('vbx_edit').pack_start @playlist
     @builder.o('vbx_edit').reorder_child @playlist, 0
-    @patterns = PatternList.new(self, engine)
+    @patterns = PatternList.new(self, @controller)
     @builder.o('scroll_pattern').add_with_viewport @patterns
-    @roll = PianoRoll.new(self, engine)
+    @roll = PianoRoll.new(self, @controller)
     @builder.o('scroll_pianoroll').add_with_viewport @roll
 
     @builder.o('spin_bpm').adjustment = @builder.o('adj_bpm')
     @builder.o('adj_bpm').value = 140
-
-    Settings.i.init(@ui, @engine)
-
-    connect_signals
-
-    @controller = Controller.new(self)
-    @mw.signal_connect('key-press-event') { |w, e| @controller.entry_point e }
-    # @mw.signal_connect('key-release-event') { |w, e| @controller.entry_point e }
-    @mw.signal_connect('focus-in-event') { |w, e| @controller.focus_change e }
   end
 
   def run
     @mw.show_all
-    @status.push 0, "Kiara started !"
     Gtk.main
   end
 
-  def connect_signals
+  def connect
+    @mw.signal_connect('key-press-event') { |w, e| @controller.entry_point e }
     @mw.signal_connect("destroy") {quit}
     @builder.o('adj_bpm').signal_connect('value-changed') { |w, bpm| act_bpm_changed w}
 

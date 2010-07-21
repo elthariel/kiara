@@ -31,18 +31,17 @@ class PatternList < Gtk::DrawingArea
   include ColorMixin
 
   attr_reader :height, :width
-  attr_accessor :selected
 
-  def initialize(ui, engine)
+  def initialize(ui, controller)
     super()
-    @engine = engine
+
     @ui = ui
+    @controller = controller
+    @patterns = controller.patterns
+    @patterns.widget = self
 
     add_events Gdk::Event::BUTTON_PRESS_MASK
     self.signal_connect('expose-event') {|s, e| on_expose e}
-    self.signal_connect('button-press-event') {|s, e| on_click e}
-    @selected = 1
-    @controller_focus = true
 
     @height = 20
     @width = 88
@@ -50,9 +49,8 @@ class PatternList < Gtk::DrawingArea
     set_size_request(@width, Kiara::KIARA_MAXPATTERNS * @height)
   end
 
-  def selected=(i)
-    @selected = i
-    full_redraw
+  def focus?
+    @controller.context.focus? :patterns
   end
 
   def on_expose(e)
@@ -62,8 +60,11 @@ class PatternList < Gtk::DrawingArea
     @cairo.rectangle e.area.x, e.area.y, e.area.width, e.area.height
     @cairo.clip
     # Background
-    color.background unless controller_focus?
-    color.background_focus if controller_focus?
+    if focus?
+      color.background_focus
+    else
+      color.background
+    end
     @cairo.rectangle 0, 0, a.width, a.height
     @cairo.fill
 
@@ -71,9 +72,12 @@ class PatternList < Gtk::DrawingArea
     @cairo.set_line_width(1)
     (0..Kiara::KIARA_MAXPATTERNS).each do |i|
       color.separator
-      if @selected - 1 == i
-		color.separator unless controller_focus?
-		color.cursor if controller_focus?
+      if @patterns.selected - 1 == i
+        if focus?
+          color.cursor
+        else
+          color.separator
+        end
         @cairo.rectangle(0, i * @height, @width, @height)
         @cairo.fill
       end
@@ -88,19 +92,6 @@ class PatternList < Gtk::DrawingArea
     end
   end
 
-  def on_click(e)
-    selection = (e.y / @height).to_i + 1
-
-    if selection != @selected
-      @selected = selection
-
-      a = Gdk::Rectangle.new 0, 0, allocation.width, allocation.height
-      window.invalidate a, false
-    end
-
-    true
-  end
-
   def full_redraw
     if realized?
       a = Gdk::Rectangle.new 0, 0, allocation.width, allocation.height
@@ -108,12 +99,7 @@ class PatternList < Gtk::DrawingArea
     end
   end
 
-  def controller_focus?
-    @controller_focus
-  end
-
-  def controller_focus=(focused)
-    @controller_focus = focused
+  def redraw
     full_redraw
   end
 end

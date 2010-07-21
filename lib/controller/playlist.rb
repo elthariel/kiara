@@ -24,26 +24,32 @@
 ##
 
 class PlaylistController
-  def initialize(context)
-    @context = context
-    @playlist = context.ui.engine.playlist
-    @playlist_ui = context.ui.playlist
-  end
+  include WidgetAwareController
 
-  def cursor
-    @playlist_ui.cursor
+  attr_reader :cursor
+
+  def initialize(controller)
+    @controller = controller
+    @playlist = controller.engine.playlist
+    @cursor = [0, 0]
   end
 
   def cursor=(a)
+    puts "updating cursor"
     a[0] = 0 if a[0] < 0
     a[1] = 0 if a[1] < 0
     a[0] = Kiara::KIARA_PLSLEN - 1 if a[0] >=  Kiara::KIARA_PLSLEN
     a[1] = Kiara::KIARA_PLSTRACKS - 1 if a[1] >=  Kiara::KIARA_PLSLEN
-    @playlist_ui.cursor = a
+    @cursor = a
+    redraw
   end
 
   def occupied?(pos)
     @playlist.get_pos(pos[1], pos[0]) != 0
+  end
+
+  def [](pos)
+    @playlist.get_pos(pos[1], pos[0])
   end
 
   def add(pattern_id, pos = nil)
@@ -56,10 +62,6 @@ class PlaylistController
     if occupied? pos
       @playlist.set_pos(pos[1], pos[0], 0);
     end
-  end
-
-  def redraw
-    @playlist_ui.redraw
   end
 end
 

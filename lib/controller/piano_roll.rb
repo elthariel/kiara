@@ -26,64 +26,69 @@
 require 'controller/phrase'
 
 class PianoRollController
-  attr_reader :mark
+  include WidgetAwareController
 
-  def initialize(context)
-    @context = context
-    @roll_ui = context.ui.roll
-    @mark = cursor
-  end
+  attr_reader :track, :mark, :selected
 
-  def redraw
-    @roll_ui.redraw
-  end
+  def initialize(controller)
+    @controller = controller
 
-  def cursor
-    @roll_ui.cursor
+    # [x, y], i.e. [tick, note]
+    @cursor = [0, 63]
+    @selected = []
+    # same as cursor
+    @track = 0
+    @mark = nil
   end
 
   def cursor=(a)
     a[0] = 0 if a[0] < 0
     a[1] = 0 if a[1] < 0
-    if a[0] >= Kiara::Memory.pattern.get(@context.patterns.selected).get_size * Kiara::KIARA_PPQ * 4
-    a[0] = Kiara::Memory.pattern.get(@context.patterns.selected).get_size * Kiara::KIARA_PPQ * 4 - 1
+    if a[0] >= @controller.patterns.selected_size * Kiara::KIARA_PPQ * 4
+    a[0] = @controller.patterns.selected_size * Kiara::KIARA_PPQ * 4 - 1
     end
     a[1] = 127 if a[1] > 127
-    @roll_ui.cursor = a
+    @cursor = a
+    redraw
+    #_update_selection
+  end
+
+  def cursor
+    @cursor.clone
   end
 
   def mark_set
-    @roll_ui.mark = cursor.clone
+    @mark = self.cursor
     redraw
   end
 
   def mark_reset
-    @roll_ui.mark = nil
+    @mark = nil
     redraw
   end
 
-  def mark
-    @roll_ui.mark
-    redraw
-  end
-
-  def selected_phrase
-    @roll_ui.phrase
-  end
-
-  def selected_phrase=(id)
+  def track=(id)
     id = 0 if id < 0
     id = Kiara::KIARA_TRACKS - 1 if id >= Kiara::KIARA_TRACKS
-    @roll_ui.phrase = id
+    @track = id
+    redraw
   end
 
   # Create and return a phrase controller for the specified phrase and pattern
   # When a parameter is nil, the current selected item is used
   def phrase(pattern = nil, phrase_id = nil)
-    pattern = @context.patterns.selected unless pattern
-    phrase_id = selected_phrase unless phrase_id
-    PhraseController.new(@context, pattern, phrase_id)
+    pattern = @controller.patterns.selected unless pattern
+    phrase_id = track unless phrase_id
+    PhraseController.new(@controller, pattern, phrase_id)
   end
 
+  protected
+  def selected_update
+    p = self.phrase
+
+    p.each_pos do |tick, event|
+
+    end
+  end
 end
 

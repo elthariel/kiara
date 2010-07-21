@@ -23,33 +23,40 @@
 ## Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 ##
 
-$:.unshift File.dirname(File.expand_path(__FILE__)) + '/lib'
-$:.unshift File.dirname(File.expand_path(__FILE__)) + '/lib/ui'
+KIARA_ROOT = File.dirname(File.expand_path(__FILE__))
+$:.unshift KIARA_ROOT + '/lib'
+$:.unshift KIARA_ROOT + '/lib/ui'
 # This is where you'll find the keyboards mappings
-$:.unshift File.dirname(File.expand_path(__FILE__)) + '/mappings'
+$:.unshift KIARA_ROOT + '/mappings'
 
-puts File.dirname(File.expand_path(__FILE__))
+puts KIARA_ROOT
 
 require 'logger'
 
-require 'engine/kiara'
 require 'settings'
+require 'engine/kiara'
+require 'controller/controller'
 require 'ui'
+
 
 Settings.i
 $log = Logger.new(STDOUT)
 $log.progname = 'kiara'
-# $log.level = Logger.const_get Settings.i.loglevel.to_s
+# FIXME $log.level = Logger.const_get Settings.i.loglevel.to_s
 $log.level = Logger::DEBUG
 
 engine = Kiara::Engine.new
-engine.start
+controller = Controller.new(engine)
+ui = Ui.new(controller)
 
 Signal.trap('SIGINT') do
   engine.stop
   exit 0
 end
 
-ui = Ui.new(engine)
+# FIXME REFACTOR
+Settings.i.init(ui, controller, engine)
+
+engine.start
 ui.run
 

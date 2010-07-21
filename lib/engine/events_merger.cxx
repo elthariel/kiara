@@ -8,6 +8,10 @@
 
 EventMerger::EventMerger()
 {
+  unsigned int i;
+
+  for (i = 0; i < KIARA_TRACKS; i++)
+    bus[i].set_chan(i % 16);
 }
 
 EventMerger::~EventMerger()

@@ -35,13 +35,13 @@ module BaseMapping
     ########################
     # Context/Focus Switching
     on_chain 'C-Tab' do
-      action 'focus-next' do |context|
-        context.next
+      action 'focus-next' do |controller|
+        controller.context.next
       end
     end
     on_chain 'C-S-Tab' do
-      action 'focus-prev' do |context|
-        context.prev
+      action 'focus-prev' do |controller|
+        controller.context.prev
       end
     end
 
@@ -107,26 +107,26 @@ module BaseMapping
     # Current pattern selection
     on_chain 'Up' do
       if_context :is? => :patterns
-      action 'prev-pattern' do |context|
-        context.patterns.prev
+      action 'prev-pattern' do |controller|
+        controller.patterns.prev
       end
     end
     on_chain 'Down' do
       if_context :is? => :patterns
-      action 'next-pattern' do |context|
-        context.patterns.next
+      action 'next-pattern' do |controller|
+        controller.patterns.next
       end
     end
     on_chain 'S-Up' do
       if_context :is? => :patterns
-      action 'prev-pattern-10' do |context|
-        context.patterns.prev(10)
+      action 'prev-pattern-10' do |controller|
+        controller.patterns.prev(10)
       end
     end
     on_chain 'S-Down' do
       if_context :is? => :patterns
-      action 'next-pattern-10' do |context|
-        context.patterns.next(10)
+      action 'next-pattern-10' do |controller|
+        controller.patterns.next(10)
       end
     end
 
@@ -144,7 +144,7 @@ module BaseMapping
     on_chain 'space' do
       if_context :is? => :patterns
       action 'reset-pattern-stack' do |c|
-        @pattern_stack.push c.controller.selected
+        @pattern_stack.push c.patterns.selected
         puts "I've stacked a new pattern : #{c.controller.selected}"
       end
     end
@@ -162,68 +162,68 @@ module BaseMapping
     # Playlist Cursor movement
     on_chain 'Left' do
       if_context :is? => :playlist
-      action 'pls-cursor-move-left' do |context|
-        cursor = context.playlist.cursor
+      action 'pls-cursor-move-left' do |controller|
+        cursor = controller.playlist.cursor
         cursor[0] -= 1
-        context.playlist.cursor = cursor
+        controller.playlist.cursor = cursor
       end
     end
     on_chain 'Right' do
       if_context :is? => :playlist
-      action 'pls-cursor-move-right' do |context|
-        cursor = context.playlist.cursor
+      action 'pls-cursor-move-right' do |controller|
+        cursor = controller.playlist.cursor
         cursor[0] += 1
-        context.playlist.cursor = cursor
+        controller.playlist.cursor = cursor
       end
     end
     on_chain 'Up' do
       if_context :is? => :playlist
-      action 'pls-cursor-move-up' do |context|
-        cursor = context.playlist.cursor
+      action 'pls-cursor-move-up' do |controller|
+        cursor = controller.playlist.cursor
         cursor[1] -= 1
-        context.playlist.cursor = cursor
+        controller.playlist.cursor = cursor
       end
     end
     on_chain 'Down' do
       if_context :is? => :playlist
-      action 'pls-cursor-move-down' do |context|
-        cursor = context.playlist.cursor
+      action 'pls-cursor-move-down' do |controller|
+        cursor = controller.playlist.cursor
         cursor[1] += 1
-        context.playlist.cursor = cursor
+        controller.playlist.cursor = cursor
       end
     end
     # Playlist fast Cursor movement
     on_chain 'S-Left' do
       if_context :is? => :playlist
-      action 'pls-cursor-move-left-fast' do |context|
-        cursor = context.playlist.cursor
+      action 'pls-cursor-move-left-fast' do |controller|
+        cursor = controller.playlist.cursor
         cursor[0] = cursor[0] - 4 + (cursor[0] - 4) % 4
-        context.playlist.cursor = cursor
+        controller.playlist.cursor = cursor
       end
     end
     on_chain 'S-Right' do
       if_context :is? => :playlist
-      action 'pls-cursor-move-right-fast' do |context|
-        cursor = context.playlist.cursor
+      action 'pls-cursor-move-right-fast' do |controller|
+        cursor = controller.playlist.cursor
         cursor[0] = cursor[0] + 4 - (cursor[0] + 4) % 4
-        context.playlist.cursor = cursor
+        controller.playlist.cursor = cursor
       end
     end
     on_chain 'S-Up' do
       if_context :is? => :playlist
-      action 'pls-cursor-move-up-fast' do |context|
-        cursor = context.playlist.cursor
+      action 'pls-cursor-move-up-fast' do |controller|
+        cursor = controller.playlist.cursor
         cursor[1] = cursor[1] - 4 + (cursor[1] - 4) % 4
         #cursor[1] = cursor[1] - 4 + (cursor[1] + 4) % 4
-        context.playlist.cursor = cursor
+        controller.playlist.cursor = cursor
       end
     end
     on_chain 'S-Down' do
       if_context :is? => :playlist
-      action 'pls-cursor-move-down-fast' do |context|
-        cursor = context.playlist.cursor
+      action 'pls-cursor-move-down-fast' do |controller|
+        cursor = controller.playlist.cursor
         cursor[1] = cursor[1] + 4 - (cursor[1] + 4) % 4
-        context.playlist.cursor = cursor
+        controller.playlist.cursor = cursor
       end
     end
 
@@ -379,25 +379,25 @@ module BaseMapping
     on_chain 'Page_Up' do
       if_context :is? => :pianoroll
       action 'phrase-prev' do |c|
-        c.pianoroll.selected_phrase = c.pianoroll.selected_phrase - 1
+        c.pianoroll.track = c.pianoroll.track - 1
       end
     end
     on_chain 'Page_Down' do
       if_context :is? => :pianoroll
       action 'phrase-prev' do |c|
-        c.pianoroll.selected_phrase = c.pianoroll.selected_phrase + 1
+        c.pianoroll.track = c.pianoroll.track + 1
       end
     end
-    on_chain 'S-Prior' do
+    on_chain 'S-Page_Up' do
       if_context :is? => :pianoroll
       action 'phrase-prev' do |c|
-        c.pianoroll.selected_phrase = c.pianoroll.selected_phrase - 4
+        c.pianoroll.track = c.pianoroll.track - 4
       end
     end
-    on_chain 'S-Next' do
+    on_chain 'S-Page_Down' do
       if_context :is? => :pianoroll
       action 'phrase-prev' do |c|
-        c.pianoroll.selected_phrase = c.pianoroll.selected_phrase + 4
+        c.pianoroll.track = c.pianoroll.track + 4
       end
     end
 
@@ -409,7 +409,7 @@ module BaseMapping
     #  Phrase
     ########################
     # Note add
-    @@last_note_duration = Kiara::KIARA_PPQ / 4
+    @@last_note_duration = Kiara::KIARA_PPQ
     @@last_note_velocity = 100
     on_chain 'space' do
       if_context :is? => :pianoroll
@@ -419,7 +419,7 @@ module BaseMapping
         unless p.occupied? (pos)
           e = p.alloc_event!
           e.noteon!
-          e.chan = p.track
+          e.chan = p.track_id
           e.data1 = pos[1]
           e.data2 = @@last_note_velocity
           e.duration = @@last_note_duration

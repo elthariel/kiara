@@ -24,50 +24,47 @@
 ##
 
 require 'controller/mapping_context_eval'
-require 'controller/pattern_list'
-require 'controller/playlist'
-require 'controller/piano_roll'
 
 class MappingContext
   include MappingContextEval
 
-  attr_reader :ui, :engine
+  attr_reader :controller
 
-  def initialize(ui)
-    # Reference to god objects
-    @ui = ui
-    @engine = ui.engine
+  def initialize(controller)
+    # Reference to Controllers container
+    @controller = controller
 
     # internal state
     @focus_list = [:patterns, :playlist, :pianoroll]
-    @controllers = [PatternListController.new(self),
-                    PlaylistController.new(self),
-                    PianoRollController.new(self)]
     @focus = 0
   end
 
+  alias :c :controller
+
   def next
-    focused.controller_focus = false
-    @focus = (@focus + 1) % @focus_list.length
-    focused.controller_focus = true
+    puts :next
+    self.focus = (@focus + 1) % @focus_list.length
   end
 
   def prev
-    focused.controller_focus = false
-    @focus = (@focus - 1) % @focus_list.length
-    focused.controller_focus = true
+    puts :prev
+    self.focus = (@focus - 1) % @focus_list.length
   end
 
   def focus=(v)
     if v.class == Symbol
-      new_focus = @focus_list.index(v) if @focus_list.index(v)
+      new_focus = @focus_list.index(v) if @focus_list.include? v
     else
       new_focus = v
     end
+    puts new_focus
+    puts @focus
     if new_focus and new_focus != @focus
-      focused.controller_focus = false
+      puts "new focus"
+      old_focused = focused
       @focus = new_focus
-      focused.controller_focus = true
+      old_focused.redraw
+      focused.redraw
     end
   end
 
@@ -75,28 +72,16 @@ class MappingContext
     @focus_list[@focus]
   end
 
+  def focus?(sym)
+    sym == focus
+  end
+
   def focused
     case @focus_list[@focus]
-      when :patterns; @ui.patterns
-      when :playlist; @ui.playlist
-      when :pianoroll; @ui.roll
+      when :patterns; @controller.patterns
+      when :playlist; @controller.playlist
+      when :pianoroll; @controller.pianoroll
     end
-  end
-
-  def controller
-    @controllers[@focus]
-  end
-
-  def patterns
-    @controllers[0]
-  end
-
-  def playlist
-    @controllers[1]
-  end
-
-  def pianoroll
-    @controllers[2]
   end
 
 end

@@ -43,9 +43,10 @@ class Settings
     self.instance
   end
 
-  def init(ui, engine)
+  def init(ui, controller, engine)
     @ui = ui
     @engine = engine
+    @controller = controller
 
     defaults
     if !File.exists? @cfg_path

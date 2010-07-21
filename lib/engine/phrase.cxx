@@ -84,7 +84,7 @@ bool          Phrase::remove(unsigned int tick, Event *e)
     return true;
   }
 
-  while (iter->next)
+  while (iter && iter->next)
   {
     if (iter->next == e)
     {

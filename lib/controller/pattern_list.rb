@@ -24,34 +24,51 @@
 ##
 
 class PatternListController
-  def initialize(context)
-    @context = context
+  include WidgetAwareController
+
+  attr_reader :selected
+
+  def initialize(controller)
+    @controller = controller
+    @selected = 1
   end
 
   def next(i = 1)
-    if @context.ui.patterns.selected + i >= Kiara::KIARA_MAXPATTERNS
-      @context.ui.patterns.selected = Kiara::KIARA_MAXPATTERNS
-    else
-      @context.ui.patterns.selected = @context.ui.patterns.selected + i
-    end
-    @context.ui.roll.pattern = @context.ui.patterns.selected
+    self.selected = self.selected + i
   end
 
   def prev(i = 1)
-    if @context.ui.patterns.selected - i < 1
-      @context.ui.patterns.selected = 1
-    else
-      @context.ui.patterns.selected = @context.ui.patterns.selected - i
-    end
-    @context.ui.roll.pattern = @context.ui.patterns.selected
-  end
-
-  def selected
-    @context.ui.patterns.selected
+    self.selected = self.selected - i
   end
 
   def size(pattern_id)
     Kiara::Memory.pattern.get(pattern_id).get_size
   end
 
+  def selected_size
+    self.size(@selected)
+  end
+
+  def set_size(pattern_id, new_size)
+    Kiara::Memory.pattern.get(pattern_id).set_size(new_size)
+  end
+
+  def selected_size=(new_size)
+    self.set_size(@selected, new_size)
+  end
+
+
+  def selected=(id)
+    unless id == @selected
+      if @selected >= Kiara::KIARA_MAXPATTERNS
+        @selected = Kiara::KIARA_MAXPATTERNS
+      elsif @selected <= 0
+        @selected = 1
+      else
+        @selected = id
+      end
+      @controller.pianoroll.redraw
+      redraw
+    end
+  end
 end

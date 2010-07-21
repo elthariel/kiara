@@ -26,106 +26,74 @@
 require 'gtk2'
 require 'colors'
 require 'piano_roll_attributes'
-require 'piano_roll_events'
 
 class PianoRoll < Gtk::DrawingArea
   include ColorMixin
-  include PianoRollEvents
   include PianoRollAttributes
 
-  attr_reader :selected, :cursor, :mark, :phrase
-
-  def initialize(ui, engine)
+  def initialize(ui, controller)
     super()
+
     @ui = ui
-    @engine = engine
-    @pattern = 1
-    @phrase = 0
+    @controller = controller
+    @roll = @controller.pianoroll
+    @roll.widget = self
+    @phrase = @roll.phrase
+
     @blockh = 18
     @blockw = 18
     @zoomh = 1.0
     @zoomw = 1.0
     @pianow = 50
+    @old_cursor = @roll.cursor.clone
     zoom_changed
 
-    # ?? Selected is an array of Event *
-    @selected = []
-    # Cursor is [tick, note]
-    @cursor = [0, 127]
-    @mark = nil
-    @controller_focus = false
-
     self.signal_connect('expose-event') {|s, e| on_expose e}
-    event_initialize
   end
 
-  def pattern=(p)
-    if p < Kiara::KIARA_MAXPATTERNS
-      @pattern = p
-      full_redraw
-      update_label
-    end
+  def focus?
+    @controller.context.focus? :pianoroll
   end
 
-  def phrase=(p)
-    if p < Kiara::KIARA_TRACKS
-      @phrase = p
-      full_redraw
-      update_label
-    end
-  end
+  def scroll
+    cursor = @roll.cursor
+    unless cursor == @old_cursor
+      @old_cursor = cursor.clone
+      hadj = parent.hadjustment
+      vadj = parent.vadjustment
 
-  def selected=(a)
-    @selected = a
-    full_redraw
-  end
+      # Compute position of the cursor in pixel
+      cursor_xpos = cursor[0] * tick_size
+      cursor_ypos = (127 - cursor[1]) * blockh
 
-  def mark=(m)
-    puts "Set mark, #{m[0]}:#{m[1]}" if m
-    @mark = m
-    full_redraw
-  end
-
-  def cursor=(a)
-    puts "Roll: cursor moved to tick #{a[0]}, note #{a[1]}"
-    hadj = parent.hadjustment
-    vadj = parent.vadjustment
-    @cursor = a
-    full_redraw
-
-    # Compute position of the cursor in pixel
-    cursor_xpos = a[0] * tick_size
-    cursor_ypos = (127 - a[1]) * blockh
-
-    # Limit scroll down to scrollwindow_size - viewport / 2
-    # because gtk allows us to scroll below the widget :-/
-    if cursor_ypos > vadj.upper - parent.allocation.height / 2
-      vadj.value = vadj.upper - parent.allocation.height
-    else
-      vadj.value = cursor_ypos - parent.allocation.height / 2
+      # Limit scroll down to scrollwindow_size - viewport / 2
+      # because gtk allows us to scroll below the widget :-/
+      if cursor_ypos > vadj.upper - parent.allocation.height / 2
+        vadj.value = vadj.upper - parent.allocation.height
+      else
+        vadj.value = cursor_ypos - parent.allocation.height / 2
+      end
     end
   end
 
   def update_label
-    text = "Pattern #{@pattern}, Track #{@phrase + 1}"
+    text = "Pattern #{@controller.patterns.selected}, Track #{@roll.track + 1}"
     @ui.builder.o('piano_roll_label').set_text text
   end
 
   def redraw
+    update_label
     full_redraw
+    scroll
   end
 
   def full_redraw
-    if realized?
-      a = Gdk::Rectangle.new 0, 0, allocation.width, allocation.height
-      window.invalidate a, false
-    end
+    queue_draw if realized?
   end
 
   def zoom_changed
-    psize = Kiara::Memory.pattern.get(@pattern).get_size
+    psize = @phrase.pattern.get_size
     set_size_request(blockw * 16 * psize + @pianow, blockh * 128)
-    full_redraw
   end
 
   def x_to_tick(x)
@@ -135,13 +103,17 @@ class PianoRoll < Gtk::DrawingArea
   def on_expose(e)
     # Initialization
     a = allocation
-    @cairo = self.window.create_cairo_context
+    puts "Unable to create context" unless (@cairo = self.window.create_cairo_context)
     @cairo.rectangle e.area.x, e.area.y, e.area.width, e.area.height
     @cairo.clip
 
+    # FIXME
+    # Optimize this ! Cache values or implement observer
+    @phrase = @roll.phrase
+
     # Background
-    color.background unless controller_focus?
-    color.background_focus if controller_focus?
+    color.background unless focus?
+    color.background_focus if focus?
     @cairo.rectangle 0, 0, a.width, a.height
     @cairo.fill
 
@@ -149,13 +121,15 @@ class PianoRoll < Gtk::DrawingArea
     draw_grid(e)
     draw_notes(e)
     draw_cursor(e)
+
+    @cairo = nil
   end
 
   def draw_grid(e)
     a = allocation
 
     @cairo.set_line_width(0.5)
-    bars = Kiara::Memory.pattern.get(@pattern).get_size
+    bars = @phrase.pattern.get_size
     (1.. bars * 16).each do |x|
       if x % 4 == 0
         color.vgrid_high
@@ -211,66 +185,46 @@ class PianoRoll < Gtk::DrawingArea
   end
 
   def draw_notes(e)
-    ticks = Kiara::KIARA_PPQ * 4 * current_pattern.get_size
-
-    (0..ticks).each do |t|
-      event = current_phrase.get(t)
-      while event && event.is_noteon do
-        draw_note(t, event)
-        event = event.next
-      end
+    @phrase.each_pos do |t, event|
+      draw_note t, event
     end
   end
 
   def draw_note(tick, note)
     # Position of the note in pixels
-    pos_x = tick * tick_size + @pianow
-    # Width of the note in pixels
+    x = tick * tick_size + @pianow
+    y = (127 - note.data1) * blockh
+    # Width and Height of the note in pixels
     w = note.duration * tick_size
+    h = blockh
 
-    color.block
-    # Rounded cube 2.0
-    # _ -> move_to and line_to
-    # / or \ -> rel_curve
-    #		1'	   2'
-    #            ______
-    #	1	/      \	2
-    #		\______/
-    #		1''	  2''
-
-    #set the current point to 1'
-    @cairo.move_to pos_x + blockh / 2, (127 - note.data1) * blockw
-    #TODO draw the line between 1' & 2'
-    #	@cairo.rel_line_to blockh, 0
-    #draw the line from 2' to 2
-    @cairo.rel_curve_to blockh / 2, 0, blockh / 2, 0, blockh / 2 , blockh / 2
-    #draw the line from 2 to 2''
-    @cairo.rel_curve_to 0, blockh / 2, 0, blockh / 2, -blockh / 2, blockh / 2
-    #TODO draw the line between 2'' & 1''
-    #	@cairo.rel_line_to -blockh, 0
-    #draw the line from 1'' to 1
-    @cairo.rel_curve_to -blockh / 2, 0, -blockh / 2, 0, -blockh / 2 , -blockh / 2
-    #draw the line from 1 to 1'
-    @cairo.rel_curve_to 0, -blockh / 2, 0, -blockh / 2,  blockh / 2, -blockh / 2
-
-    @cairo.rel_line_to 0, (note.duration * tick_size)
-    #	@cairo.rel_line_to -blockh, 0
-    #	@cairo.rel_line_to 0, -(note.duration * tick_size)
-
+    # FIXME Too much rounded !
+    if @roll.selected.include? [tick, note.data1]
+      color.block_selected
+    else
+      color.block
+    end
+    @cairo.move_to x + w / 2, y
+    @cairo.curve_to x + w, y, x + w, y, x + w, y + h / 2
+    @cairo.curve_to x + w, y + h, x + w, y + h, x + w / 2, y + h
+    @cairo.curve_to x, y + h, x, y + h, x, y + h / 2
+    @cairo.curve_to x, y, x, y, x + w / 2, y
+    path = @cairo.copy_path
     @cairo.fill
+    @cairo.append_path path
     color.block_border
+    @cairo.set_line_width(1)
     @cairo.stroke
   end
 
   def draw_cursor(e)
-    if @controller_focus
-      if @mark
+    if focus?
+      if @roll.mark
         color.cursor
-        x = @mark[0] * tick_size + @pianow
-        y = (127 - @mark[1]) * blockh
-        w = @cursor[0] * tick_size - @mark[0] * tick_size
-        h = (127 - @cursor[1]) * blockh - (127 - @mark[1]) * blockh
-        puts "Trying to draw selection #{x}:#{y}:#{w}:#{h}"
+        x = @roll.mark[0] * tick_size + @pianow
+        y = (127 - @roll.mark[1]) * blockh
+        w = @roll.cursor[0] * tick_size - @roll.mark[0] * tick_size
+        h = (127 - @roll.cursor[1]) * blockh - (127 - @roll.mark[1]) * blockh
         @cairo.rectangle x, y, w, h
         @cairo.fill
         color.note_sharp
@@ -279,32 +233,22 @@ class PianoRoll < Gtk::DrawingArea
         @cairo.stroke
       end
       color.cursor
-      @cairo.rectangle(@cursor[0] * tick_size + @pianow, 0,
+      @cairo.rectangle(@roll.cursor[0] * tick_size + @pianow, 0,
                        blockw, allocation.height)
       @cairo.fill
       @cairo.rectangle(0 + @pianow,
-                       (127 - @cursor[1]) * blockh,
+                       (127 - @roll.cursor[1]) * blockh,
                        allocation.width, blockh)
       @cairo.fill
       color.note_sharp
-      @cairo.move_to(@cursor[0] * tick_size + @pianow,
-                     (127 - @cursor[1]) * blockh)
-      @cairo.line_to(@cursor[0] * tick_size + @pianow,
-                     (127 - @cursor[1] + 1) * blockh)
+      @cairo.move_to(@roll.cursor[0] * tick_size + @pianow,
+                     (127 - @roll.cursor[1]) * blockh)
+      @cairo.line_to(@roll.cursor[0] * tick_size + @pianow,
+                     (127 - @roll.cursor[1] + 1) * blockh)
       @cairo.set_line_width(0.8)
       @cairo.stroke
     end
   end
-
-  def controller_focus?
-    @controller_focus
-  end
-
-  def controller_focus=(focused)
-    @controller_focus = focused
-    full_redraw
-  end
-
 end
 
 

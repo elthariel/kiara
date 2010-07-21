@@ -26,16 +26,7 @@
 require 'gtk2'
 
 module PianoRollAttributes
-
   attr_reader :zoomh, :zoomw
-
-  def current_phrase
-    Kiara::Memory.pattern.get(@pattern).get(@phrase)
-  end
-
-  def current_pattern
-    Kiara::Memory.pattern.get(@pattern)
-  end
 
   def blockh
     (@blockh * @zoomh).to_i
@@ -57,7 +48,6 @@ module PianoRollAttributes
 
   def tick_size
     block_ticks = Kiara::KIARA_PPQ / 4
-    #puts "Block = #{block_ticks} ticks = #{blockw} pixels"
     blockw / block_ticks.to_f
   end
 

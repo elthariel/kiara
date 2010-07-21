@@ -27,15 +27,15 @@ class MappingEngineError < StandardError
 end
 
 class MappingEngine
-  DEBUG = true
+  DEBUG = false
 
-  def initialize(mappings, context)
-    @context = context
+  def initialize(mappings, controller)
+    @controller = controller
     @map = mappings
     @chain = [@map]
     @keychain = []
     chain_filter_init
-    puts @map
+    puts @map if DEBUG
 
 
     @valid = true
@@ -71,11 +71,11 @@ class MappingEngine
     # elsif chain.len == 0, you lose
     # if chain.len > 0 and node.has_key? chain[0] -> :rec_eval
     # else loose return false
-    if @context.valid_context? node
+    if @controller.context.valid_context? node
       puts "Valid context #{chain}" if DEBUG
       if chain.length == 0 and node.has_key? :action
         puts "Calling action" if DEBUG
-        node[:action].call @context
+        node[:action].call @controller
         reset_chain
         true
       elsif chain.length == 0 and node.has_key? :subchains
@@ -112,6 +112,7 @@ class MappingEngine
       result
     rescue => e
       reset_chain
+      puts e
       puts e.backtrace
       false
     end

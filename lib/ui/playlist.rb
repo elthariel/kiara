@@ -29,31 +29,27 @@ require 'colors'
 class PlaylistView < Gtk::DrawingArea
   include ColorMixin
 
-  attr_reader :cursor, :selected
-
-  def initialize(ui, engine)
+  def initialize(ui, controller)
     super()
 
-    # Reference to Kiara god objects...
-    @engine = engine
+    # Reference to containes...
+    @controller = controller
+    @playlist = controller.playlist
+    @playlist.widget = self
     @ui = ui
 
     # Drawing related vars
     @playbar_lastpos = 0
     @head_size = 12
 
-    # Context related stuff
-    # The selected block, array of pos [[x, y], ...]
-    @selected = []
-    # [x, y] coordonate of the cursor (in blocks)
-    @cursor = [0,0]
-    @controller_focus = false
-
     add_events Gdk::Event::BUTTON_PRESS_MASK
     add_events Gdk::Event::BUTTON_RELEASE_MASK
     self.signal_connect('expose-event') {|s, e| on_expose e}
-    self.signal_connect('button-press-event') {|s, e| on_click e}
     Gtk.timeout_add(100) {draw_playing_bar}
+  end
+
+  def focus?
+    @controller.context.focus? :playlist
   end
 
   def blockw
@@ -73,6 +69,7 @@ class PlaylistView < Gtk::DrawingArea
   def redraw
     full_redraw
   end
+
   def full_redraw
     if realized?
       a = Gdk::Rectangle.new 0, 0, allocation.width, allocation.height
@@ -88,8 +85,11 @@ class PlaylistView < Gtk::DrawingArea
     @cairo.clip
 
     # Background
-    color.background unless controller_focus?
-    color.background_focus if controller_focus?
+    if focus?
+      color.background_focus
+    else
+      color.background
+    end
     @cairo.rectangle 0, 0, a.width, a.height
     @cairo.fill
 
@@ -128,8 +128,9 @@ class PlaylistView < Gtk::DrawingArea
 
     ## Now drawing loop point
     # FIXME We ignore beats and tick
-    loop_start = @engine.transport.get_loop_start
-    loop_end = @engine.transport.get_loop_end
+    # FIXME "MVC" break, views access directly to model
+    loop_start = @controller.engine.transport.get_loop_start
+    loop_end = @controller.engine.transport.get_loop_end
     color.cursor
     #Drawing 2 small triangles for loop points
     @cairo.move_to(loop_start.bar * blockw, 0)
@@ -167,9 +168,9 @@ class PlaylistView < Gtk::DrawingArea
   def draw_patterns(a)
     (0..Kiara::KIARA_PLSTRACKS).each do |t|
       (0..Kiara::KIARA_PLSLEN).each do |b|
-        if (pattern_id = @engine.playlist.get_pos(t, b)) > 0
-          pattern = Kiara::Memory.pattern.get(pattern_id)
-          @cairo.rectangle(b * blockw, t * blockh + @head_size, pattern.get_size * blockw, blockh)
+        if (pattern_id = @playlist[[b, t]]) > 0
+          psize = @controller.patterns.size pattern_id
+          @cairo.rectangle(b * blockw, t * blockh + @head_size, psize * blockw, blockh)
           color.block
           @cairo.fill
           color.block_border
@@ -192,7 +193,8 @@ class PlaylistView < Gtk::DrawingArea
 
     @cairo = self.window.create_cairo_context
     @cairo.set_antialias Cairo::ANTIALIAS_SUBPIXEL
-    pos = @engine.transport.get_position
+    # FIXME "MVC" break, views access directly to model
+    pos = @controller.engine.transport.get_position
     max_ticks = Kiara::KIARA_PLSLEN * 4 * Kiara::KIARA_PPQ
     pos_tick = pos.bar * 4 * Kiara::KIARA_PPQ + pos.beat * Kiara::KIARA_PPQ + pos.tick
     pos_x = (pos_tick.to_f / max_ticks) * self.window.size[0]
@@ -207,58 +209,16 @@ class PlaylistView < Gtk::DrawingArea
   end
 
   def draw_cursor(a)
-    if @controller_focus
-      @cairo.rectangle(0, @head_size + @cursor[1] * blockh,
+    if focus?
+      @cairo.rectangle(0, @head_size + @playlist.cursor[1] * blockh,
                        a.width, blockh)
       color.cursor
       @cairo.fill
-      @cairo.rectangle(@cursor[0] * blockw, @head_size,
+      @cairo.rectangle(@playlist.cursor[0] * blockw, @head_size,
                        blockw, a.height)
       color.cursor
       @cairo.fill
     end
-  end
-
-  def get_block(e)
-    track = ((e.y - @head_size) / blockh).to_i
-    bar = (e.x / blockw).to_i
-
-    [track, bar]
-  end
-
-  def on_click(e)
-    if e.y <= @head_size
-      # Clicking on the head bar
-      puts "Head bar."
-    else
-      block = get_block e
-
-      if @engine.playlist.get_pos(block[0], block[1]) == 0 and e.button == 1
-        @engine.playlist.set_pos(block[0], block[1], @ui.patterns.selected)
-      elsif @engine.playlist.get_pos(block[0], block[1]) > 0 and e.button == 3
-        @engine.playlist.set_pos(block[0], block[1], 0)
-      end
-      # FIXME Handle pattern with more than one bar
-      a = Gdk::Rectangle.new 0, 0, allocation.width, allocation.height
-      window.invalidate a, false
-    end
-  end
-
-  def controller_focus?
-    @controller_focus
-  end
-  def controller_focus=(focused)
-    @controller_focus = focused
-    full_redraw
-  end
-  def cursor=(a)
-    puts "Moving cursor to #{a[0]}:#{a[1]}"
-    @cursor=(a)
-    full_redraw
-  end
-  def selected=(a)
-    @selected=a
-    full_redraw
   end
 end
 

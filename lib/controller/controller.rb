@@ -23,6 +23,10 @@
 ## Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 ##
 
+require 'controller/widget_controller'
+require 'controller/pattern_list'
+require 'controller/playlist'
+require 'controller/piano_roll'
 require 'controller/keymap'
 require 'controller/mapping'
 require 'controller/mapping_engine'
@@ -33,44 +37,25 @@ require 'mapping_base'
 class Controller
   DEBUG = true
 
-  def initialize(ui)
-    @engine = ui.engine
-    @ui = ui
+  attr_reader :engine, :context, :patterns, :playlist, :pianoroll
 
-    @context = MappingContext.new(ui)
-    @map_engine = MappingEngine.new Mapping.get, @context
+  def initialize(engine)
+    @engine = engine
+
+    @patterns = PatternListController.new(self)
+    @playlist = PlaylistController.new(self)
+    @pianoroll = PianoRollController.new(self)
+
+    @context = MappingContext.new(self)
+    @map_engine = MappingEngine.new Mapping.get, self
     @km = KeyMap.new
-
-    #Gtk.timeout_add(200) {key_repeat}
-  end
-
-  def chain
-    #str = ""
-    # @chain.each {|k| str += "#{KeyMap.kname[k.key]}-"}
-    #str.chop
   end
 
   # Here we convert Gdk::EventKey structure into our own simpler
   # representation
   def entry_point(native_event)
-    # e = native_event.to_e
-    # if e.type == Event::KEY_PRESS
-    #   if @chain[-1] == e
-    #     @map_engine.event(chain)
-    #   else
-    #     @chain << e
-    #   end
-    # elsif e.type == Event::KEY_RELEASE
-    #   @map_engine.event(chain)
-    #   @chain.delete(e)
-    # end
-    #puts @km.map_key native_event
     @map_engine.event @km.map_key native_event
     true
-  end
-
-  def focus_change(e)
-    # @chain = []
   end
 
 end

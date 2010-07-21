@@ -24,13 +24,13 @@
 ##
 
 class PhraseController
-  attr_reader :pattern, :track
+  attr_reader :pattern, :track_id, :pattern_id
 
-  def initialize(context, pattern_id, track_id)
-    @context = context
-    @roll_ui = context.ui.roll
+  def initialize(controller, pattern_id, track_id)
+    @controller = controller
+    @roll = controller.pianoroll
     @pattern_id = pattern_id
-    @track = track_id
+    @track_id = track_id
     @pattern = Kiara::Memory.pattern.get(@pattern_id)
     @phrase = @pattern.get(track_id)
   end
@@ -49,7 +49,8 @@ class PhraseController
   end
 
   def insert!(tick, event)
-    @phrase.insert!(tick, event) if event
+    return true if event and @phrase.insert!(tick, event)
+    false
   end
 
   # Delete a note with data1=note starting precisely at tick=tick
@@ -59,19 +60,20 @@ class PhraseController
     while iter and iter.data1 != note do
       iter = iter.next
     end
-    if iter
-      res = @phrase.remove!(tick, iter)
-      iter if res
-    else
-      nil
-    end
+    return iter if iter and @phrase.remove!(tick, iter)
+    nil
   end
 
   # Delete a note with data1=note starting at or overlapping tick=tick
   # Return true if the event was deleted
   def delete_note_on_tick_overlapping!(pos)
     event = occupied?(pos)
-    @phrase.remove!(pos[0], event) if event
+    #  if event
+    if event
+      tick = 0
+      each_pos { |t, e| tick = t; return if e == event }
+      @phrase.remove!(tick, event)
+    end
     event
   end
 
@@ -79,8 +81,8 @@ class PhraseController
   # the phrase, passing each event to the given block
   def each
     iter = 0
-    while (iter = next_used_tick iter) >= 0 do
-      e = get(iter)
+    while (iter = @phrase.next_used_tick iter) >= 0 do
+      e = @phrase.get(iter)
       while e do
         yield e
         e = e.next
@@ -94,8 +96,8 @@ class PhraseController
   # the block
   def each_pos
     iter = 0
-    while (iter = next_used_tick iter) >= 0 do
-      e = get(iter)
+    while (iter = @phrase.next_used_tick iter) >= 0 do
+      e = @phrase.get(iter)
       while e do
         yield iter, e
         e = e.next
