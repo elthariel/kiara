@@ -55,18 +55,6 @@ bool          Phrase::insert(unsigned int tick, Event *e)
 
   e->next = data[tick];
   data[tick] = e;
-  // if (!iter)
-  // {
-  //   e.next = 0;
-  //   data[tick] = e;
-  // }
-  // else
-  // {
-  //   while (iter->next)
-  //     iter = iter->next;
-  //   e->next = 0;
-  //   iter->next = e;
-  // }
 
   return true;
 }

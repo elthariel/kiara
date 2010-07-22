@@ -102,6 +102,36 @@ class PianoRollController
     redraw
   end
 
+  # offset = [tick_offset, note offset]
+  def move(offset)
+    p = self.phrase
+    @selected.each do |pos|
+      npos = [pos[0] + offset[0], pos[1] + offset[1]]
+      npos[0] = 0 if npos[0] < 0
+      npos[1] = 0 if npos[1] < 0
+      npos[1] = 127 if npos[1] > 128
+      if npos[0] >= Kiara::KIARA_MAXBARS * 4 * Kiara::KIARA_PPQ
+        npos[0] = Kiara::KIARA_MAXBARS * 4 * Kiara::KIARA_PPQ - 1
+      end
+      if p.move_note! pos, npos
+        pos[0] = npos[0]
+        pos[1] = npos[1]
+      end
+    end
+    @cursor = [@cursor[0] + offset[0], @cursor[1] + offset[1]]
+    @mark = [@mark[0] + offset[0], @mark[1] + offset[1]] if @mark
+    redraw
+  end
+
+  # Changes notes duration by offset ticks
+  def resize(offset)
+    p = self.phrase
+    @selected.each do |pos|
+      p.resize_note! pos, offset
+    end
+    redraw
+  end
+
   protected
   def selected_update
     p = self.phrase

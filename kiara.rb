@@ -52,7 +52,7 @@ ui = Ui.new(controller)
 
 Signal.trap('SIGINT') do
   engine.stop
-  Profiler__.print_profile STDOUT
+  # Profiler__.print_profile STDOUT
   exit 0
 end
 

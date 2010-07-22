@@ -53,10 +53,53 @@ class PhraseController
     @phrase.get_note_on_tick pos[0], @pattern.get_size, pos[1]
   end
 
+  def get_note(pos)
+    iter = @phrase.get(pos[0])
+    while iter and iter.data1 != pos[1] do
+      iter = iter.next
+    end
+    return iter if iter
+    nil
+  end
+
   def insert!(tick, event)
     return true if event and @phrase.insert!(tick, event)
     false
   end
+
+  # pos = [tick, note]
+  # returns true if the note has been moved at the request pos
+  def move_note!(old_pos, new_pos)
+    return true if old_pos == new_pos
+    if old_pos[0] == new_pos[0] and (note = get_note old_pos)
+      note.data1 = new_pos[1]
+    elsif (note = delete_note_on_tick! old_pos[0], old_pos[1])
+      note.data1 = new_pos[1]
+      unless insert!(new_pos[0], note)
+        dealloc_event note
+        return false
+      end
+    else
+      return false
+    end
+    true
+  end
+
+  # Resize the note at pos, by offset tick
+  # returns true if successfull
+  def resize_note!(pos, offset)
+    if (note = get_note(pos))
+      if note.duration + offset < 1
+        note.duration = 1
+      else
+        note.duration = note.duration + offset
+      end
+      true
+    else
+      false
+    end
+  end
+
 
   # Delete a note with data1=note starting precisely at tick=tick
   # Returns true if correctly deleted

@@ -518,6 +518,96 @@ module BaseMapping
       end
     end
 
+    # Move Note
+    on_chain 'C-Up' do
+      if_context :is? => :pianoroll
+      if_context :has_selection? => true
+      action 'move-note-up' do |c|
+        c.pianoroll.move [0, 1]
+      end
+    end
+    on_chain 'C-Down' do
+      if_context :is? => :pianoroll
+      if_context :has_selection? => true
+      action 'move-note-down' do |c|
+        c.pianoroll.move [0, -1]
+      end
+    end
+    on_chain 'C-Left' do
+      if_context :is? => :pianoroll
+      if_context :has_selection? => true
+      action 'move-note-left' do |c|
+        c.pianoroll.move [-Kiara::KIARA_PPQ / 4, 0]
+      end
+    end
+    on_chain 'C-Right' do
+      if_context :is? => :pianoroll
+      if_context :has_selection? => true
+      action 'move-note-right' do |c|
+        c.pianoroll.move [Kiara::KIARA_PPQ / 4, 0]
+      end
+    end
+
+    # Move note FAST
+    on_chain 'C-S-Up' do
+      if_context :is? => :pianoroll
+      if_context :has_selection? => true
+      action 'move-note-up' do |c|
+        c.pianoroll.move [0, 12]
+      end
+    end
+    on_chain 'C-S-Down' do
+      if_context :is? => :pianoroll
+      if_context :has_selection? => true
+      action 'move-note-down' do |c|
+        c.pianoroll.move [0, -12]
+      end
+    end
+    on_chain 'C-S-Left' do
+      if_context :is? => :pianoroll
+      if_context :has_selection? => true
+      action 'move-note-left' do |c|
+        c.pianoroll.move [-Kiara::KIARA_PPQ, 0]
+      end
+    end
+    on_chain 'C-S-Right' do
+      if_context :is? => :pianoroll
+      if_context :has_selection? => true
+      action 'move-note-right' do |c|
+        c.pianoroll.move [Kiara::KIARA_PPQ, 0]
+      end
+    end
+
+    # Resize notes
+    on_chain 'C-L-Up' do
+      if_context :is? => :pianoroll
+      if_context :has_selection? => true
+      action 'resize-note-left-small' do |c|
+        c.pianoroll.resize -1
+      end
+    end
+    on_chain 'C-L-Down' do
+      if_context :is? => :pianoroll
+      if_context :has_selection? => true
+      action 'resize-note-right-small' do |c|
+        c.pianoroll.resize 1
+      end
+    end
+    on_chain 'C-L-Left' do
+      if_context :is? => :pianoroll
+      if_context :has_selection? => true
+      action 'resize-note-left' do |c|
+        c.pianoroll.resize -Kiara::KIARA_PPQ / 4
+      end
+    end
+    on_chain 'C-L-Right' do
+      if_context :is? => :pianoroll
+      if_context :has_selection? => true
+      action 'resize-note-right' do |c|
+        c.pianoroll.resize Kiara::KIARA_PPQ / 4
+      end
+    end
+
 
 
 
