@@ -26,13 +26,12 @@
 #ifndef   	TIMER_HH_
 # define   	TIMER_HH_
 
-#include <porttime.h>
-#include <portmidi.h>
-
 #include "kiara-config.h"
 #include "transport.hh"
+#include "event_scheduler.hh"
+#include "boost/utility.hpp"
 
-class Timer
+class Timer : private boost::noncopyable
 {
 public:
   Timer();
@@ -42,6 +41,7 @@ public:
   void          kill();
 
   void          set_transport(Transport *t = 0);
+  void          set_scheduler(EventScheduler *s = 0);
   unsigned int  get_bpm();
   unsigned int  set_bpm(unsigned int);
 
@@ -49,13 +49,12 @@ protected:
   int           run();
 
   Transport     *transport;
+  EventScheduler *scheduler;
   unsigned int  bpm;
   double        tick_len;
   double        reminder;
   bool          running;
 
-private:
-  Timer(const Timer &to_copy);
 };
 
 #endif	    /* !TIMER_HH_ */

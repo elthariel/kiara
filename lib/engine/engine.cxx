@@ -11,8 +11,8 @@ Engine::Engine()
 
   Pm_Initialize();
   m_timer.set_transport(&m_transport);
-  m_transport.connect(&m_scheduler, 0);
-  m_transport.connect(&m_playlist, 1);
+  m_timer.set_scheduler(&m_scheduler);
+  m_transport.connect(&m_playlist, 0);
   Memory::pattern().set_event_merger(m_merger);
   for (i = 0; i < KIARA_TRACKS; i++)
   {

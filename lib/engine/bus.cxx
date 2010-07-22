@@ -7,6 +7,7 @@ using namespace std;
 
 template <class T>
 Bus<T>::Bus()
+  : m_send_ticks(true)
 {
   unsigned int i;
 
@@ -41,14 +42,23 @@ void  Bus<T>::tick(TransportPosition pos)
 {
   unsigned int i;
 
-  for (i = 0; i < KIARA_TRACKS; i++)
-    if (m_bus[i])
-      m_bus[i]->tick(pos);
-
-  // static int zzz = 0;
-  // zzz = (zzz + 1) % 100;
-  // if (zzz == 0)
-  //   cout << typeid(*this).name()
-  //        << ": tick" << endl;
+  if (m_send_ticks)
+    for (i = 0; i < KIARA_TRACKS; i++)
+      if (m_bus[i])
+        m_bus[i]->tick(pos);
 }
 
+// /*
+//  * Control wether the bus sends ticks to its connected busses.
+//  */
+// template <class T>
+// virtual void  Bus<T>::set_send_ticks(bool send_tick = true)
+// {
+//   m_send_ticks = send_tick;
+// }
+
+// template <class T>
+// virtual bool  Bus<T>::get_send_ticks()
+// {
+//   return m_send_ticks;
+// }

@@ -40,9 +40,11 @@ public:
                         unsigned int bus_id = 0);
   virtual void  send(T &e);
   virtual void  tick(TransportPosition pos);
-
+  // virtual void  set_send_ticks(bool send_tick = true);
+  // virtual bool  get_send_ticks();
 protected:
   Bus<T>       *m_bus[KIARA_TRACKS];
+  bool          m_send_ticks;
 };
 
 #include "bus.cxx"

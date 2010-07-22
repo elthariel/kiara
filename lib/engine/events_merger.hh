@@ -45,6 +45,7 @@ public:
   virtual void  send(Event &);
   void          set_chan(unsigned int chan);
   unsigned int  get_chan();
+
 protected:
   unsigned int          chan;
 };

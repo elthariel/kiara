@@ -67,11 +67,6 @@ void    EventSchedulerBus::send(Event &e)
 
 void    EventSchedulerBus::tick(TransportPosition pos)
 {
-  // static int zzz = 0;
-  // zzz = (zzz + 1) % 50;
-  // if (zzz == 0)
-  //   cout << typeid(*this).name() << ": tick" << endl;
-
   unsigned int i;
 
   for (i = 0; i < KIARA_TRACK_POLY; i++)

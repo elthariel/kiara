@@ -26,7 +26,6 @@
 KIARA_ROOT = File.dirname(File.expand_path(__FILE__))
 $:.unshift KIARA_ROOT + '/lib'
 $:.unshift KIARA_ROOT + '/lib/ui'
-# This is where you'll find the keyboards mappings
 
 puts KIARA_ROOT
 
