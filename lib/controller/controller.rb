@@ -32,7 +32,7 @@ require 'controller/mapping'
 require 'controller/mapping_engine'
 require 'controller/mapping_context'
 require 'controller/save'
-require 'mapping_base'
+require 'controller/mapping_loader'
 
 class Controller
   DEBUG = true

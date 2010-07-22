@@ -64,24 +64,24 @@
 #     end
 # end
 
-# This should gives us
-a_block=nil
-test_mapping = {
-  'C-x' => [{ :context => { :is => :piano_roll },
-              'C-f' => [ # Opening a chain block
-                        # First item on this chain block
-                        {:context => { :playing => false },
-                          :action => a_block },
-                        # Second item on this chain block
-                        {:context => { :playing => true },
-                          :action => a_block }
-                       ],
-              'C-s' => [{:action => a_block}]
-            },
-            {:test => nil}],
-  'S-Right' => [{ :context => { :is => :piano_roll },
-                  :action => a_block }]
-}
+# # This should gives us
+# a_block=nil
+# test_mapping = {
+#   'C-x' => [{ :context => { :is => :piano_roll },
+#               'C-f' => [ # Opening a chain block
+#                         # First item on this chain block
+#                         {:context => { :playing => false },
+#                           :action => a_block },
+#                         # Second item on this chain block
+#                         {:context => { :playing => true },
+#                           :action => a_block }
+#                        ],
+#               'C-s' => [{:action => a_block}]
+#             },
+#             {:test => nil}],
+#   'S-Right' => [{ :context => { :is => :piano_roll },
+#                   :action => a_block }]
+# }
 
 
 

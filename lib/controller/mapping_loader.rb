@@ -1,7 +1,7 @@
-#! /usr/bin/env ruby1.9
-## kiara.rb
+##
+## mapping_loader.rb
 ## Login : <elthariel@rincevent>
-## Started on  Sun Jul 11 15:06:33 2010 elthariel
+## Started on  Thu Jul 22 06:06:17 2010 elthariel
 ## $Id$
 ##
 ## Author(s):
@@ -23,38 +23,25 @@
 ## Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 ##
 
-KIARA_ROOT = File.dirname(File.expand_path(__FILE__))
-$:.unshift KIARA_ROOT + '/lib'
-$:.unshift KIARA_ROOT + '/lib/ui'
-# This is where you'll find the keyboards mappings
+#
+# This is kind of a temporary solution waiting for a proper
+# implementation of a deep merge algorithm for 'ASTs' of
+# different mapping module
+#
 
-puts KIARA_ROOT
+module MappingLoader
+  include Mapping
 
-require 'logger'
-require 'profiler'
-
-require 'settings'
-require 'engine/kiara'
-require 'controller/controller'
-require 'ui'
-
-Settings.i
-$log = Logger.new(STDOUT)
-$log.progname = 'kiara'
-# FIXME $log.level = Logger.const_get Settings.i.loglevel.to_s
-$log.level = Logger::DEBUG
-
-engine = Kiara::Engine.new
-controller = Controller.new(engine)
-Settings.i.init(controller, engine)
-ui = Ui.new(controller)
-
-Signal.trap('SIGINT') do
-  engine.stop
-  # Profiler__.print_profile STDOUT
-  exit 0
+  puts "Will load mappings"
+  mapping do
+    Dir.glob("#{KIARA_ROOT}/mappings/*.rb").each do |file|
+      puts "Loading a mapping: #{file} ..."
+      File.open(file, 'r') do |fh|
+        lines = fh.readlines
+        module_eval lines.join, file
+      end
+    end
+  end
 end
 
-engine.start
-ui.run
 
