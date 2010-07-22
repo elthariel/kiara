@@ -94,6 +94,14 @@ class PianoRollController
     PhraseController.new(@controller, pattern, phrase_id)
   end
 
+  def select_all
+    @selected = []
+    phrase.each_pos do |tick, event|
+      @selected.push [tick, event.data1] if event.noteon?
+    end
+    redraw
+  end
+
   protected
   def selected_update
     p = self.phrase

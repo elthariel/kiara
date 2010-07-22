@@ -44,6 +44,16 @@ module BaseMapping
         controller.context.prev
       end
     end
+    on_chain 'L-Up' do
+      action 'prev-pattern' do |c|
+        c.patterns.prev
+      end
+    end
+    on_chain 'L-Down' do
+      action 'next-pattern' do |c|
+        c.patterns.next
+      end
+    end
 
     # File Management and stuff like that
     on_chain 'C-x' do
@@ -290,6 +300,12 @@ module BaseMapping
         c.pianoroll.mark_set
       end
     end
+    on_chain 'C-a' do
+      if_context :is? => :pianoroll
+      action 'roll-select-all' do |c|
+        c.pianoroll.select_all
+      end
+    end
     # PianoRoll Cursor movement
     on_chain 'Up' do
       if_context :is? => :pianoroll
@@ -361,8 +377,11 @@ module BaseMapping
       if_context :is? => :pianoroll
       action 'roll-cursor-up' do |c|
         cursor = c.pianoroll.cursor
-        cursor[0] -= Kiara::KIARA_PPQ
-        cursor[0] += cursor[0] % Kiara::KIARA_PPQ
+        if cursor[0] % Kiara::KIARA_PPQ == 0
+          cursor[0] -= Kiara::KIARA_PPQ
+        else
+          cursor[0] -= cursor[0] % Kiara::KIARA_PPQ
+        end
         c.pianoroll.cursor = cursor
       end
     end
@@ -383,6 +402,18 @@ module BaseMapping
       end
     end
     on_chain 'Page_Down' do
+      if_context :is? => :pianoroll
+      action 'phrase-prev' do |c|
+        c.pianoroll.track = c.pianoroll.track + 1
+      end
+    end
+    on_chain 'L-Left' do
+      if_context :is? => :pianoroll
+      action 'phrase-prev' do |c|
+        c.pianoroll.track = c.pianoroll.track - 1
+      end
+    end
+    on_chain 'L-Right' do
       if_context :is? => :pianoroll
       action 'phrase-prev' do |c|
         c.pianoroll.track = c.pianoroll.track + 1
@@ -459,27 +490,29 @@ module BaseMapping
     # Step edition
     [[0, '1'], [1, 'q'], [2, '2'], [3, 'w'], [4, '3'], [5, 'e'], [6, '4'], [7, 'r'],
      [8, '5'], [9, 't'], [10, '6'], [11, 'y'], [12, '7'], [13, 'u'], [14, '8'], [15, 'i']].each do |x|
-      on_chain x[1] do
-        if_context :is? => :pianoroll
-        action "tr-edit-#{x[0]}" do |c|
-          p = c.pianoroll.phrase
-          cursor = c.pianoroll.cursor
-          bar = (cursor[0] / (Kiara::KIARA_PPQ * 4)) * Kiara::KIARA_PPQ * 4
-          pos = [bar + x[0] * (Kiara::KIARA_PPQ / 4), cursor[1]]
-          # This checks is there's a note on the "step"
-          if (p.occupied? pos)
-            e = p.delete_note_on_tick_overlapping! pos
-            p.dealloc_event! e
-            c.pianoroll.redraw
-          else
-            e = p.alloc_event!
-            e.noteon!
-            e.chan = p.track_id
-            e.data1 = pos[1]
-            e.data2 = 100
-            e.duration = Kiara::KIARA_PPQ / 4
-            p.dealloc_event! e unless p.insert! pos[0], e
-            c.pianoroll.redraw
+      [[42, 'M-'], [84, ''], [127, 'S-']].each do |power|
+        on_chain "#{power[1]}#{x[1]}" do
+          if_context :is? => :pianoroll
+          action "tr-edit-#{x[0]}" do |c|
+            p = c.pianoroll.phrase
+            cursor = c.pianoroll.cursor
+            bar = (cursor[0] / (Kiara::KIARA_PPQ * 4)) * Kiara::KIARA_PPQ * 4
+            pos = [bar + x[0] * (Kiara::KIARA_PPQ / 4), cursor[1]]
+            # This checks is there's a note on the "step"
+            if (p.occupied? pos)
+              e = p.delete_note_on_tick_overlapping! pos
+              p.dealloc_event! e
+              c.pianoroll.redraw
+            else
+              e = p.alloc_event!
+              e.noteon!
+              e.chan = p.track_id
+              e.data1 = pos[1]
+              e.data2 = power[0]
+              e.duration = Kiara::KIARA_PPQ / 4
+              p.dealloc_event! e unless p.insert! pos[0], e
+              c.pianoroll.redraw
+            end
           end
         end
       end

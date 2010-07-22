@@ -84,6 +84,7 @@ class Settings
     @data['colors']['text'] = "a6a6a6"
     @data['colors']['text_sharp'] = '000000'
     @data['colors']['block'] = "940374"
+    @data['colors']['block_selected'] = "83617b"
     @data['colors']['block_border'] = "720c5b"
     @data['colors']['note'] = "FF3300"
     @data['colors']['note_sharp'] = "121412"
