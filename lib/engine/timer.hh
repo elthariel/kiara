@@ -50,7 +50,17 @@ protected:
 
   Transport     *transport;
   EventScheduler *scheduler;
+
+  /*
+   * Current bpm
+   */
   unsigned int  bpm;
+
+  /*
+   * Current tick length, in ms or in s, depending on implementation.
+   * Default portable one is in ms, _linux one based on nanosleep is
+   * in seconds.
+   */
   double        tick_len;
   double        reminder;
   bool          running;

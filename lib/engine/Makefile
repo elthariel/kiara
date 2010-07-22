@@ -35,7 +35,7 @@ LDFLAGS =	-shared
 CXXFLAGS =	-O0 -g -fPIC -I$(RUBYINC) -I$(RUBYINC)/$(RUBYARCH)
 
 NAME =		kiara.so
-OBJS =		kiara_wrap.o event.o engine.o timer.o \
+OBJS =		kiara_wrap.o event.o engine.o timer_linux.o \
 		transport.o transport_position.o memory.o \
 		phrase.o playlist.o pattern.o \
 		pattern_storage.o events_merger.o \

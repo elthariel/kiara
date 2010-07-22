@@ -23,6 +23,15 @@
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 */
 
+#include <time.h>
+#include <cmath>
+#include <cstring>
+#include <stdio.h>
+
+// Linux specific headers
+#include <errno.h>
+#include <sys/mman.h>
+#include <sched.h>
 
 #include "timer.hh"
 
@@ -35,12 +44,6 @@ Timer::Timer()
    running(true)
 {
   set_bpm(KIARA_DEFAULTBPM);
-  if (Pt_Start(1, 0, 0) != ptNoError)
-  {
-    std::cerr << "Unable to start PortTime, Kiara won't work at all !"
-              << std::endl;
-    throw "Unable to start PortTime";
-  }
 }
 
 Timer::~Timer()
@@ -51,25 +54,53 @@ int           Timer::run()
 {
   while (running)
   {
-    Pt_Sleep(1);
-    reminder += 1;
+    struct timespec     request;
+    struct timespec     remaining;
 
-    if (reminder >= tick_len)
+    /*
+     * If tick_len is 1.2465, tv_sec should be 1 and tv_nsec
+     * 2465000000000
+     */
+    request.tv_sec = floor(tick_len);
+    request.tv_nsec = (tick_len - floor(tick_len)) * 1000 * 1000 * 1000;
+    //cout << request.tv_sec << "," << request.tv_nsec << endl;
+    while (clock_nanosleep(CLOCK_REALTIME, 0, &request, &remaining))
+      memcpy(&request, &remaining, sizeof(struct timespec));
+
+
+    if (scheduler)
     {
-      reminder -= tick_len;
-      if (scheduler)
-      {
-        TransportPosition useless_pos;
-        scheduler->tick(useless_pos);
-      }
-      if (transport)
-        transport->trigger_tick();
+      TransportPosition useless_pos;
+      scheduler->tick(useless_pos);
     }
+    if (transport)
+      transport->trigger_tick();
   }
+}
+
+static void   __acquire_rt_privileges()
+{
+  struct sched_param sched_param;
+
+  /*
+   * Trying to lock memory pages (avoid swapping and stuffs)
+   * to prevent pages faults that would ruin our timer accuracy.
+   */
+  if (mlockall(MCL_CURRENT))
+    perror("Kiara-Engine, Unable to lock memory pages");
+
+  /*
+   * Try to obtain the real-time scheduling privileges for the current
+   * thread.
+   */
+  sched_param.sched_priority = 10;
+  if (sched_setscheduler(0, SCHED_FIFO, &sched_param))
+    perror("Kiara-Engine, Unable acquire realtime scheduling");
 }
 
 void          Timer::operator()()
 {
+  __acquire_rt_privileges();
   run();
 }
 
@@ -86,8 +117,8 @@ unsigned int  Timer::get_bpm()
 unsigned int  Timer::set_bpm(unsigned int new_bpm)
 {
   bpm = new_bpm;
-  tick_len = 60000.0 / (bpm * KIARA_PPQ);
-  cout << "New tick len: " << tick_len << "ms." << endl;
+  tick_len = 60.0 / (bpm * KIARA_PPQ);
+  cout << "New tick len: " << tick_len << "s." << endl;
 }
 
 void          Timer::set_transport(Transport *t)
