@@ -1,7 +1,7 @@
 ##
-## Makefile
+## build_options.cmake
 ## Login : <elthariel@rincevent>
-## Started on  Wed Jul  7 22:39:05 2010 elthariel
+## Started on  Fri Jul 23 02:18:34 2010 elthariel
 ## $Id$
 ##
 ## Author(s):
@@ -23,17 +23,14 @@
 ## Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 ##
 
-SUBFOLDERS = lib/engine
+#
+# We will here set build options in order to replace manually written
+# kiara-config.h
+#
 
-all:
-	$(foreach dir, $(SUBFOLDERS), cd $(dir) && make $@)
+set (PORTTIME_PREFIX "/home/somebody/builds/portmidi")
+set (PORTMIDI_PREFIX "/home/somebody/builds/portmidi")
 
-clean:
-	$(foreach dir, $(SUBFOLDERS), cd $(dir) && make $@)
-
-re: clean all
-c : clean
-
-.PHONY: all, clean, re, c
-
+# If you want to help cmake find swig, you'll have to add its
+# installation path to the PATH env variables
 
