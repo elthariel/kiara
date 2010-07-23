@@ -50,7 +50,7 @@ on_chain 'L-Down' do
   end
 end
 
-# File Management and stuff like that
+# File Management, Exit and stuff like that
 on_chain 'C-x' do
   on_chain 'C-s' do
     action 'save' do |c|
@@ -97,6 +97,12 @@ on_chain 'C-x' do
         end
       end
       dialog.destroy
+    end
+  end
+  on_chain 'C-c' do
+    action 'quit' do |c|
+      c.engine.stop
+      Gtk.main_quit
     end
   end
 end

@@ -57,3 +57,5 @@ end
 engine.start
 ui.run
 
+puts "Exiting Kiara Sequencer. Have a nice day !"
+

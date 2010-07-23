@@ -34,3 +34,10 @@ set (PORTMIDI_PREFIX "/home/somebody/builds/portmidi")
 # If you want to help cmake find swig, you'll have to add its
 # installation path to the PATH env variables
 
+# Use the more precise nanosleep based timer. (It'll work only on recent linux kernel)
+set (USE_NANOSLEEP_TIMER ON)
+
+# Release or debug mode ?
+# the following build types are availables :
+# [Debug|Release|RelWithDebInfo|MinSizeRel]
+set (CMAKE_BUILD_TYPE RelWithDebInfo)

@@ -86,7 +86,7 @@ class Ui
   end
 
   def quit
-    @engine.stop
+    @controller.engine.stop
     Gtk.main_quit
   end
 

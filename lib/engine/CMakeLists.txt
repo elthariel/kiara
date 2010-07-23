@@ -38,11 +38,11 @@ set(kiara_SOURCES engine.cxx
   transport_position.cxx
   )
 
-if (UNIX)
+if (UNIX AND USE_NANOSLEEP_TIMER)
   set(kiara_SOURCES ${kiara_SOURCES} timer_linux.cxx)
-else (UNIX)
+else (UNIX AND USE_NANOSLEEP_TIMER)
   set(kiara_SOURCES ${kiara_SOURCES} timer.cxx)
-endif (UNIX)
+endif (UNIX AND USE_NANOSLEEP_TIMER)
 
 include(${SWIG_USE_FILE})
 include_directories(${PORTTIME_INCLUDE})

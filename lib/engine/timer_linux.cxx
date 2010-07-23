@@ -93,7 +93,7 @@ static void   __acquire_rt_privileges()
    * Try to obtain the real-time scheduling privileges for the current
    * thread.
    */
-  sched_param.sched_priority = 10;
+  sched_param.sched_priority = 40;
   if (sched_setscheduler(0, SCHED_FIFO, &sched_param))
     perror("Kiara-Engine, Unable acquire realtime scheduling");
 }
