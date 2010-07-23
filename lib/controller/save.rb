@@ -70,6 +70,7 @@ class Kiara::Phrase
 
     iter = 0
     while (iter = next_used_tick iter) >= 0 do
+      puts iter
       e = get(iter)
       tick = []
       while e do
@@ -98,27 +99,27 @@ end
 class Kiara::Pattern
   def to_a(id)
     res = []
-    (0..Kiara::KIARA_TRACKS).each { |x| res.push get(x).to_a }
+    (0...Kiara::KIARA_TRACKS).each { |x| res.push get(x).to_a }
     res
   end
 
   def from_a(a)
-    (0..Kiara::KIARA_TRACKS).each { |i| get(i).from_a a[i] }
+    (0...Kiara::KIARA_TRACKS).each { |i| get(i).from_a a[i] }
   end
 end
 
 class Kiara::PatternStorage
   def to_a
     res = []
-    (0..Kiara::KIARA_MAXPATTERNS).each do |x|
+    (1..Kiara::KIARA_MAXPATTERNS).each do |x|
       res.push get(x).to_a(x)
     end
     res
   end
 
   def from_a(a)
-    (0..Kiara::KIARA_MAXPATTERNS).each do |i|
-      get(i).from_a a[i]
+    (1..Kiara::KIARA_MAXPATTERNS).each do |i|
+      get(i).from_a a[i - 1]
     end
   end
 end
@@ -138,9 +139,9 @@ end
 class Kiara::Playlist
   def to_a
     res = []
-    (0..Kiara::KIARA_PLSTRACKS).each do |track_id|
+    (0...Kiara::KIARA_PLSTRACKS).each do |track_id|
       track = []
-      (0..Kiara::KIARA_PLSLEN).each do |bar|
+      (0...Kiara::KIARA_PLSLEN).each do |bar|
         track.push get_pos(track_id, bar)
       end
       res.push track
@@ -149,8 +150,8 @@ class Kiara::Playlist
   end
 
   def from_a(a)
-    (0..Kiara::KIARA_PLSTRACKS).each do |track_id|
-      (0..Kiara::KIARA_PLSLEN).each do |bar|
+    (0...Kiara::KIARA_PLSTRACKS).each do |track_id|
+      (0...Kiara::KIARA_PLSLEN).each do |bar|
         set_pos(track_id, bar, a[track_id][bar])
       end
     end
