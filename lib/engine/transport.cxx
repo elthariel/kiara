@@ -19,10 +19,6 @@ void                  Transport::trigger_tick()
 {
   if (playing)
   {
-    ++position;
-    if (looping && position >= loop_end)
-      position = loop_start;
-
     // Using EventBus to trigger linked busses.
     tick(position);
 
@@ -34,6 +30,14 @@ void                  Transport::trigger_tick()
       midi_tick.midi[0] = 0xF8;
       m_midi_clock.send(midi_tick);
     }
+
+    /*
+     * After we played current tick, we jump to next tick
+     * and if necessary we loop back.
+     */
+    ++position;
+    if (looping && position >= loop_end)
+      position = loop_start;
   }
 }
 
