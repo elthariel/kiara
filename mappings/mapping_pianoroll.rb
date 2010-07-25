@@ -197,3 +197,22 @@ on_chain 'S-Page_Down' do
   end
 end
 
+# Copy/Paste
+on_chain 'C-c' do
+  if_context :is? => :pianoroll
+  action 'roll-copy' do |c|
+    #puts "copy"
+    c.pianoroll.to_clipboard
+  end
+end
+
+on_chain 'C-v' do
+  if_context :is? => :pianoroll
+  action 'roll-paste' do |c|
+    #puts "paste"
+    c.pianoroll.from_clipboard
+    c.pianoroll.redraw
+  end
+end
+
+

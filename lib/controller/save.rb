@@ -33,7 +33,6 @@ require 'yaml'
 class Kiara::Event
   # Return a array representing the Event.
   def to_a
-    puts status.class
     [
      status,
      data1,
@@ -44,7 +43,6 @@ class Kiara::Event
   end
 
   def from_a(a)
-    p a[0].class
     self.status = a[0].to_i
     self.data1 = a[1].to_i
     self.data2 = a[2].to_i

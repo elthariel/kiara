@@ -28,14 +28,24 @@ require 'controller/phrase'
 class PianoRollController
   include WidgetAwareController
 
-  attr_reader :track, :mark, :selected, :pattern
+  attr_reader :track, :mark, :selected, :pattern, :clipboard
 
   def initialize(controller)
     @controller = controller
 
     # [x, y], i.e. [tick, note]
     @cursor = [0, 63]
+    # Selection is an array of cursor
     @selected = []
+    # Clipboard is a serialization of a selection. The format is the following:
+    #  [[tick, [status, data1, data2, ...],
+    #          [status, data1, data2, ...]],
+    #  [tick2, ...],
+    #  ...]
+    # The serialized note is altered to have some of its informations (tick and note)
+    # being sotred as a relative position from cursor position
+    # When deserialized the cursor position, which could have been moved, is added back.
+    @clipboard = []
     # same as cursor
     @track = 0
     @pattern = 1
@@ -100,6 +110,47 @@ class PianoRollController
       @selected.push [tick, event.data1] if event.noteon?
     end
     redraw
+  end
+
+  # Serialize selection to clipboard for later use
+  def to_clipboard
+    @clipboard = []
+    p = self.phrase
+    last_tick = nil
+    current_list = []
+    @selected.each do |cursor|
+      unless cursor[0] == last_tick
+        @clipboard.push current_list unless last_tick == nil
+        last_tick = cursor[0]
+        current_list = [cursor[0] - @cursor[0]] # relative positioning
+      end
+      note = p.get_note cursor
+      serialized_note = note.to_a
+      serialized_note[1] -= @cursor[1] # relative positioning
+      current_list.push serialized_note
+    end
+    @clipboard.push current_list if last_tick
+  end
+
+  def from_clipboard
+    p = phrase
+    @selected = []
+    @clipboard.each do |tick|
+      t = tick[0]
+      #puts "tick #{t}"
+      tick[1, tick.length - 1].each do |snote|
+        #puts "\tnote #{snote}"
+        note = p.alloc_event!
+        serialized_note = snote.clone
+        serialized_note[1] += @cursor[1]
+        note.from_a serialized_note
+        if p.insert! t + @cursor[0], note
+          @selected.push [t + @cursor[0], serialized_note[1]]
+        else
+          p.dealloc_event! note
+        end
+      end
+    end
   end
 
   # offset = [tick_offset, note offset]
