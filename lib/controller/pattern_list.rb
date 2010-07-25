@@ -50,6 +50,10 @@ class PatternListController
   end
 
   def set_size(pattern_id, new_size)
+    pattern_id = 1 if pattern_id < 1
+    pattern_id = Kiara::KIARA_MAXPATTERNS if pattern_id > Kiara::KIARA_MAXPATTERNS
+    new_size = 1 if new_size < 1
+    new_size = Kiara::KIARA_MAXBARS if new_size > Kiara::KIARA_MAXBARS
     Kiara::Memory.pattern.get(pattern_id).set_size(new_size)
   end
 

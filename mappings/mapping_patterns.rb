@@ -72,4 +72,42 @@ on_chain 'space' do
   end
 end
 
+# Pattern length change
+on_chain 'KP_Subtract' do
+  action 'pattern-decrement-size' do |c|
+    c.patterns.selected_size = c.patterns.selected_size - 1
+    c.playlist.redraw
+    c.pianoroll.redraw
+  end
+end
+on_chain 'KP_Add' do
+  action 'pattern-increment-size' do |c|
+    c.patterns.selected_size = c.patterns.selected_size + 1
+    c.playlist.redraw
+    c.pianoroll.redraw
+  end
+end
+on_chain 'S-KP_Subtract' do
+  action 'pattern-decrement-size-fast' do |c|
+    new_size = c.patterns.selected_size
+    if new_size < 4
+      c.patterns.selected_size = 1
+    else
+      new_size -= 4 - new_size % 4
+      c.patterns.selected_size = new_size
+    end
+    c.playlist.redraw
+    c.pianoroll.redraw
+  end
+end
+on_chain 'S-KP_Add' do
+  action 'pattern-increment-size-fast' do |c|
+    new_size = c.patterns.selected_size
+    new_size += 4
+    new_size -= new_size % 4
+    c.patterns.selected_size = new_size
+    c.playlist.redraw
+    c.pianoroll.redraw
+  end
+end
 
