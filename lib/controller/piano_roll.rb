@@ -61,6 +61,7 @@ class PianoRollController
     a[1] = 127 if a[1] > 127
     @cursor = a
     selected_update
+    @widget.scroll
     redraw
   end
 

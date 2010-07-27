@@ -26,53 +26,119 @@
 require 'gtk2'
 require 'colors'
 require 'piano_roll_attributes'
+require 'piano_view'
+require 'position_view'
+require 'phrase_view'
+require 'velocity_view'
 
-class PianoRoll < Gtk::DrawingArea
-  include ColorMixin
-  include PianoRollAttributes
 
-  def initialize(ui, controller)
+class Filler < Gtk::DrawingArea
+  def initialize(ui, controller, roll, w, h)
     super()
 
     @ui = ui
     @controller = controller
-    @roll = @controller.pianoroll
-    @roll.widget = self
-    @phrase = @roll.phrase
+    @roll = roll
 
+    set_size_request w, h
+  end
+end
+
+
+class PianoRollView
+  include PianoRollAttributes
+
+  # Sub-widgets accessors
+  attr_reader :piano, :position, :phrase, :velocity
+  # Drawing configuration variables, also c.f. PianoRollAttributes
+  attr_reader :pianow, :velh, :headh
+
+  def initialize(ui, controller)
+    @ui = ui
+    @controller = controller
+
+    # Connect to piano roll controller.
+    @controller.pianoroll.widget = self
+    @rollc = @controller.pianoroll
+
+    # Appearence related variables
     @blockh = 18
     @blockw = 18
     @zoomh = 1.0
     @zoomw = 1.0
     @pianow = 50
-    @old_cursor = [0, 0]
-    zoom_changed
+    @headh = 15
+    @velh = 50
 
-    self.signal_connect('expose-event') {|s, e| on_expose e}
-    self.signal_connect('realize') { scroll }
+    # Creating all widgets
+    @piano = PianoView.new(ui, controller, self)
+    @position = PositionView.new(ui, controller, self)
+    @phrase = PhraseView.new(ui, controller, self)
+    @velocity = VelocityView.new(ui, controller, self)
+    @fillers = [Filler.new(ui, controller, self, @pianow, @headh),
+                Filler.new(ui, controller, self, @pianow, @velh)]
+
+    # Scroll management
+    @old_cursor = [0, 0]
+
+    # Pack everything
+    pack_widgets
   end
 
-  def focus?
-    @controller.context.focus? :pianoroll
+  def pack_widgets
+    # Left part of the piano roll, the piano and the top and bottom fillers
+    @ui.builder.o('vbox_piano').pack_start @fillers[0], false
+    @ui.builder.o('vbox_piano').pack_start @fillers[1], false
+    @ui.builder.o('vp_piano').add @piano
+    @ui.builder.o('vbox_piano').reorder_child @ui.builder.o('vp_piano'), 1
+
+    # Right part of the piano roll, the phrase, the velocity view and
+    # the header with the positions
+    @ui.builder.o('vbox_phrase').pack_start @position, false
+    @ui.builder.o('vbox_phrase').pack_start @velocity, false
+    @ui.builder.o('vp_phrase').add @phrase
+    @ui.builder.o('vbox_phrase').reorder_child @ui.builder.o('vp_phrase'), 1
+
   end
 
   def scroll
-    cursor = @roll.cursor
+    cursor = @rollc.cursor
     unless cursor == @old_cursor
       @old_cursor = cursor.clone
-      hadj = parent.hadjustment
-      vadj = parent.vadjustment
+      hadj = @ui.builder.o('vp_roll').hadjustment
+      vadj = @ui.builder.o('vp_phrase').vadjustment
+      vadj_piano = @ui.builder.o('vp_piano').vadjustment
+
+      # Used as reference for horizontal scroll
+      allocation_roll = @ui.builder.o('vp_roll').allocation
+      # Used as reference for vertical scroll
+      allocation_piano = @ui.builder.o('vp_piano').allocation
+
+      # puts "hadj: #{hadj.lower}/#{hadj.value}/#{hadj.upper}"
+      # puts "vadj: #{vadj.lower}/#{vadj.value}/#{vadj.upper}"
+      # puts "vadj_piano: #{vadj_piano.lower}/#{vadj_piano.value}/#{vadj_piano.upper}"
 
       # Compute position of the cursor in pixel
       cursor_xpos = cursor[0] * tick_size
       cursor_ypos = (127 - cursor[1]) * blockh
 
+      # puts "scroll #{cursor[0]}, #{cursor[1]} || #{cursor_xpos}, #{cursor_ypos}"
+      # puts "alloc_roll: #{allocation_roll.width}x#{allocation_roll.height}"
+      # puts "alloc_piano: #{allocation_piano.width}x#{allocation_piano.height}"
+
       # Limit scroll down to scrollwindow_size - viewport / 2
       # because gtk allows us to scroll below the widget :-/
-      if cursor_ypos > vadj.upper - parent.allocation.height / 2
-        vadj.value = vadj.upper - parent.allocation.height
+      if cursor_ypos > vadj.upper - allocation_piano.height / 2
+        vadj.value = vadj.upper - allocation_piano.height
+        vadj_piano.value = vadj.upper - allocation_piano.height
       else
-        vadj.value = cursor_ypos - parent.allocation.height / 2
+        vadj.value = cursor_ypos - allocation_piano.height / 2
+        vadj_piano.value = cursor_ypos - allocation_piano.height / 2
+      end
+      if cursor_xpos > hadj.upper - allocation_roll.width / 2
+        hadj.value = hadj.upper - allocation_roll.width
+      else
+        hadj.value = cursor_xpos - allocation_roll.width / 2
       end
     end
   end
@@ -83,179 +149,15 @@ class PianoRoll < Gtk::DrawingArea
   end
 
   def redraw
-    update_label
-    full_redraw
-    scroll
+    @piano.redraw
+    @position.redraw
+    @velocity.redraw
+    @phrase.redraw
   end
 
-  def full_redraw
-    queue_draw if realized?
+  def focus?
+    @controller.context.focus? :pianoroll
   end
 
-  def zoom_changed
-    psize = @phrase.pattern.get_size
-    set_size_request(blockw * 16 * psize + @pianow, blockh * 128)
-  end
-
-  def x_to_tick(x)
-    (x / tick_size).to_i
-  end
-
-  def on_expose(e)
-    #Profiler__.start_profile
-    # Initialization
-    a = allocation
-    puts "Unable to create context" unless (@cairo = self.window.create_cairo_context)
-    @cairo.rectangle e.area.x, e.area.y, e.area.width, e.area.height
-    @cairo.clip
-
-    # FIXME
-    # Optimize this ! Cache values or implement observer
-    @phrase = @roll.phrase
-
-    # Background
-    color.background unless focus?
-    color.background_focus if focus?
-    @cairo.rectangle 0, 0, a.width, a.height
-    @cairo.fill
-
-    draw_piano(e)
-    draw_grid(e)
-    draw_notes(e)
-    draw_cursor(e)
-
-    @cairo = nil
-    #Profiler__.stop_profile
-  end
-
-  def draw_grid(e)
-    a = allocation
-
-    @cairo.set_line_width(0.5)
-    bars = @phrase.pattern.get_size
-    (0..bars * 16).each do |x|
-      if x % 4 == 0
-        color.vgrid_high
-      else
-        color.vgrid_low
-      end
-      @cairo.move_to x * self.blockw + @pianow, 0
-      @cairo.line_to x * self.blockw + @pianow, a.height
-      @cairo.stroke
-    end
-
-    @cairo.set_line_width(0.5)
-    color.hgrid
-    (0..128).each do |y|
-      @cairo.move_to @pianow, y * self.blockh
-      @cairo.line_to a.width, y * self.blockh
-      @cairo.stroke
-    end
-
-
-  end
-
-  def draw_piano(e)
-    a = allocation
-    # Which keys are black ?
-    note_map = [0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0]
-    note_text = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"]
-
-    (0..128).each do |i|
-      if note_map[i%12] == 1
-        color.note_sharp
-      else
-        color.note
-      end
-
-      @cairo.rectangle 0, (128 - i - 1) * blockh, @pianow, blockh
-      @cairo.fill
-      @cairo.rectangle 0, (128 - i - 1) * blockh, @pianow, blockh
-      color.note_sharp
-      @cairo.set_line_width 0.5
-      @cairo.stroke
-
-      if note_map[i%12] == 1
-	color.text_sharp
-      else
-	color.text
-      end
-      @cairo.set_font_size 8
-      @cairo.move_to 20, (128 - i - 1) * blockh + 12
-      @cairo.text_path "#{note_text[i%12]} #{i/12 - 2}"
-      @cairo.fill
-    end
-  end
-
-  def draw_notes(e)
-    @phrase.each_pos do |t, event|
-      #puts "draw_notes #{t}, #{event}"
-      draw_note t, event if event.noteon?
-    end
-  end
-
-  def draw_note(tick, note)
-    # Position of the note in pixels
-    x = tick * tick_size + @pianow
-    y = (127 - note.data1) * blockh
-    # Width and Height of the note in pixels
-    w = note.duration * tick_size
-    h = blockh
-
-    # FIXME Too much rounded !
-    if @roll.selected.include? [tick, note.data1]
-      #puts "selected note"
-      color.block_selected
-    else
-      color.block
-    end
-    @cairo.move_to x + w / 2, y
-    @cairo.curve_to x + w, y, x + w, y, x + w, y + h / 2
-    @cairo.curve_to x + w, y + h, x + w, y + h, x + w / 2, y + h
-    @cairo.curve_to x, y + h, x, y + h, x, y + h / 2
-    @cairo.curve_to x, y, x, y, x + w / 2, y
-    path = @cairo.copy_path
-    @cairo.fill
-    @cairo.append_path path
-    color.block_border
-    @cairo.set_line_width(1)
-    @cairo.stroke
-  end
-
-  def draw_cursor(e)
-    if focus?
-      # If there is a mark set, we draw selection region
-      # FIXME selection region sometimes misses a line
-      if @roll.mark
-        color.cursor
-        x = @roll.mark[0] * tick_size + @pianow
-        y = (127 - @roll.mark[1]) * blockh
-        w = @roll.cursor[0] * tick_size - @roll.mark[0] * tick_size
-        h = (127 - @roll.cursor[1]) * blockh - (127 - @roll.mark[1]) * blockh + blockh
-        @cairo.rectangle x, y, w, h
-        @cairo.fill
-        color.note_sharp
-        @cairo.rectangle x, y, w, h
-        @cairo.set_line_width(0.5)
-        @cairo.stroke
-      end
-      color.cursor
-      @cairo.rectangle(@roll.cursor[0] * tick_size + @pianow, 0,
-                       blockw, allocation.height)
-      @cairo.fill
-      @cairo.rectangle(0 + @pianow,
-                       (127 - @roll.cursor[1]) * blockh,
-                       allocation.width, blockh)
-      @cairo.fill
-      color.note_sharp
-      @cairo.move_to(@roll.cursor[0] * tick_size + @pianow,
-                     (127 - @roll.cursor[1]) * blockh)
-      @cairo.line_to(@roll.cursor[0] * tick_size + @pianow,
-                     (127 - @roll.cursor[1] + 1) * blockh)
-      @cairo.set_line_width(0.8)
-      @cairo.stroke
-    end
-  end
 end
-
 

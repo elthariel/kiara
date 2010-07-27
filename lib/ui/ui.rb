@@ -61,8 +61,8 @@ class Ui
     @builder.o('vp_playlist').add @playlist
     @patterns = PatternList.new(self, @controller)
     @builder.o('vp_patterns').add @patterns
-    @roll = PianoRoll.new(self, @controller)
-    @builder.o('vp_pianoroll').add @roll
+    @roll = PianoRollView.new(self, @controller)
+    #    @builder.o('vp_pianoroll').add @roll
 
     @builder.o('spin_bpm').adjustment = @builder.o('adj_bpm')
     @builder.o('adj_bpm').value = 140
