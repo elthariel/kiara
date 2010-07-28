@@ -28,8 +28,9 @@
 # kiara-config.h
 #
 
-set (PORTTIME_PREFIX "/home/somebody/builds/portmidi")
-set (PORTMIDI_PREFIX "/home/somebody/builds/portmidi")
+set (PORTTIME_SEPARATE_LIB OFF)
+set (PORTTIME_PREFIX "d:/msys/home/Lta/portmidi")
+set (PORTMIDI_PREFIX "d:/msys/home/Lta/portmidi")
 
 # If you want to help cmake find swig, you'll have to add its
 # installation path to the PATH env variables
@@ -41,3 +42,12 @@ set (USE_NANOSLEEP_TIMER ON)
 # the following build types are availables :
 # [Debug|Release|RelWithDebInfo|MinSizeRel]
 set (CMAKE_BUILD_TYPE RelWithDebInfo)
+
+# Necessary one windows and on non standard installation on unix systems
+# set (SWIG_EXECUTABLE "d:/msys/home/Lta/swigwin-1.3.40/swig.exe")
+
+## Boost options
+set(Boost_USE_STATIC_LIBS OFF)
+set(Boost_USE_MULTITHREADED ON)
+# Necessary one windows and on non standard installation on unix systems
+set (BOOST_ROOT "d:/msys/home/Lta/boost_1.40.0")

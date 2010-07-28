@@ -75,7 +75,7 @@
 
 %module PortMidi
 %{
-#include "/usr/include/portmidi.h"
+#include "../../include/portmidi.h"
 %}
-%include </usr/include/portmidi.h>
+%include <../../include/portmidi.h>
 

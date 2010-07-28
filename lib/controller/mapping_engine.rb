@@ -27,7 +27,7 @@ class MappingEngineError < StandardError
 end
 
 class MappingEngine
-  DEBUG = true
+  DEBUG = false
 
   def initialize(mappings, controller)
     @controller = controller

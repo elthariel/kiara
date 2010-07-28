@@ -44,9 +44,10 @@ class Ui
   end
 
   def build
-    Gtk::RC.parse "#{KIARA_ROOT}/gtk-theme/gtk-2.0/gtkrc"
+    unless RUBY_PLATFORM =~ /mingw|win32/
+	  Gtk::RC.parse "#{KIARA_ROOT}/gtk-theme/gtk-2.0/gtkrc"
+	end
     Gtk.init
-
     @builder = Gtk::Builder.new
     @builder.class.instance_eval "alias_method :o, :get_object"
     @builder << KIARA_ROOT + '/lib/ui/ui.glade'
