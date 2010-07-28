@@ -64,31 +64,7 @@ class Settings
     @data['midi_out'] = 0
     @data['midi_clock'] = true
     @data['loglevel'] = "DEBUG"
-
-    default_colors
-  end
-
-  def default_colors
-    @data['colors'] = {}
-    @data['colors']['background'] = "1a1a2e"
-    @data['colors']['background_focus'] = "142912"
-    @data['colors']['cursor'] = "611c87"
-    @data['colors']['header'] = "494863"
-    @data['colors']['separator'] = "6d3811"
-    @data['colors']['header_grid_high'] = "d2691b90"
-    @data['colors']['header_grid_low'] = "d2691b90"
-    @data['colors']['vgrid_high'] = "9b4f1890"
-    @data['colors']['vgrid_low'] = "554b44"
-    @data['colors']['hgrid'] = "6d3811"
-    @data['colors']['playbar'] = "cb0000"
-    @data['colors']['text'] = "a6a6a6"
-    @data['colors']['text_sharp'] = '000000'
-    @data['colors']['block'] = "940374"
-    @data['colors']['block_selected'] = "83617b"
-    @data['colors']['block_border'] = "720c5b"
-    @data['colors']['note'] = "FF3300"
-    @data['colors']['note_sharp'] = "121412"
-    @data['colors']['velocity'] = "7272ea"
+    @data['theme'] = 'purple-cricket'
   end
 
   def save

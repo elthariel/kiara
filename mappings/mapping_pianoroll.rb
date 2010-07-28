@@ -114,7 +114,7 @@ on_chain 'S-Up' do
   if_context :is? => :pianoroll
   action 'roll-cursor-up' do |c|
     cursor = c.pianoroll.cursor
-    cursor[1] += 12
+    cursor[1] += 6
     c.pianoroll.cursor = cursor
   end
 end
@@ -123,7 +123,7 @@ on_chain 'S-Down' do
   if_context :is? => :pianoroll
   action 'roll-cursor-down' do |c|
     cursor = c.pianoroll.cursor
-    cursor[1] -= 12
+    cursor[1] -= 6
     c.pianoroll.cursor = cursor
   end
 end

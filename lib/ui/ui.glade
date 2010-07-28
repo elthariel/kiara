@@ -117,8 +117,8 @@
                     <child>
                       <object class="GtkImageMenuItem" id="menuitem5">
                         <property name="visible">True</property>
-                        <property name="related_action">act_settings</property>
                         <property name="use_action_appearance">True</property>
+                        <property name="related_action">act_settings</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
                       </object>
@@ -174,8 +174,8 @@
                 <child>
                   <object class="GtkToggleToolButton" id="toolloop">
                     <property name="visible">True</property>
-                    <property name="related_action">act_loop</property>
                     <property name="use_action_appearance">True</property>
+                    <property name="related_action">act_loop</property>
                     <property name="label" translatable="yes">Loop</property>
                     <property name="use_underline">True</property>
                     <property name="stock_id">gtk-refresh</property>
@@ -189,8 +189,8 @@
                 <child>
                   <object class="GtkToolButton" id="toolplay">
                     <property name="visible">True</property>
-                    <property name="related_action">act_play</property>
                     <property name="use_action_appearance">True</property>
+                    <property name="related_action">act_play</property>
                     <property name="label" translatable="yes">Play</property>
                     <property name="use_underline">True</property>
                     <property name="stock_id">gtk-media-play</property>
@@ -203,8 +203,8 @@
                 <child>
                   <object class="GtkToolButton" id="toolpause">
                     <property name="visible">True</property>
-                    <property name="related_action">act_pause</property>
                     <property name="use_action_appearance">True</property>
+                    <property name="related_action">act_pause</property>
                     <property name="label" translatable="yes">Pause</property>
                     <property name="use_underline">True</property>
                     <property name="stock_id">gtk-media-pause</property>
@@ -217,8 +217,8 @@
                 <child>
                   <object class="GtkToolButton" id="toolstop">
                     <property name="visible">True</property>
-                    <property name="related_action">act_stop</property>
                     <property name="use_action_appearance">True</property>
+                    <property name="related_action">act_stop</property>
                     <property name="label" translatable="yes">Stop</property>
                     <property name="use_underline">True</property>
                     <property name="stock_id">gtk-media-stop</property>
@@ -1205,6 +1205,44 @@ Camille 'Kmoo' JAN</property>
                 <property name="label" translatable="yes">Midi</property>
               </object>
               <packing>
+                <property name="tab_fill">False</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkVBox" id="vbox2">
+                <property name="visible">True</property>
+                <child>
+                  <object class="GtkHBox" id="set_theme_box">
+                    <property name="visible">True</property>
+                    <child>
+                      <object class="GtkLabel" id="Theme_label">
+                        <property name="visible">True</property>
+                        <property name="label" translatable="yes">Theme (need restart)</property>
+                      </object>
+                      <packing>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <placeholder/>
+                </child>
+              </object>
+              <packing>
+                <property name="position">1</property>
+              </packing>
+            </child>
+            <child type="tab">
+              <object class="GtkLabel" id="label2">
+                <property name="visible">True</property>
+                <property name="label" translatable="yes">Interface</property>
+              </object>
+              <packing>
+                <property name="position">1</property>
                 <property name="tab_fill">False</property>
               </packing>
             </child>

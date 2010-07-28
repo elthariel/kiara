@@ -33,9 +33,12 @@ class UiSettings
     @ui = ui
     @dialog = dialog
     @midi_out = Gtk::ComboBox.new
+    @theme = Gtk::ComboBox.new
 
     box = @ui.builder.o('set_midi_out_box')
     box.pack_start @midi_out
+    box = @ui.builder.o('set_theme_box')
+    box.pack_start @theme
 
     widgets_init
   end
@@ -45,10 +48,14 @@ class UiSettings
 
     while (info = Kiara.Pm_GetDeviceInfo i)
       if info.output == 1
-        puts "#{i}:#{info.interf} #{info.name}"
+        # puts "#{i}:#{info.interf} #{info.name}"
         @midi_out.append_text "#{i}:#{info.interf} #{info.name}"
       end
       i += 1
+    end
+
+    Dir.glob("#{KIARA_THEME}*.ktheme").each do |ktheme|
+      @theme.append_text File.basename(ktheme).gsub('.ktheme', '')
     end
   end
 
@@ -67,11 +74,13 @@ class UiSettings
   def load
     @midi_out.active = find_midi_out
     @ui.builder.o('set_midi_clock').active = Settings.i.midi_clock
+    @theme.active = find_theme
   end
 
   def save
     Settings.i.midi_out = @midi_out.active_text.to_i
     Settings.i.midi_clock = @ui.builder.o('set_midi_clock').active?
+    Settings.i.theme = @theme.active_text
     Settings.i.save
   end
 
@@ -82,6 +91,15 @@ class UiSettings
       i += 1
     end
     i
+  end
+
+  def find_theme
+    i = 0
+    @theme.model.each do |x, y, z|
+      return i if Settings.i.theme == z[0]
+      i += i
+    end
+    i - 1
   end
 
 end

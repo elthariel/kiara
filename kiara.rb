@@ -24,10 +24,10 @@
 ##
 
 KIARA_ROOT = File.dirname(File.expand_path(__FILE__))
-$:.unshift KIARA_ROOT + '/lib'
-$:.unshift KIARA_ROOT + '/lib/ui'
-
-puts KIARA_ROOT
+KIARA_LIB = KIARA_ROOT + '/lib'
+KIARA_THEME = KIARA_ROOT + '/themes/'
+$:.unshift KIARA_LIB
+$:.unshift KIARA_LIB + '/ui'
 
 require 'logger'
 require 'profiler'

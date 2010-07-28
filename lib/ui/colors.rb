@@ -57,30 +57,16 @@ class Color
   def initialize(mod)
     @mod = mod
 
-    Settings.i.colors.each { |name, hexvalue| add_color name, hexvalue }
+    ktheme = KIARA_THEME + Settings.i.theme + '.ktheme'
+    if File.readable? ktheme and (parsed_theme = YAML.load_file ktheme) and parsed_theme['version'] == 0
+      parsed_theme['colors'].each { |name, hexvalue| add_color name, hexvalue }
+    end
   end
 
-#   def method_missing(sym, *args, &block)
-#     if Settings.i.colors.has_key? sym.to_s
-#       color Settings.i.colors[sym.to_s]
-#     else
-#       raise "Colors: Method (or color) missing"
-#     end
-#   end
-
-#   def color(a_color)
-#     if a_color.size == 8
-#       alpha = a_color[6, 2].to_i(16) / 255.0
-#     else
-#       alpha = 1.0
-#     end
-#     red = a_color[0, 2].to_i(16) / 255.0
-#     green = a_color[2, 2].to_i(16) / 255.0
-#     blue = a_color[4, 2].to_i(16) / 255.0
-
-#     #puts "Color on #{context} ## #{red}:#{green}:#{blue}:#{alpha}"
-#     context.set_source_rgba red, green, blue, alpha
-#   end
+  def method_missing(sym, *args, &block)
+    puts "Theme Error: Unknown color"
+    @mod.instance_variable_get(:@cairo).set_source_rgba 1.0, 0.5, 0.5, 1
+  end
 end
 
 end

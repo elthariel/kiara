@@ -1,0 +1,23 @@
+---
+version: 0
+colors:
+  background: "858585"
+  background_focus: 855c9d
+  cursor: 611c8740
+  header: CCCCCC
+  separator: A1A1A1
+  header_grid_high: d7a0f5
+  header_grid_low: e6c4f5
+  vgrid_high: "222222"
+  vgrid_low: A1A1A1
+  hgrid: 2B2B2B
+  playbar: cb000090
+  text: 2b2b2b
+  text_sharp: ffffff
+  block: CCCCCC
+  block_selected: 83617b
+  block_border: 720c5b
+  note: FFFFFF
+  note_sharp: "121412"
+  velocity: "7272ea"
+
