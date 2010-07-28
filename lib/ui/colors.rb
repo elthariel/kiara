@@ -46,8 +46,11 @@ class Color
     red = value[0, 2].to_i(16) / 255.0
     green = value[2, 2].to_i(16) / 255.0
     blue = value[4, 2].to_i(16) / 255.0
-    eval "def self.#{name}
-      @mod.instance_variable_get(:@cairo).set_source_rgba #{red}, #{green}, #{blue}, #{alpha}
+    eval "def self.#{name} (alpha_scale = 1.0, color_scale = 1.0)
+      @mod.instance_variable_get(:@cairo).set_source_rgba(#{red} * color_scale,
+                                                          #{green} * color_scale,
+                                                          #{blue} * color_scale,
+                                                          #{alpha} * alpha_scale)
     end"
   end
 

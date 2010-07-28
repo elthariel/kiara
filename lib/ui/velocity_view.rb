@@ -88,6 +88,9 @@ class VelocityView < Gtk::DrawingArea
     color.separator
     @cairo.stroke
 
+    @cairo.set_line_width 2.5
+    color.velocity
+    @cairo.set_line_cap Cairo::LINE_CAP_ROUND
     @phrase.each_pos do |tick, event|
       draw_velocity_bar(a, tick, event)
     end
@@ -95,10 +98,8 @@ class VelocityView < Gtk::DrawingArea
 
   def draw_velocity_bar(a, tick, event)
     if event.noteon?
-      @cairo.set_line_width 0.8
       @cairo.move_to tick * @roll.tick_size, a.height
       @cairo.line_to tick * @roll.tick_size, a.height - a.height * (event.data2 / 127.0)
-      color.block
       @cairo.stroke
     end
   end

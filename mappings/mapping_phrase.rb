@@ -24,8 +24,6 @@
 ##
 
 # Note add
-@@last_note_duration = Kiara::KIARA_PPQ
-@@last_note_velocity = 100
 on_chain 'space' do
   if_context :is? => :pianoroll
   action 'node-add' do |c|
@@ -36,8 +34,8 @@ on_chain 'space' do
       e.noteon!
       e.chan = p.track_id
       e.data1 = pos[1]
-      e.data2 = @@last_note_velocity
-      e.duration = @@last_note_duration
+      e.data2 = c.pianoroll.note_velocity
+      e.duration = c.pianoroll.note_duration
       if p.insert! pos[0], e
         c.pianoroll.cursor=[pos[0] + e.duration, pos[1]]
       else
@@ -219,6 +217,33 @@ on_chain 'C-L-Right' do
   if_context :has_selection? => true
   action 'resize-note-right' do |c|
     c.pianoroll.resize Kiara::KIARA_PPQ / 4
+  end
+end
+
+# Velocity edition
+
+[[0, 'KP_0'], [14, 'KP_1'], [28, 'KP_2'], [42, 'KP_3'], [56, 'KP_4'],
+ [70, 'KP_5'], [84, 'KP_6'], [98, 'KP_7'], [112, 'KP_8'], [127, 'KP_9']].each do |k|
+  # If the piano roll has selected notes, we set all the note velocity to
+  ## k[0] value
+  on_chain k[1] do
+    if_context :is? => :pianoroll
+    if_context :has_selection? => true
+    action "set-velocity-#{k[0]}" do |c|
+      p = c.pianoroll.phrase
+      c.pianoroll.selected.each do |pos|
+        note = p.get_note pos
+        note.data2 = k[0]
+      end
+    end
+  end
+  # If there's no selection we set the default velocity for futures notes
+  on_chain k[1] do
+    if_context :is? => :pianoroll
+    if_context :has_selection? => false
+    action "set-current-velocity-#{k[0]}" do |c|
+      c.pianoroll.note_velocity = k[0]
+    end
   end
 end
 

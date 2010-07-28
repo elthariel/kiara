@@ -88,6 +88,7 @@ class Settings
     @data['colors']['block_border'] = "720c5b"
     @data['colors']['note'] = "FF3300"
     @data['colors']['note_sharp'] = "121412"
+    @data['colors']['velocity'] = "7272ea"
   end
 
   def save

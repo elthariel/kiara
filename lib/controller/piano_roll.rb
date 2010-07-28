@@ -29,6 +29,7 @@ class PianoRollController
   include WidgetAwareController
 
   attr_reader :track, :mark, :selected, :pattern, :clipboard
+  attr_accessor :note_duration, :note_velocity
 
   def initialize(controller)
     @controller = controller
@@ -50,6 +51,10 @@ class PianoRollController
     @track = 0
     @pattern = 1
     @mark = nil
+
+    # Some states used by mapping
+    @note_duration = Kiara::KIARA_PPQ / 4
+    @note_velocity = 98
   end
 
   def cursor=(a)

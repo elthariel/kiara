@@ -119,13 +119,14 @@ class PhraseView < Gtk::DrawingArea
     # Width and Height of the note in pixels
     w = note.duration * @roll.tick_size
     h = @roll.blockh
+    velocity_scale = note.data2 / 127.0
 
     # FIXME Too much rounded !
     if @rollc.selected.include? [tick, note.data1]
       #puts "selected note"
-      color.block_selected
+      color.block_selected velocity_scale
     else
-      color.block
+      color.block velocity_scale
     end
     @cairo.move_to x + w / 2, y
     @cairo.curve_to x + w, y, x + w, y, x + w, y + h / 2

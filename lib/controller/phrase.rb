@@ -58,7 +58,7 @@ class PhraseController
     while iter and iter.data1 != pos[1] do
       iter = iter.next
     end
-    return iter if iter
+    return iter if iter and iter.noteon?
     nil
   end
 
@@ -90,8 +90,10 @@ class PhraseController
   def resize_note!(pos, offset)
     if (note = get_note(pos))
       if note.duration + offset < 1
+        @controller.pianoroll.note_duration = 1
         note.duration = 1
       else
+        @controller.pianoroll.note_duration = note.duration + offset
         note.duration = note.duration + offset
       end
       true
