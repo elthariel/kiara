@@ -37,6 +37,8 @@
 
 using namespace std;
 
+#define __KIARA_LINUX_TIMER_CLOCK   CLOCK_REALTIME
+
 Timer::Timer()
   :transport(0),
    scheduler(0),
@@ -52,21 +54,32 @@ Timer::~Timer()
 
 int           Timer::run()
 {
+  /*
+   * Since we are using absolute time when sleeping, we here query the
+   * start time (last_tick). We then add the tick size to this time
+   * and sleep until that new time.
+   */
+  struct timespec       last_tick;
+  clock_gettime(__KIARA_LINUX_TIMER_CLOCK, &last_tick);
+
   while (running)
   {
     struct timespec     request;
-    struct timespec     remaining;
 
     /*
      * If tick_len is 1.2465, tv_sec should be 1 and tv_nsec
      * 2465000000000
      */
-    request.tv_sec = floor(tick_len);
-    request.tv_nsec = (tick_len - floor(tick_len)) * 1000 * 1000 * 1000;
-    //cout << request.tv_sec << "," << request.tv_nsec << endl;
-    while (clock_nanosleep(CLOCK_REALTIME, 0, &request, &remaining))
-      memcpy(&request, &remaining, sizeof(struct timespec));
+    request.tv_sec = last_tick.tv_sec + floor(tick_len);
+    request.tv_nsec = last_tick.tv_nsec + (tick_len - floor(tick_len)) * 1000 * 1000 * 1000;
+    request.tv_sec += request.tv_nsec / (1000 * 1000 * 1000);
+    request.tv_nsec = request.tv_nsec % (1000 * 1000 * 1000);
 
+    // cout << request.tv_sec << ":" << request.tv_nsec << endl;
+    while (clock_nanosleep(__KIARA_LINUX_TIMER_CLOCK, TIMER_ABSTIME, &request, 0))
+      cout << "clock_nanosleep interrupted ?!" << endl;
+
+    memcpy(&last_tick, &request, sizeof(last_tick));
 
     if (scheduler)
     {
