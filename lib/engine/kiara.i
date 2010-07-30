@@ -8,10 +8,10 @@
 #include "playlist.hh"
 #include "pattern.hh"
 #include "pattern_storage.hh"
-#include "phrase.hh"
+#include "note_block.hh"
 #include "event.hh"
-#include "events_merger.hh"
-#include "event_scheduler.hh"
+#include "chan_merger.hh"
+#include "note_scheduler.hh"
 #include "midi_out.hh"
 #include "memory.hh"
 #include "kiara-config.h"
@@ -44,11 +44,11 @@
 %bang Playlist::reset();
 %bang PatternStorage::reset();
 %bang Pattern::reset();
-%bang Phrase::reset();
+%bang NoteBlock::reset();
 
-// Phrase rules
-%bang Phrase::insert(unsigned int, Event *);
-%bang Phrase::remove(unsigned int, Event *);
+// NoteBlock rules
+%bang NoteBlock::insert(unsigned int, Event *);
+%bang NoteBlock::remove(unsigned int, Event *);
 
 // Timer rules
 %rename("bpm") Timer::get_bpm();
@@ -64,10 +64,10 @@
 %include "playlist.hh"
 %include "pattern.hh"
 %include "pattern_storage.hh"
-%include "phrase.hh"
+%include "note_block.hh"
 %include "event.hh"
-%include "events_merger.hh"
-%include "event_scheduler.hh"
+%include "chan_merger.hh"
+%include "note_scheduler.hh"
 %include "midi_out.hh"
 %include "memory.hh"
 %include "kiara-config.h"

@@ -40,12 +40,12 @@ Playlist                      &Engine::playlist()
   return m_playlist;
 }
 
-EventMerger                   &Engine::merger()
+ChanMerger                   &Engine::merger()
 {
   return m_merger;
 }
 
-EventScheduler                &Engine::scheduler()
+NoteScheduler                &Engine::scheduler()
 {
   return m_scheduler;
 }

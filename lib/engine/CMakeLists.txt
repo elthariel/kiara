@@ -26,13 +26,13 @@
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(kiara_SOURCES engine.cxx
   event.cxx
-  event_scheduler.cxx
-  events_merger.cxx
+  note_scheduler.cxx
+  chan_merger.cxx
   memory.cxx
   midi_out.cxx
   pattern.cxx
   pattern_storage.cxx
-  phrase.cxx
+  note_block.cxx
   playlist.cxx
   transport.cxx
   transport_position.cxx

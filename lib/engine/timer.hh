@@ -28,7 +28,7 @@
 
 #include "kiara-config.h"
 #include "transport.hh"
-#include "event_scheduler.hh"
+#include "note_scheduler.hh"
 #include "boost/utility.hpp"
 
 class Timer : private boost::noncopyable
@@ -41,7 +41,7 @@ public:
   void          kill();
 
   void          set_transport(Transport *t = 0);
-  void          set_scheduler(EventScheduler *s = 0);
+  void          set_scheduler(NoteScheduler *s = 0);
   unsigned int  get_bpm();
   unsigned int  set_bpm(unsigned int);
 
@@ -49,7 +49,7 @@ protected:
   int           run();
 
   Transport     *transport;
-  EventScheduler *scheduler;
+  NoteScheduler *scheduler;
 
   /*
    * Current bpm

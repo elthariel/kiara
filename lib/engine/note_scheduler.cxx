@@ -1,12 +1,12 @@
 
 #include <iostream>
 #include <typeinfo>
-#include "event_scheduler.hh"
+#include "note_scheduler.hh"
 
 /*
- * EventScheduler
+ * NoteScheduler
  */
-EventScheduler::EventScheduler()
+NoteScheduler::NoteScheduler()
 {
   unsigned int i;
 
@@ -14,9 +14,9 @@ EventScheduler::EventScheduler()
     connect(&bus[i], i);
 }
 
-EventScheduler::~EventScheduler() {}
+NoteScheduler::~NoteScheduler() {}
 
-EventSchedulerBus &EventScheduler::operator[](unsigned int i)
+NoteSchedulerBus &NoteScheduler::operator[](unsigned int i)
 {
   if (i >= KIARA_TRACKS)
     i = 0;
@@ -25,30 +25,30 @@ EventSchedulerBus &EventScheduler::operator[](unsigned int i)
 
 // Overloading with empty method to avoid event passing
 // Events should go directly to busses, we only pass ticks.
-void    EventScheduler::send(Event &e)
+void    NoteScheduler::send(Event &e)
 {
   return;
 }
 
 /*
- * EventSchedulerBus
+ * NoteSchedulerBus
  */
 
-EventSchedulerBus::Voice::Voice()
+NoteSchedulerBus::Voice::Voice()
   :remaining_tick(0),
    note(0)
 {
 }
 
-EventSchedulerBus::EventSchedulerBus()
+NoteSchedulerBus::NoteSchedulerBus()
 {
 }
 
-EventSchedulerBus::~EventSchedulerBus()
+NoteSchedulerBus::~NoteSchedulerBus()
 {
 }
 
-void    EventSchedulerBus::send(Event &e)
+void    NoteSchedulerBus::send(Event &e)
 {
   int   voice_id;
 
@@ -65,7 +65,7 @@ void    EventSchedulerBus::send(Event &e)
   EventBus::send(e);
 }
 
-void    EventSchedulerBus::tick(TransportPosition pos)
+void    NoteSchedulerBus::tick(TransportPosition pos)
 {
   unsigned int i;
 
@@ -84,7 +84,7 @@ void    EventSchedulerBus::tick(TransportPosition pos)
     }
 }
 
-int     EventSchedulerBus::find_free_voice()
+int     NoteSchedulerBus::find_free_voice()
 {
   unsigned int i;
 

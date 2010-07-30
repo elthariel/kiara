@@ -21,7 +21,7 @@ void          Pattern::reset()
     phrases[i].reset();
 }
 
-Phrase        &Pattern::operator[](unsigned int track_id)
+NoteBlock        &Pattern::operator[](unsigned int track_id)
 {
   if (track_id >= KIARA_TRACKS)
     return phrases[0];

@@ -1,21 +1,21 @@
 
 #include <iostream>
 #include <cstring>
-#include "phrase.hh"
+#include "note_block.hh"
 
 using namespace std;
 
-Phrase::Phrase()
+NoteBlock::NoteBlock()
 {
   reset();
 }
 
-Phrase::~Phrase()
+NoteBlock::~NoteBlock()
 {
   // FIXME dealloc all events.
 }
 
-Event         *Phrase::operator[](unsigned int tick)
+Event         *NoteBlock::operator[](unsigned int tick)
 {
   if (tick >= KIARA_PPQ * 4 * KIARA_MAXBARS)
     return data[0];
@@ -23,7 +23,7 @@ Event         *Phrase::operator[](unsigned int tick)
     return data[tick];
 }
 
-Event         *Phrase::get_note_on_tick(unsigned int tick,
+Event         *NoteBlock::get_note_on_tick(unsigned int tick,
                                         unsigned int max_bar,
                                         unsigned char note)
 {
@@ -46,7 +46,7 @@ Event         *Phrase::get_note_on_tick(unsigned int tick,
   return iter;
 }
 
-bool          Phrase::insert(unsigned int tick, Event *e)
+bool          NoteBlock::insert(unsigned int tick, Event *e)
 {
   if (tick > KIARA_MAXBARS * KIARA_PPQ * 4 || e == 0)
     return false;
@@ -59,7 +59,7 @@ bool          Phrase::insert(unsigned int tick, Event *e)
   return true;
 }
 
-bool          Phrase::remove(unsigned int tick, Event *e)
+bool          NoteBlock::remove(unsigned int tick, Event *e)
 {
   if (tick > KIARA_MAXBARS * KIARA_PPQ * 4 || e == 0)
     return false;
@@ -91,7 +91,7 @@ bool          Phrase::remove(unsigned int tick, Event *e)
   return false;
 }
 
-int           Phrase::next_used_tick(unsigned int tick)
+int           NoteBlock::next_used_tick(unsigned int tick)
 {
   unsigned int i;
 
@@ -101,7 +101,7 @@ int           Phrase::next_used_tick(unsigned int tick)
   return -1;
 }
 
-void          Phrase::reset()
+void          NoteBlock::reset()
 {
   memset(&data, 0, sizeof(data));
 }

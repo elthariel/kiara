@@ -29,7 +29,7 @@
 # include <boost/utility.hpp>
 
 # include "pattern.hh"
-# include "events_merger.hh"
+# include "chan_merger.hh"
 
 class PatternStorage : boost::noncopyable
 {
@@ -40,7 +40,7 @@ public:
   Pattern       &operator[](unsigned int id);
   unsigned int  size();
 
-  void          set_event_merger(EventMerger &merger);
+  void          set_event_merger(ChanMerger &merger);
 
   void          reset();
 protected:

@@ -23,13 +23,13 @@
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 */
 
-#ifndef   	EVENT_SCHEDULER_HH_
-# define   	EVENT_SCHEDULER_HH_
+#ifndef   	NOTE_SCHEDULER_HH_
+# define   	NOTE_SCHEDULER_HH_
 
 # include "boost/utility.hpp"
 # include "bus.hh"
 
-class EventSchedulerBus : public EventBus, boost::noncopyable
+class NoteSchedulerBus : public EventBus, boost::noncopyable
 {
 protected:
   struct Voice
@@ -40,8 +40,8 @@ protected:
     uint8_t     note;
   };
 public:
-  EventSchedulerBus();
-  ~EventSchedulerBus();
+  NoteSchedulerBus();
+  ~NoteSchedulerBus();
   virtual void  send(Event &e);
   virtual void  tick(TransportPosition pos);
 
@@ -52,18 +52,18 @@ protected:
 };
 
 // connect before Playlist in Transport.
-class EventScheduler : public EventBus, boost::noncopyable
+class NoteScheduler : public EventBus, boost::noncopyable
 {
 public:
-  EventScheduler();
-  ~EventScheduler();
+  NoteScheduler();
+  ~NoteScheduler();
 
-  EventSchedulerBus     &operator[](unsigned int i);
+  NoteSchedulerBus     &operator[](unsigned int i);
   virtual void          send(Event &e);
 
 protected:
 
-  EventSchedulerBus     bus[KIARA_TRACKS];
+  NoteSchedulerBus     bus[KIARA_TRACKS];
 };
 
-#endif	    /* !EVENT_SCHEDULER_HH_ */
+#endif	    /* !NOTE_SCHEDULER_HH_ */

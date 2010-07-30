@@ -23,24 +23,24 @@
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 */
 
-#ifndef   	EVENTS_MERGER_HH_
-# define   	EVENTS_MERGER_HH_
+#ifndef   	NOTE_MERGER_HH_
+# define   	NOTE_MERGER_HH_
 
 # include "bus.hh"
 # include "boost/utility.hpp"
 
 /*
- * EventMergerBus is the destination bus of all patterns.
+ * ChanMergerBus is the destination bus of all patterns.
  * There is a bus per midi channel. All events passing
- * through an EventMergerBus are checked and modified
+ * through an ChanMergerBus are checked and modified
  * necessary, at the output they all are on the same midi
  * chan (cf. set_chan(uint))
  */
-class EventMergerBus : boost::noncopyable, public EventBus
+class ChanMergerBus : boost::noncopyable, public EventBus
 {
 public:
-  EventMergerBus();
-  ~EventMergerBus();
+  ChanMergerBus();
+  ~ChanMergerBus();
 
   virtual void  send(Event &);
   void          set_chan(unsigned int chan);
@@ -50,14 +50,14 @@ protected:
   unsigned int          chan;
 };
 
-class EventMerger : boost::noncopyable
+class ChanMerger : boost::noncopyable
 {
 public:
-  EventMerger();
-  ~EventMerger();
-  EventMergerBus        &operator[](unsigned int);
+  ChanMerger();
+  ~ChanMerger();
+  ChanMergerBus        &operator[](unsigned int);
 protected:
-  EventMergerBus        bus[KIARA_TRACKS];
+  ChanMergerBus        bus[KIARA_TRACKS];
 };
 
-#endif	    /* !EVENTS_MERGER_HH_ */
+#endif	    /* !NOTE_MERGER_HH_ */

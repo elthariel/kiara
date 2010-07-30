@@ -23,19 +23,19 @@
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 */
 
-#ifndef   	PHRASE_HH_
-# define   	PHRASE_HH_
+#ifndef   	NOTE_BLOCK_HH_
+# define   	NOTE_BLOCK_HH_
 
 # include <stdint.h>
 
 # include "kiara-config.h"
 # include "event.hh"
 
-class Phrase
+class NoteBlock
 {
 public:
-  Phrase();
-  ~Phrase();
+  NoteBlock();
+  ~NoteBlock();
   Event         *operator[](unsigned int tick);
 
   /*
@@ -69,4 +69,4 @@ protected:
   Event         *data[KIARA_PPQ * 4 * KIARA_MAXBARS];
 };
 
-#endif	    /* !PHRASE_HH_ */
+#endif	    /* !NOTE_BLOCK_HH_ */

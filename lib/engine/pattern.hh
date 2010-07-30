@@ -26,7 +26,7 @@
 #ifndef   	PATTERN_HH_
 # define   	PATTERN_HH_
 
-#include "phrase.hh"
+#include "note_block.hh"
 #include "bus.hh"
 
 class Pattern : public EventBus
@@ -35,7 +35,7 @@ public:
   Pattern();
   ~Pattern();
 
-  Phrase        &operator[](unsigned int track_id);
+  NoteBlock        &operator[](unsigned int track_id);
 
   /*
    * When sending tick to patterns, pos must be relative to
@@ -51,7 +51,7 @@ protected:
   void          play_track(unsigned int track,
                            TransportPosition pos);
 
-  Phrase        phrases[KIARA_TRACKS];
+  NoteBlock        phrases[KIARA_TRACKS];
 
   // The size of the pattern in bars.
   unsigned int  size;

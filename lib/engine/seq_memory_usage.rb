@@ -35,7 +35,7 @@ max_events = 10 ** 6
 
 # Event: a pointer + midievent + ?flags
 event = pointer + midi + flags
-# Phrase: pointer * ppq * 4 (using 4/4 signature) * bars
+# NoteBlock: pointer * ppq * 4 (using 4/4 signature) * bars
 phrase = pointer * ppq * 4 * bars * tracks
 
 # max_patterns = max_phrases / 16
@@ -49,13 +49,13 @@ puts "Midi Event Size: #{midi} bytes."
 puts "Flags and other: #{flags} bytes."
 puts "PPQ: #{ppq}."
 puts "Tracks: #{tracks}"
-puts "Max Phrases Bars: #{bars}."
-puts "Max Phrases: #{max_phrases}."
+puts "Max NoteBlocks Bars: #{bars}."
+puts "Max NoteBlocks: #{max_phrases}."
 puts "Max Notes: #{max_events}."
 # puts "=> Max Patterns: #{max_patterns}"
 puts "--------------------------------------"
 puts "Memory Consumption:"
-puts "\tPhrases:\t#{phrase_mem / (1024*1024)} Mb."
+puts "\tNoteBlocks:\t#{phrase_mem / (1024*1024)} Mb."
 puts "\tNotes:\t#{event_mem / (1024*1024)} Mb."
 # puts "--------------------------------------"
 # puts "--------------  Tests ----------------"

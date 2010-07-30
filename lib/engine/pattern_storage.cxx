@@ -23,7 +23,7 @@ void          PatternStorage::reset()
     patterns[i].reset();
 }
 
-void          PatternStorage::set_event_merger(EventMerger &merger)
+void          PatternStorage::set_event_merger(ChanMerger &merger)
 {
   unsigned int i, j;
 

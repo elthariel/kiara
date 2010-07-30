@@ -32,8 +32,8 @@
 # include "timer.hh"
 # include "memory.hh"
 # include "playlist.hh"
-# include "events_merger.hh"
-# include "event_scheduler.hh"
+# include "chan_merger.hh"
+# include "note_scheduler.hh"
 # include "midi_out.hh"
 
 class Engine : boost::noncopyable
@@ -47,15 +47,15 @@ public:
   Timer                         &timer();
   Transport                     &transport();
   Playlist                      &playlist();
-  EventMerger                   &merger();
-  EventScheduler                &scheduler();
+  ChanMerger                   &merger();
+  NoteScheduler                &scheduler();
   MidiOut                       &midi_out();
 protected:
   Timer                         m_timer;
   Transport                     m_transport;
-  EventMerger                   m_merger;
+  ChanMerger                   m_merger;
   Playlist                      m_playlist;
-  EventScheduler                m_scheduler;
+  NoteScheduler                m_scheduler;
   MidiOut                       m_out;
   boost::thread                 engine_thread;
 };

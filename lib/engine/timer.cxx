@@ -98,7 +98,7 @@ void          Timer::set_transport(Transport *t)
   transport = t;
 }
 
-void          Timer::set_scheduler(EventScheduler *s)
+void          Timer::set_scheduler(NoteScheduler *s)
 {
   scheduler = s;
 }
