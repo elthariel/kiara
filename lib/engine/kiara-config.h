@@ -26,17 +26,63 @@
 #ifndef   	KIARA_CONFIG_H_
 # define   	KIARA_CONFIG_H_
 
-#define         KIARA_PPQ               48
-#define         KIARA_MAXBARS           16
-// #define         KIARA_MAXPHRASES        2000
-#define         KIARA_MAXPATTERNS       200
-#define         KIARA_MAXEVENTS         1000000
-// FIXME rename to KIARA_CHANNELS
-#define         KIARA_TRACKS            16
-#define         KIARA_PLSLEN            32
-#define         KIARA_PLSTRACKS         20
-#define         KIARA_TRACK_POLY        32
+#define         PPQ                     48
 
-#define         KIARA_DEFAULTBPM        120
+/*
+ * The maximum of bars of a block
+ */
+#define         MAX_BARS                16
+
+/*
+ * The maximum of bars of a cluster. (This is really
+ * cheaper to allocate)
+ */
+#define         MAX_BARS_CLUSTER        64
+
+/*
+ * The maximum allocatable notes.
+ */
+#define         MAX_EVENTS              1000000
+
+/*
+ * The maximum allocatable notes.
+ */
+#define         MAX_CURVE_BLOCKS        4000
+
+/*
+ * The maximum allocatable notes.
+ */
+#define         MAX_NOTE_BLOCKS         1000
+
+/*
+ * Due to MIDI protocol restriction, this should be < 16
+ * until we change our event format.
+ */
+#define         CHANNELS                16
+
+/*
+ * The number of note on waiting for their note off to be
+ * schedulded.
+ */
+#define         TRACK_POLY              32
+
+/*
+ *  The number of curve you could play concurrently on each
+ *  track.
+ */
+#define         CURVE_POLY              4
+
+/*
+ * The bpm when the application starts.
+ */
+#define         START_BPM               120
+
+
+// FIXME Removes this when 0.1.0 work is over
+// #define         KIARA_MAXPHRASES        2000
+// #define         KIARA_MAXPATTERNS       200
+// #define         KIARA_PLSLEN            32
+// #define         KIARA_PLSCHANNELS         20
+
 
 #endif 	    /* !KIARA_CONFIG_H_ */

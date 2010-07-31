@@ -1,7 +1,7 @@
 /*
-** pattern.hh
+** curve_block.cxx
 ** Login : <elthariel@rincevent>
-** Started on  Sat Jul 10 15:33:17 2010 elthariel
+** Started on  Sat Jul 31 02:36:40 2010 elthariel
 ** $Id$
 **
 ** Author(s):
@@ -23,38 +23,56 @@
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 */
 
-#ifndef   	PATTERN_HH_
-# define   	PATTERN_HH_
+#include <iostream>
+#include <cstring>
+#include <assert.h>
 
-#include "note_block.hh"
-#include "bus.hh"
+#include "curve_block.hh"
+#include "memory.hh"
 
-class Pattern : public EventBus
+CurveBlock::CurveBlock()
 {
-public:
-  Pattern();
-  ~Pattern();
+  reset();
+}
 
-  NoteBlock        &operator[](unsigned int track_id);
+CurveBlock::~CurveBlock()
+{
+}
 
-  /*
-   * When sending tick to patterns, pos must be relative to
-   * the start of the pattern.
-   */
-  virtual void  tick(TransportPosition pos);
+void          *CurveBlock::operator new(size_t sz)
+{
+  assert(sz == sizeof(CurveBlock));
 
-  unsigned int  get_size();
-  void          set_size(unsigned int a_size);
+  return Memory::curve_block().alloc();
+}
 
-  void          reset();
-protected:
-  void          play_track(unsigned int track,
-                           TransportPosition pos);
+void          CurveBlock::operator delete(void *p)
+{
+  if (p)
+    Memory::curve_block().dealloc((CurveBlock *)p);
+}
 
-  NoteBlock        phrases[KIARA_TRACKS];
 
-  // The size of the pattern in bars.
-  unsigned int  size;
-};
+char          &CurveBlock::operator[](unsigned int idx)
+{
+  assert (id < PPQ * 4 * MAX_BARS);
 
-#endif	    /* !PATTERN_HH_ */
+  return curve[idx];
+}
+
+bool          CurveBlock::is_empty()
+{
+  unsigned int i;
+
+  for (i = 0; i < PPQ * 4 * MAX_BARS; i++)
+    if (curve[i] >= 0)
+      return false;
+
+  return true;
+}
+
+void          CurveBlock::reset()
+{
+  memset(&curve, -1, sizeof(curve));
+}
+

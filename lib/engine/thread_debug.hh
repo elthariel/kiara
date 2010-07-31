@@ -1,7 +1,7 @@
 /*
-** memory.hh
+** thread_debug.hh
 ** Login : <elthariel@rincevent>
-** Started on  Sat Jul 10 05:56:58 2010 elthariel
+** Started on  Sat Jul 31 15:49:26 2010 elthariel
 ** $Id$
 **
 ** Author(s):
@@ -23,32 +23,17 @@
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 */
 
-#ifndef   	MEMORY_HH_
-# define   	MEMORY_HH_
+#ifndef   	THREAD_DEBUG_HH_
+# define   	THREAD_DEBUG_HH_
 
-# include <boost/utility.hpp>
-# include "kiara-config.h"
-# include "pool.hh"
-# include "event.hh"
-# include "note_block.hh"
-# include "curve_block.hh"
+# include <assert.h>
+# include <boost/thread.hpp>
 
-class Memory : private boost::noncopyable
-{
-public:
-  static Memory                 &get();
-  static Rt::Chunk<Event>       &event();
-  static Rt::Chunk<NoteBlock>   &note_block();
-  static Rt::Chunk<CurveBlock>  &curve_block();
+extern boost::thread::id __rt_thread_id;
 
-protected:
-  Memory();
+# define        I_AM_THE_RT_THREAD __rt_thread_id = boost::this_thread::get_id();
 
-  static Memory                 *instance;
+# define        ASSERT_RT_THREAD assert(boost::this_thread::get_id == __rt_thread_id);
+# define        ASSERT_NONRT_THREAD assert(boost::this_thread::get_id != __rt_thread_id);
 
-  Rt::Chunk<Event>              event_pool;
-  Rt::Chunk<NoteBlock>          note_block_pool;
-  Rt::Chunk<CurveBlock>         curve_block_pool;
-};
-
-#endif	    /* !MEMORY_HH_ */
+#endif	    /* !THREAD_DEBUG_HH_ */

@@ -10,7 +10,7 @@ NoteScheduler::NoteScheduler()
 {
   unsigned int i;
 
-  for (i = 0; i < KIARA_TRACKS; i++)
+  for (i = 0; i < CHANNELS; i++)
     connect(&bus[i], i);
 }
 
@@ -18,7 +18,7 @@ NoteScheduler::~NoteScheduler() {}
 
 NoteSchedulerBus &NoteScheduler::operator[](unsigned int i)
 {
-  if (i >= KIARA_TRACKS)
+  if (i >= CHANNELS)
     i = 0;
   return bus[i];
 }
@@ -69,7 +69,7 @@ void    NoteSchedulerBus::tick(TransportPosition pos)
 {
   unsigned int i;
 
-  for (i = 0; i < KIARA_TRACK_POLY; i++)
+  for (i = 0; i < TRACK_POLY; i++)
     if (voices[i].remaining_tick > 0)
     {
       voices[i].remaining_tick--;
@@ -88,7 +88,7 @@ int     NoteSchedulerBus::find_free_voice()
 {
   unsigned int i;
 
-  for (i = 0; i < KIARA_TRACK_POLY; i++)
+  for (i = 0; i < TRACK_POLY; i++)
     if (voices[i].remaining_tick == 0)
       return i;
   return -1;

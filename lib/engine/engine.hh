@@ -31,7 +31,6 @@
 
 # include "timer.hh"
 # include "memory.hh"
-# include "playlist.hh"
 # include "chan_merger.hh"
 # include "note_scheduler.hh"
 # include "midi_out.hh"
@@ -46,16 +45,14 @@ public:
   void                          stop();
   Timer                         &timer();
   Transport                     &transport();
-  Playlist                      &playlist();
-  ChanMerger                   &merger();
-  NoteScheduler                &scheduler();
+  ChanMerger                    &merger();
+  NoteScheduler                 &scheduler();
   MidiOut                       &midi_out();
 protected:
   Timer                         m_timer;
   Transport                     m_transport;
-  ChanMerger                   m_merger;
-  Playlist                      m_playlist;
-  NoteScheduler                m_scheduler;
+  ChanMerger                    m_merger;
+  NoteScheduler                 m_scheduler;
   MidiOut                       m_out;
   boost::thread                 engine_thread;
 };

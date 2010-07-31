@@ -57,7 +57,7 @@ public:
   ~ChanMerger();
   ChanMergerBus        &operator[](unsigned int);
 protected:
-  ChanMergerBus        bus[KIARA_TRACKS];
+  ChanMergerBus        bus[CHANNELS];
 };
 
 #endif	    /* !NOTE_MERGER_HH_ */

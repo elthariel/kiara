@@ -29,13 +29,25 @@
 # include <stdint.h>
 
 # include "kiara-config.h"
+
+# include "block.hh"
 # include "event.hh"
 
-class NoteBlock
+class NoteBlock : public Block
 {
 public:
   NoteBlock();
+  // Deep copy of the NoteBlock (i.e. allocate new events).
+  NoteBlock(const NoteBlock &a_block);
   ~NoteBlock();
+  /*
+   * Overload new and delete operator to avoid calls to malloc but
+   * instead use our own allocator (memory pool / Rt::Chunk)
+   */
+  void          *operator new(size_t);
+  void          operator delete(void *);
+
+
   Event         *operator[](unsigned int tick);
 
   /*
@@ -65,8 +77,9 @@ public:
    * reset as well when loading a file.
    */
   void          reset();
+
 protected:
-  Event         *data[KIARA_PPQ * 4 * KIARA_MAXBARS];
+  Event         *data[PPQ * 4 * MAX_BARS];
 };
 
 #endif	    /* !NOTE_BLOCK_HH_ */

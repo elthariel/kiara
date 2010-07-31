@@ -1,7 +1,10 @@
 
 #include <iostream>
 #include <cstring>
+#include <assert.h>
+
 #include "note_block.hh"
+#include "memory.hh"
 
 using namespace std;
 
@@ -12,12 +15,39 @@ NoteBlock::NoteBlock()
 
 NoteBlock::~NoteBlock()
 {
-  // FIXME dealloc all events.
+  for (int i = 0; i < PPQ * 4 * MAX_BARS; ++i)
+    if (data[i])
+    {
+      Event     *iter = data[i];
+      Event     *to_delete = 0;
+
+      while (iter)
+      {
+        to_delete = iter;
+        iter = iter->next;
+        delete to_delete;
+      }
+
+      data[i] = 0;
+    }
+}
+
+void          *NoteBlock::operator new(size_t sz)
+{
+  assert(sz == sizeof(NoteBlock));
+
+  return Memory::note_block().alloc();
+}
+
+void          NoteBlock::operator delete(void *p)
+{
+  if (p)
+    Memory::note_block().dealloc((NoteBlock *)p);
 }
 
 Event         *NoteBlock::operator[](unsigned int tick)
 {
-  if (tick >= KIARA_PPQ * 4 * KIARA_MAXBARS)
+  if (tick >= PPQ * 4 * MAX_BARS)
     return data[0];
   else
     return data[tick];
@@ -30,10 +60,10 @@ Event         *NoteBlock::get_note_on_tick(unsigned int tick,
   unsigned int i;
   Event *iter = 0;
 
-  if (max_bar > KIARA_MAXBARS)
-    max_bar = KIARA_MAXBARS;
+  if (max_bar > MAX_BARS)
+    max_bar = MAX_BARS;
 
-  for (i = 0; i < max_bar * 4 * KIARA_PPQ; i++)
+  for (i = 0; i < max_bar * 4 * PPQ; i++)
   {
     iter = data[i];
     while (iter)
@@ -48,7 +78,7 @@ Event         *NoteBlock::get_note_on_tick(unsigned int tick,
 
 bool          NoteBlock::insert(unsigned int tick, Event *e)
 {
-  if (tick > KIARA_MAXBARS * KIARA_PPQ * 4 || e == 0)
+  if (tick > MAX_BARS * PPQ * 4 || e == 0)
     return false;
 
   Event *iter = data[tick];
@@ -61,7 +91,7 @@ bool          NoteBlock::insert(unsigned int tick, Event *e)
 
 bool          NoteBlock::remove(unsigned int tick, Event *e)
 {
-  if (tick > KIARA_MAXBARS * KIARA_PPQ * 4 || e == 0)
+  if (tick > MAX_BARS * PPQ * 4 || e == 0)
     return false;
 
   Event *iter = data[tick];
@@ -95,7 +125,7 @@ int           NoteBlock::next_used_tick(unsigned int tick)
 {
   unsigned int i;
 
-  for (i = tick; i < KIARA_MAXBARS * KIARA_PPQ * 4; i++)
+  for (i = tick; i < MAX_BARS * PPQ * 4; i++)
     if (data[i])
       return i;
   return -1;

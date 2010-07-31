@@ -47,7 +47,7 @@ module PianoRollAttributes
   end
 
   def tick_size
-    block_ticks = Kiara::KIARA_PPQ / 4
+    block_ticks = Kiara::PPQ / 4
     blockw / block_ticks.to_f
   end
 

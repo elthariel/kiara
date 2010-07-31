@@ -34,6 +34,7 @@
 #include <sched.h>
 
 #include "timer.hh"
+#include "thread_debug.hh"
 
 using namespace std;
 
@@ -45,7 +46,7 @@ Timer::Timer()
    reminder(0.0),
    running(true)
 {
-  set_bpm(KIARA_DEFAULTBPM);
+  set_bpm(START_BPM);
 }
 
 Timer::~Timer()
@@ -113,6 +114,7 @@ static void   __acquire_rt_privileges()
 
 void          Timer::operator()()
 {
+  I_AM_THE_RT_THREAD;
   __acquire_rt_privileges();
   run();
 }
@@ -130,7 +132,7 @@ unsigned int  Timer::get_bpm()
 unsigned int  Timer::set_bpm(unsigned int new_bpm)
 {
   bpm = new_bpm;
-  tick_len = 60.0 / (bpm * KIARA_PPQ);
+  tick_len = 60.0 / (bpm * PPQ);
   cout << "New tick len: " << tick_len << "s." << endl;
 }
 

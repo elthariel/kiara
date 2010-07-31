@@ -30,12 +30,10 @@ set(kiara_SOURCES engine.cxx
   chan_merger.cxx
   memory.cxx
   midi_out.cxx
-  pattern.cxx
-  pattern_storage.cxx
   note_block.cxx
-  playlist.cxx
   transport.cxx
   transport_position.cxx
+  thread_debug.cxx
   )
 
 if (UNIX AND USE_NANOSLEEP_TIMER)

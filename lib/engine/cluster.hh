@@ -1,7 +1,7 @@
 /*
-** memory.hh
+** cluster.hh
 ** Login : <elthariel@rincevent>
-** Started on  Sat Jul 10 05:56:58 2010 elthariel
+** Started on  Sat Jul 31 01:45:15 2010 elthariel
 ** $Id$
 **
 ** Author(s):
@@ -23,32 +23,32 @@
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 */
 
-#ifndef   	MEMORY_HH_
-# define   	MEMORY_HH_
+#ifndef   	CLUSTER_HH_
+# define   	CLUSTER_HH_
 
-# include <boost/utility.hpp>
-# include "kiara-config.h"
-# include "pool.hh"
-# include "event.hh"
-# include "note_block.hh"
-# include "curve_block.hh"
+# include "sector.hh"
 
-class Memory : private boost::noncopyable
+class Cluster
 {
 public:
-  static Memory                 &get();
-  static Rt::Chunk<Event>       &event();
-  static Rt::Chunk<NoteBlock>   &note_block();
-  static Rt::Chunk<CurveBlock>  &curve_block();
+  Cluster();
+  ~Cluster();
 
+  /*
+   * The assignment operator of the Cluster Class is used when copy an
+   * editable cluster to the read-only cluster stored in the block
+   * device. We should here perform a deep copy of the different
+   * Sector and of their blocks. This way, the user editable cluster
+   * could continue being edited by the user and this doesn't affect
+   * the cluster being played by the block device
+   */
+  Cluster       &operator=(const Cluster&a_cluster);
+
+  Sector        &operator[](unsigned int idx);
 protected:
-  Memory();
 
-  static Memory                 *instance;
-
-  Rt::Chunk<Event>              event_pool;
-  Rt::Chunk<NoteBlock>          note_block_pool;
-  Rt::Chunk<CurveBlock>         curve_block_pool;
+  Sector        sectors[MAX_BARS_CLUSTER];
+  unsigned int  length;
 };
 
-#endif	    /* !MEMORY_HH_ */
+#endif	    /* !CLUSTER_HH_ */

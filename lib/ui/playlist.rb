@@ -61,11 +61,11 @@ class PlaylistView < Gtk::DrawingArea
 
   def blockh
     a = allocation
-    (a.height - @head_size) / Kiara::KIARA_PLSTRACKS.to_f
+    (a.height - @head_size) / Kiara::KIARA_PLSCHANNELS.to_f
   end
 
   def tick_size
-    blockw / (Kiara::KIARA_PPQ * 4)
+    blockw / (Kiara::PPQ * 4)
   end
 
   def redraw
@@ -159,7 +159,7 @@ class PlaylistView < Gtk::DrawingArea
       @cairo.stroke
     end
 
-    (1..Kiara::KIARA_PLSTRACKS).each do |i|
+    (1..Kiara::KIARA_PLSCHANNELS).each do |i|
       @cairo.move_to 0, i * blockh + @head_size
       @cairo.line_to a.width, i * blockh + @head_size
       color.hgrid
@@ -168,7 +168,7 @@ class PlaylistView < Gtk::DrawingArea
   end
 
   def draw_patterns(a)
-    (0..Kiara::KIARA_PLSTRACKS).each do |t|
+    (0..Kiara::KIARA_PLSCHANNELS).each do |t|
       (0..Kiara::KIARA_PLSLEN).each do |b|
         if (pattern_id = @playlist[[b, t]]) > 0
           psize = @controller.patterns.size pattern_id
@@ -197,8 +197,8 @@ class PlaylistView < Gtk::DrawingArea
     @cairo.set_antialias Cairo::ANTIALIAS_SUBPIXEL
     # FIXME "MVC" break, views access directly to model
     pos = @controller.engine.transport.get_position
-    max_ticks = Kiara::KIARA_PLSLEN * 4 * Kiara::KIARA_PPQ
-    pos_tick = pos.bar * 4 * Kiara::KIARA_PPQ + pos.beat * Kiara::KIARA_PPQ + pos.tick
+    max_ticks = Kiara::KIARA_PLSLEN * 4 * Kiara::PPQ
+    pos_tick = pos.bar * 4 * Kiara::PPQ + pos.beat * Kiara::PPQ + pos.tick
     pos_x = (pos_tick.to_f / max_ticks) * self.window.size[0]
 
     color.playbar

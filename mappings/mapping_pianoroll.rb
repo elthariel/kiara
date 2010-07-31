@@ -73,7 +73,7 @@ on_chain 'Left' do
   if_context :is? => :pianoroll
   action 'roll-cursor-up' do |c|
     cursor = c.pianoroll.cursor
-    cursor[0] -= Kiara::KIARA_PPQ / 4
+    cursor[0] -= Kiara::PPQ / 4
     c.pianoroll.cursor = cursor
   end
 end
@@ -82,7 +82,7 @@ on_chain 'Right' do
   if_context :is? => :pianoroll
   action 'roll-cursor-down' do |c|
     cursor = c.pianoroll.cursor
-    cursor[0] += Kiara::KIARA_PPQ / 4
+    cursor[0] += Kiara::PPQ / 4
     c.pianoroll.cursor = cursor
   end
 end
@@ -132,10 +132,10 @@ on_chain 'S-Left' do
   if_context :is? => :pianoroll
   action 'roll-cursor-up' do |c|
     cursor = c.pianoroll.cursor
-    if cursor[0] % Kiara::KIARA_PPQ == 0
-      cursor[0] -= Kiara::KIARA_PPQ
+    if cursor[0] % Kiara::PPQ == 0
+      cursor[0] -= Kiara::PPQ
     else
-      cursor[0] -= cursor[0] % Kiara::KIARA_PPQ
+      cursor[0] -= cursor[0] % Kiara::PPQ
     end
     c.pianoroll.cursor = cursor
   end
@@ -145,8 +145,8 @@ on_chain 'S-Right' do
   if_context :is? => :pianoroll
   action 'roll-cursor-down' do |c|
     cursor = c.pianoroll.cursor
-    cursor[0] += Kiara::KIARA_PPQ
-    cursor[0] -= cursor[0] % Kiara::KIARA_PPQ
+    cursor[0] += Kiara::PPQ
+    cursor[0] -= cursor[0] % Kiara::PPQ
     c.pianoroll.cursor = cursor
   end
 end

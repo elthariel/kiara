@@ -1,7 +1,7 @@
 /*
-** memory.hh
+** sector.hh
 ** Login : <elthariel@rincevent>
-** Started on  Sat Jul 10 05:56:58 2010 elthariel
+** Started on  Sat Jul 31 01:58:35 2010 elthariel
 ** $Id$
 **
 ** Author(s):
@@ -23,32 +23,25 @@
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 */
 
-#ifndef   	MEMORY_HH_
-# define   	MEMORY_HH_
+#ifndef   	SECTOR_HH_
+# define   	SECTOR_HH_
 
-# include <boost/utility.hpp>
-# include "kiara-config.h"
-# include "pool.hh"
-# include "event.hh"
+# include <boost/shared_ptr.hpp>
+
 # include "note_block.hh"
 # include "curve_block.hh"
 
-class Memory : private boost::noncopyable
+class Sector
 {
 public:
-  static Memory                 &get();
-  static Rt::Chunk<Event>       &event();
-  static Rt::Chunk<NoteBlock>   &note_block();
-  static Rt::Chunk<CurveBlock>  &curve_block();
+  Sector();
+  // Should perform a deep copy
+  Sector(const Sector &a_sector);
+  ~Sector();
 
 protected:
-  Memory();
-
-  static Memory                 *instance;
-
-  Rt::Chunk<Event>              event_pool;
-  Rt::Chunk<NoteBlock>          note_block_pool;
-  Rt::Chunk<CurveBlock>         curve_block_pool;
+  boost::shared_ptr<NoteBlock>  notes[CHANNELS];
+  boost::shared_ptr<CurveBlock> curves[CHANNELS * CURVE_POLY];
 };
 
-#endif	    /* !MEMORY_HH_ */
+#endif	    /* !SECTOR_HH_ */

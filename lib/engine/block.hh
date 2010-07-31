@@ -1,7 +1,7 @@
 /*
-** pattern_storage.hh
+** base_block.hh
 ** Login : <elthariel@rincevent>
-** Started on  Sat Jul 10 15:58:52 2010 elthariel
+** Started on  Sat Jul 31 02:37:51 2010 elthariel
 ** $Id$
 **
 ** Author(s):
@@ -23,28 +23,13 @@
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 */
 
-#ifndef   	PATTERN_STORAGE_HH_
-# define   	PATTERN_STORAGE_HH_
+#ifndef   	BLOCK_HH_
+# define   	BLOCK_HH_
 
-# include <boost/utility.hpp>
+# include "kiara-config.h"
 
-# include "pattern.hh"
-# include "chan_merger.hh"
-
-class PatternStorage : boost::noncopyable
+class Block
 {
-public:
-  PatternStorage();
-  ~PatternStorage();
-
-  Pattern       &operator[](unsigned int id);
-  unsigned int  size();
-
-  void          set_event_merger(ChanMerger &merger);
-
-  void          reset();
-protected:
-  Pattern       patterns[KIARA_MAXPATTERNS];
 };
 
-#endif	    /* !PATTERN_STORAGE_HH_ */
+#endif	    /* !BLOCK_HH_ */

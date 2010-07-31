@@ -87,8 +87,8 @@ end
       action "tr-edit-#{x[0]}-vel#{power[0]}" do |c|
         p = c.pianoroll.phrase
         cursor = c.pianoroll.cursor
-        bar = (cursor[0] / (Kiara::KIARA_PPQ * 4)) * Kiara::KIARA_PPQ * 4
-        pos = [bar + x[0] * (Kiara::KIARA_PPQ / 4), cursor[1]]
+        bar = (cursor[0] / (Kiara::PPQ * 4)) * Kiara::PPQ * 4
+        pos = [bar + x[0] * (Kiara::PPQ / 4), cursor[1]]
         # This checks is there's a note on the "step"
         if (p.occupied? pos)
           e = p.delete_note_on_tick_overlapping! pos
@@ -100,7 +100,7 @@ end
           e.chan = p.track_id
           e.data1 = pos[1]
           e.data2 = power[0]
-          e.duration = Kiara::KIARA_PPQ / 4
+          e.duration = Kiara::PPQ / 4
           p.dealloc_event! e unless p.insert! pos[0], e
           c.pianoroll.redraw
         end
@@ -134,7 +134,7 @@ on_chain 'C-Left' do
   if_context :is? => :pianoroll
   if_context :has_selection? => true
   action 'move-note-left' do |c|
-    c.pianoroll.move [-Kiara::KIARA_PPQ / 4, 0]
+    c.pianoroll.move [-Kiara::PPQ / 4, 0]
   end
 end
 
@@ -142,7 +142,7 @@ on_chain 'C-Right' do
   if_context :is? => :pianoroll
   if_context :has_selection? => true
   action 'move-note-right' do |c|
-    c.pianoroll.move [Kiara::KIARA_PPQ / 4, 0]
+    c.pianoroll.move [Kiara::PPQ / 4, 0]
   end
 end
 
@@ -171,7 +171,7 @@ on_chain 'C-S-Left' do
   if_context :is? => :pianoroll
   if_context :has_selection? => true
   action 'move-note-left' do |c|
-    c.pianoroll.move [-Kiara::KIARA_PPQ, 0]
+    c.pianoroll.move [-Kiara::PPQ, 0]
   end
 end
 
@@ -179,7 +179,7 @@ on_chain 'C-S-Right' do
   if_context :is? => :pianoroll
   if_context :has_selection? => true
   action 'move-note-right' do |c|
-    c.pianoroll.move [Kiara::KIARA_PPQ, 0]
+    c.pianoroll.move [Kiara::PPQ, 0]
   end
 end
 
@@ -208,7 +208,7 @@ on_chain 'C-L-Left' do
   if_context :is? => :pianoroll
   if_context :has_selection? => true
   action 'resize-note-left' do |c|
-    c.pianoroll.resize -Kiara::KIARA_PPQ / 4
+    c.pianoroll.resize -Kiara::PPQ / 4
   end
 end
 
@@ -216,7 +216,7 @@ on_chain 'C-L-Right' do
   if_context :is? => :pianoroll
   if_context :has_selection? => true
   action 'resize-note-right' do |c|
-    c.pianoroll.resize Kiara::KIARA_PPQ / 4
+    c.pianoroll.resize Kiara::PPQ / 4
   end
 end
 

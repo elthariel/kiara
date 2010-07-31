@@ -43,7 +43,7 @@ public:
   // virtual void  set_send_ticks(bool send_tick = true);
   // virtual bool  get_send_ticks();
 protected:
-  Bus<T>       *m_bus[KIARA_TRACKS];
+  Bus<T>       *m_bus[CHANNELS];
   bool          m_send_ticks;
 };
 

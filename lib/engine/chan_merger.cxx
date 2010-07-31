@@ -10,7 +10,7 @@ ChanMerger::ChanMerger()
 {
   unsigned int i;
 
-  for (i = 0; i < KIARA_TRACKS; i++)
+  for (i = 0; i < CHANNELS; i++)
     bus[i].set_chan(i % 16);
 }
 
@@ -20,7 +20,7 @@ ChanMerger::~ChanMerger()
 
 ChanMergerBus        &ChanMerger::operator[](unsigned int id)
 {
-  if (id >= KIARA_TRACKS)
+  if (id >= CHANNELS)
     id = 0;
   return bus[id];
 }

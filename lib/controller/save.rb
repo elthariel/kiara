@@ -97,12 +97,12 @@ end
 class Kiara::Pattern
   def to_a(id)
     res = []
-    (0...Kiara::KIARA_TRACKS).each { |x| res.push get(x).to_a }
+    (0...Kiara::CHANNELS).each { |x| res.push get(x).to_a }
     res
   end
 
   def from_a(a)
-    (0...Kiara::KIARA_TRACKS).each { |i| get(i).from_a a[i] }
+    (0...Kiara::CHANNELS).each { |i| get(i).from_a a[i] }
   end
 end
 
@@ -137,7 +137,7 @@ end
 class Kiara::Playlist
   def to_a
     res = []
-    (0...Kiara::KIARA_PLSTRACKS).each do |track_id|
+    (0...Kiara::KIARA_PLSCHANNELS).each do |track_id|
       track = []
       (0...Kiara::KIARA_PLSLEN).each do |bar|
         track.push get_pos(track_id, bar)
@@ -148,7 +148,7 @@ class Kiara::Playlist
   end
 
   def from_a(a)
-    (0...Kiara::KIARA_PLSTRACKS).each do |track_id|
+    (0...Kiara::KIARA_PLSCHANNELS).each do |track_id|
       (0...Kiara::KIARA_PLSLEN).each do |bar|
         set_pos(track_id, bar, a[track_id][bar])
       end

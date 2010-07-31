@@ -28,11 +28,28 @@
 
 #include <stdint.h>
 
-// struct __attribute__((packed)) Event
+// FIXME, packed attribute is not defined
+//struct __attribute__((packed)) Event
 struct Event
-//class Note
 {
   Event();
+
+  /*
+   * Copy Constructor. this->next is reset to 0
+   */
+
+  Event(const Event &an_event);
+
+  // this->next is reset to 0
+  Event         &operator=(const Event& an_event);
+
+  /*
+   * Overload new and delete operator to avoid calls to malloc but
+   * instead use our own allocator (memory pool / Rt::Chunk)
+   */
+  void          *operator new(size_t sz);
+  void          operator delete(void *e);
+
   Event         *next;
   char          midi[3];
   char          flags[1];

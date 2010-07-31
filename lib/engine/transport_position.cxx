@@ -16,8 +16,8 @@ TransportPosition     &TransportPosition::operator+=(TransportPosition &tp)
   // unsigned int        tmp;
 
   // tmp = tp.tick + tick;
-  // tick = tmp % KIARA_PPQ;
-  // tmp = tp.beat + beat + tmp / KIARA_PPQ;
+  // tick = tmp % PPQ;
+  // tmp = tp.beat + beat + tmp / PPQ;
   // beat = tmp % 4;
   // tmp = tp.bar + bar + tmp / 4;
   *this = (unsigned int)*this + (unsigned int) tp;
@@ -55,15 +55,15 @@ TransportPosition     &TransportPosition::operator=(TransportPosition &other)
 
 TransportPosition     &TransportPosition::operator=(unsigned int value)
 {
-  bar = value / (KIARA_PPQ * 4);
-  value = value % (KIARA_PPQ * 4);
-  beat = value / KIARA_PPQ;
-  tick = value % KIARA_PPQ;
+  bar = value / (PPQ * 4);
+  value = value % (PPQ * 4);
+  beat = value / PPQ;
+  tick = value % PPQ;
 }
 
 TransportPosition::operator unsigned int() const
 {
-  return tick + beat * KIARA_PPQ + bar * 4 * KIARA_PPQ;
+  return tick + beat * PPQ + bar * 4 * PPQ;
 }
 
 bool                  operator==(TransportPosition &a, TransportPosition &b)

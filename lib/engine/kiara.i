@@ -5,9 +5,6 @@
 #include "engine.hh"
 #include "transport.hh"
 #include "transport_position.hh"
-#include "playlist.hh"
-#include "pattern.hh"
-#include "pattern_storage.hh"
 #include "note_block.hh"
 #include "event.hh"
 #include "chan_merger.hh"
@@ -41,9 +38,6 @@
 %bang Event::noteon();
 %bang Event::noteoff();
 
-%bang Playlist::reset();
-%bang PatternStorage::reset();
-%bang Pattern::reset();
 %bang NoteBlock::reset();
 
 // NoteBlock rules
@@ -58,12 +52,11 @@
 %template(EventBus) Bus<Event>;
 %include "pool.hh"
 %template(EventPool) Rt::Chunk<Event>;
+%template(NoteBlockPool) Rt::Chunk<NoteBlock>;
+%template(CurveBlockPool) Rt::Chunk<CurveBlock>;
 %include "engine.hh"
 %include "transport.hh"
 %include "transport_position.hh"
-%include "playlist.hh"
-%include "pattern.hh"
-%include "pattern_storage.hh"
 %include "note_block.hh"
 %include "event.hh"
 %include "chan_merger.hh"

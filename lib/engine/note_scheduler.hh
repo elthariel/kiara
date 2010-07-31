@@ -48,7 +48,7 @@ public:
 protected:
   int           find_free_voice();
 
-  Voice         voices[KIARA_TRACK_POLY];
+  Voice         voices[TRACK_POLY];
 };
 
 // connect before Playlist in Transport.
@@ -63,7 +63,7 @@ public:
 
 protected:
 
-  NoteSchedulerBus     bus[KIARA_TRACKS];
+  NoteSchedulerBus     bus[CHANNELS];
 };
 
 #endif	    /* !NOTE_SCHEDULER_HH_ */

@@ -53,15 +53,15 @@ class PianoRollController
     @mark = nil
 
     # Some states used by mapping
-    @note_duration = Kiara::KIARA_PPQ / 4
+    @note_duration = Kiara::PPQ / 4
     @note_velocity = 98
   end
 
   def cursor=(a)
     a[0] = 0 if a[0] < 0
     a[1] = 0 if a[1] < 0
-    if a[0] >= @controller.patterns.selected_size * Kiara::KIARA_PPQ * 4
-    a[0] = @controller.patterns.selected_size * Kiara::KIARA_PPQ * 4 - 1
+    if a[0] >= @controller.patterns.selected_size * Kiara::PPQ * 4
+    a[0] = @controller.patterns.selected_size * Kiara::PPQ * 4 - 1
     end
     a[1] = 127 if a[1] > 127
     @cursor = a
@@ -86,7 +86,7 @@ class PianoRollController
 
   def track=(id)
     id = 0 if id < 0
-    id = Kiara::KIARA_TRACKS - 1 if id >= Kiara::KIARA_TRACKS
+    id = Kiara::CHANNELS - 1 if id >= Kiara::CHANNELS
     @track = id
     selected_update
     redraw
@@ -167,8 +167,8 @@ class PianoRollController
       npos[0] = 0 if npos[0] < 0
       npos[1] = 0 if npos[1] < 0
       npos[1] = 127 if npos[1] > 128
-      if npos[0] >= Kiara::KIARA_MAXBARS * 4 * Kiara::KIARA_PPQ
-        npos[0] = Kiara::KIARA_MAXBARS * 4 * Kiara::KIARA_PPQ - 1
+      if npos[0] >= Kiara::MAX_BARS * 4 * Kiara::PPQ
+        npos[0] = Kiara::MAX_BARS * 4 * Kiara::PPQ - 1
       end
       if p.move_note! pos, npos
         pos[0] = npos[0]

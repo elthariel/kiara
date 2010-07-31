@@ -25,13 +25,29 @@
 
 #include <iostream>
 #include <cstring>
+#include <assert.h>
+
 #include "event.hh"
+#include "memory.hh"
 
 using namespace std;
 
 Event::Event()
 {
   reset();
+}
+
+void          *Event::operator new(size_t sz)
+{
+  assert(sz == sizeof(Event));
+
+  return Memory::event().alloc();
+}
+
+void          Event::operator delete(void *e)
+{
+  if (e)
+    Memory::event().dealloc((Event *)e);
 }
 
 void          Event::reset()
