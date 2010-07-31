@@ -37,6 +37,7 @@ public:
   Sector();
   // Should perform a deep copy
   Sector(const Sector &a_sector);
+  // not really necessary
   ~Sector();
 
 protected:
