@@ -42,9 +42,15 @@ public:
    * could continue being edited by the user and this doesn't affect
    * the cluster being played by the block device
    */
-  Cluster       &operator=(const Cluster&a_cluster);
-
+  Cluster       &operator=(const Cluster &a_cluster);
+  Cluster       &operator+=(const Cluster &a_cluster);
   Sector        &operator[](unsigned int idx);
+
+  unsigned int  get_length();
+  void          set_length(unsigned int newlen);
+
+  void          reset();
+  void          merge(const Cluster &a_cluster);
 protected:
 
   Sector        sectors[MAX_BARS_CLUSTER];

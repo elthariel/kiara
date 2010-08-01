@@ -55,7 +55,10 @@ void          CurveBlock::operator delete(void *p)
 
 char          &CurveBlock::operator[](unsigned int idx)
 {
-  assert (id < PPQ * 4 * MAX_BARS);
+  assert (idx < PPQ * 4 * MAX_BARS);
+
+  if (idx >= PPQ * 4 * length)
+    idx = PPQ * 4 * length - 1;
 
   return curve[idx];
 }
@@ -64,7 +67,7 @@ bool          CurveBlock::is_empty()
 {
   unsigned int i;
 
-  for (i = 0; i < PPQ * 4 * MAX_BARS; i++)
+  for (i = 0; i < PPQ * 4 * length; i++)
     if (curve[i] >= 0)
       return false;
 
@@ -73,6 +76,23 @@ bool          CurveBlock::is_empty()
 
 void          CurveBlock::reset()
 {
+  Block::reset();
   memset(&curve, -1, sizeof(curve));
 }
+
+/*
+ *  Etudiant dans la / En nageant dans la
+ *  Piscine pleine de vague
+ *  Il implore l'abysse
+ *
+ *  //Tek 5 en plein
+ *  //Eip, serein et sage
+ *  //Charme les precipices
+ *
+ *  Tournent bien des lunes
+ *  Encore, et hardi il
+ *  Charme les precipices
+ *
+ * -Haijin
+ */
 

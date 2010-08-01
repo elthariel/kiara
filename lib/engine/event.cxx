@@ -37,6 +37,30 @@ Event::Event()
   reset();
 }
 
+Event::Event(const Event &an_event)
+  :flags(an_event.flags),
+   duration(an_event.duration),
+   next(0)
+{
+  midi[0] = an_event.midi[0];
+  midi[1] = an_event.midi[1];
+  midi[2] = an_event.midi[2];
+}
+
+Event         &Event::operator=(const Event& an_event)
+{
+  if (this == &an_event)
+    return *this;
+
+  midi[0] = an_event.midi[0];
+  midi[1] = an_event.midi[1];
+  midi[2] = an_event.midi[2];
+  flags = an_event.flags;
+  duration = an_event.duration;
+
+  return *this;
+}
+
 void          *Event::operator new(size_t sz)
 {
   assert(sz == sizeof(Event));

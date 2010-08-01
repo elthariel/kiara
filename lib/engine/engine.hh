@@ -34,6 +34,7 @@
 # include "chan_merger.hh"
 # include "note_scheduler.hh"
 # include "midi_out.hh"
+# include "block_device.hh"
 
 class Engine : boost::noncopyable
 {
@@ -48,12 +49,20 @@ public:
   ChanMerger                    &merger();
   NoteScheduler                 &scheduler();
   MidiOut                       &midi_out();
+  Cluster                       &loop();
+  Cluster                       &dabreak();
+  Cluster                       &interrupt();
+  BlockDevice                   &device();
 protected:
   Timer                         m_timer;
   Transport                     m_transport;
   ChanMerger                    m_merger;
   NoteScheduler                 m_scheduler;
   MidiOut                       m_out;
+  Cluster                       m_loop;
+  Cluster                       m_break;
+  Cluster                       m_interrupt;
+  BlockDevice                   m_device;
   boost::thread                 engine_thread;
 };
 

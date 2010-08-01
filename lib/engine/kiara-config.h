@@ -40,17 +40,17 @@
 #define         MAX_BARS_CLUSTER        64
 
 /*
- * The maximum allocatable notes.
+ * The maximum allocatable events
  */
 #define         MAX_EVENTS              1000000
 
 /*
- * The maximum allocatable notes.
+ * The maximum allocatable curve blocks.
  */
 #define         MAX_CURVE_BLOCKS        4000
 
 /*
- * The maximum allocatable notes.
+ * The maximum allocatable note blocks
  */
 #define         MAX_NOTE_BLOCKS         1000
 

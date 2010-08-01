@@ -52,7 +52,7 @@ struct Event
 
   Event         *next;
   char          midi[3];
-  char          flags[1];
+  char          flags;
   unsigned short duration; // will store duration for notes.
 
   void          reset();

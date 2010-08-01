@@ -4,6 +4,7 @@
 #include "engine.hh"
 
 Engine::Engine()
+  : m_device(m_loop, m_break, m_interrupt)
 {
   unsigned int i;
 
@@ -14,8 +15,10 @@ Engine::Engine()
   m_timer.set_scheduler(&m_scheduler);
   // m_transport.connect(&m_playlist, 0);
   // Memory::pattern().set_event_merger(m_merger);
+  m_transport.connect(&m_device, 0);
   for (i = 0; i < CHANNELS; i++)
   {
+    m_device.connect(&m_merger[i], i);
     m_merger[i].connect(&m_scheduler[i]);
     m_scheduler[i].connect(&m_out);
   }
@@ -48,6 +51,22 @@ NoteScheduler                &Engine::scheduler()
 MidiOut                       &Engine::midi_out()
 {
   return m_out;
+}
+
+Cluster                       &Engine::loop()
+{
+}
+
+Cluster                       &Engine::dabreak()
+{
+}
+
+Cluster                       &Engine::interrupt()
+{
+}
+
+BlockDevice                   &Engine::device()
+{
 }
 
 void            Engine::start()

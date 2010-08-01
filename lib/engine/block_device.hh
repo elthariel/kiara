@@ -32,31 +32,50 @@
 class BlockDevice : public EventBus
 {
 public:
-  BlockDevice(const Cluster &a_loop_cluster,
-              const Cluster &a_break_cluster,
-              const Cluster &a_interrupt_cluster);
+  BlockDevice(Cluster &a_loop_cluster,
+              Cluster &a_break_cluster,
+              Cluster &a_interrupt_cluster);
   ~BlockDevice();
 
   // FIXME const this!
   Sector                &operator[](unsigned int);
 
-  virtual void          send(T &e);
+  virtual void          send(Event &e);
   virtual void          tick(TransportPosition pos);
 
   bool                  is_break_triggered();
   bool                  is_interrupt_triggered();
   void                  trigger_break(bool trig = true);
   void                  trigger_interrupt(bool trig = true);
+
+  TransportPosition     get_interrupt_time();
+  TransportPosition     get_current_start_time();
 protected:
+  bool                  new_bar(TransportPosition pos);
+  void                  apply_interrupt();
+  void                  load_cluster();
+  void                  play_tick(TransportPosition pos);
+  void                  play_note(TransportPosition pos,
+                                  unsigned int idx);
+  void                  play_curve(TransportPosition pos,
+                                   unsigned int chan,
+                                   unsigned int track_id);
 
   Cluster               current;
-  const Cluster         &loop_cluster;
-  const Cluster         &break_cluster;
-  const Cluster         &interrupt_cluster;
+  // FIXME const this !
+  // const Cluster         &loop_cluster;
+  // const Cluster         &break_cluster;
+  // const Cluster         &interrupt_cluster;
+  Cluster               &loop_cluster;
+  Cluster               &break_cluster;
+  Cluster               &interrupt_cluster;
   TransportPosition     interrupt_time;
   TransportPosition     current_start_time;
   bool                  break_triggered;
   bool                  interrupt_triggered;
+
+private:
+  BlockDevice();
 };
 
-#ENDIF	    /* !BLOCK_DEVICE_HH_ */
+#endif	    /* !BLOCK_DEVICE_HH_ */

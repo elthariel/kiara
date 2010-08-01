@@ -26,6 +26,8 @@
 #ifndef   	CURVE_BLOCK_HH_
 # define   	CURVE_BLOCK_HH_
 
+# include "block.hh"
+
 class CurveBlock : public Block
 {
 public:
@@ -53,6 +55,7 @@ protected:
    * negative, the curve is empty.
    */
   char          curve[PPQ * 4 * MAX_BARS];
+  unsigned int  length;
 };
 
 #endif	    /* !CURVE_BLOCK_HH_ */

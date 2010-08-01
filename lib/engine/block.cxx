@@ -1,7 +1,7 @@
 /*
-** base_block.hh
+** block.cc
 ** Login : <elthariel@rincevent>
-** Started on  Sat Jul 31 02:37:51 2010 elthariel
+** Started on  Sat Jul 31 22:26:04 2010 elthariel
 ** $Id$
 **
 ** Author(s):
@@ -23,24 +23,41 @@
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 */
 
-#ifndef   	BLOCK_HH_
-# define   	BLOCK_HH_
+#include <iostream>
+#include "block.hh"
 
-# include "kiara-config.h"
+using namespace std;
 
-class Block
+Block::Block()
 {
-public:
-  Block();
-  Block(const Block &a_block);
+  reset();
+}
 
-  virtual Block         &operator=(const Block &a_block);
+Block::Block(const Block &a_block)
+  :length(a_block.length)
+{
+}
 
-  virtual unsigned int  get_length();
-  virtual void          set_length(unsigned int newlen);
-  virtual void          reset();
-protected:
-  unsigned int  length;
-};
+Block         &Block::operator=(const Block &a_block)
+{
+  length = a_block.length;
+}
 
-#endif	    /* !BLOCK_HH_ */
+unsigned int  Block::get_length()
+{
+  return length;
+}
+
+void          Block::set_length(unsigned int newlen)
+{
+  if (newlen > MAX_BARS)
+    length = MAX_BARS;
+  else
+    length = newlen;
+}
+
+void          Block::reset()
+{
+  length = 1;
+}
+

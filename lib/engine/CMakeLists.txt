@@ -29,11 +29,16 @@ set(kiara_SOURCES engine.cxx
   note_scheduler.cxx
   chan_merger.cxx
   memory.cxx
+  block.cxx
   midi_out.cxx
   note_block.cxx
+  curve_block.cxx
   transport.cxx
   transport_position.cxx
   thread_debug.cxx
+  sector.cxx
+  cluster.cxx
+  block_device.cxx
   )
 
 if (UNIX AND USE_NANOSLEEP_TIMER)
