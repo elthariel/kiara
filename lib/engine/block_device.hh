@@ -50,9 +50,15 @@ public:
 
   TransportPosition     get_interrupt_time();
   TransportPosition     get_current_start_time();
+
+  void                  set_cc_number(unsigned int chan,
+                                      unsigned int lane_idx,
+                                      unsigned char cc_number);
+  unsigned char         get_cc_number(unsigned int chan,
+                                      unsigned int lane_idx);
 protected:
   bool                  new_bar(TransportPosition pos);
-  void                  apply_interrupt();
+  void                  handle_interrupt();
   void                  load_cluster();
   void                  play_tick(TransportPosition pos);
   void                  play_note(TransportPosition pos,
@@ -73,6 +79,18 @@ protected:
   TransportPosition     current_start_time;
   bool                  break_triggered;
   bool                  interrupt_triggered;
+
+  /*
+   * Output configuration for curve lanes. Each curve lane of each
+   * channel is assigned a cc number (data1) which will be used when
+   * outputting the Event. Any curve block placed on a particular lane
+   * will have its curve sent using the cc number you set here.
+   *
+   * It might not be the better place to do this, but i wasn't wanting
+   * to add a specific class or to do this in the cluster. If ever you
+   * have a better idea. Send a patch! :)
+   */
+  unsigned char         cc_numbers[CHANNELS][CURVE_POLY];
 
 private:
   BlockDevice();

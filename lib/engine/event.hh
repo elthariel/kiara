@@ -37,10 +37,9 @@ struct Event
   /*
    * Copy Constructor. this->next is reset to 0
    */
-
   Event(const Event &an_event);
 
-  // this->next is reset to 0
+  // this->next is kept unchanged
   Event         &operator=(const Event& an_event);
 
   /*

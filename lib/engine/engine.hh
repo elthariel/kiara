@@ -50,6 +50,7 @@ public:
   NoteScheduler                 &scheduler();
   MidiOut                       &midi_out();
   Cluster                       &loop();
+  // break is a c++ reserverd keyword, sorry.
   Cluster                       &dabreak();
   Cluster                       &interrupt();
   BlockDevice                   &device();

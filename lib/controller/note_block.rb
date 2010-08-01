@@ -23,16 +23,14 @@
 ## Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 ##
 
-class PhraseController
-  attr_reader :pattern, :track_id, :pattern_id
+class NoteBlockController
+  attr_reader :block
 
-  def initialize(controller, pattern_id, track_id)
+  def initialize(controller, block)
     @controller = controller
     @roll = controller.pianoroll
-    @pattern_id = pattern_id
-    @track_id = track_id
-    @pattern = Kiara::Memory.pattern.get(@pattern_id)
-    @phrase = @pattern.get(track_id)
+    @block = block
+    # @phrase = @pattern.get(track_id)
   end
 
   def alloc_event!
@@ -50,11 +48,11 @@ class PhraseController
 
   # Pos has the same syntax than cursor
   def occupied?(pos)
-    @phrase.get_note_on_tick pos[0], @pattern.get_size, pos[1]
+    @block.get_note_on_tick pos[0], @block.length, pos[1]
   end
 
   def get_note(pos)
-    iter = @phrase.get(pos[0])
+    iter = @block.get(pos[0])
     while iter and iter.data1 != pos[1] do
       iter = iter.next
     end
@@ -63,7 +61,7 @@ class PhraseController
   end
 
   def insert!(tick, event)
-    return true if event and @phrase.insert!(tick, event)
+    return true if event and @block.insert!(tick, event)
     false
   end
 
@@ -106,11 +104,11 @@ class PhraseController
   # Delete a note with data1=note starting precisely at tick=tick
   # Returns true if correctly deleted
   def delete_note_on_tick!(tick, note)
-    iter = @phrase.get(tick)
+    iter = @block.get(tick)
     while iter and iter.data1 != note do
       iter = iter.next
     end
-    return iter if iter and @phrase.remove!(tick, iter)
+    return iter if iter and @block.remove!(tick, iter)
     nil
   end
 
@@ -126,7 +124,7 @@ class PhraseController
           tick = t
         end
       end
-      return event if tick and @phrase.remove!(tick, event)
+      return event if tick and @block.remove!(tick, event)
       nil
     end
     nil
@@ -136,8 +134,8 @@ class PhraseController
   # the phrase, passing each event to the given block
   def each
     iter = 0
-    while (iter = @phrase.next_used_tick iter) >= 0 do
-      e = @phrase.get(iter)
+    while (iter = @block.next_used_tick iter) >= 0 do
+      e = @block.get(iter)
       while e do
         yield e
         e = e.next
@@ -151,7 +149,7 @@ class PhraseController
   # the block
   def each_pos
     iter = 0
-    while (iter = @phrase.next_used_tick iter) >= 0 do
+    while (iter = @block.next_used_tick iter) >= 0 do
       e = @phrase.get(iter)
       while e do
         yield iter, e

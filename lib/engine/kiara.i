@@ -6,6 +6,7 @@
 #include "transport.hh"
 #include "transport_position.hh"
 #include "note_block.hh"
+#include "curve_block.hh"
 #include "event.hh"
 #include "chan_merger.hh"
 #include "note_scheduler.hh"
@@ -14,12 +15,23 @@
 #include "kiara-config.h"
 #include "pool.hh"
 #include "timer.hh"
+#include "sector.hh"
+#include "cluster.hh"
+#include "block_device.hh"
 %}
 
-// %include "note.hh"
 
 // General rules
 %rename("get") operator[](unsigned int);
+
+namespace boost
+{
+  template<class T> class shared_ptr
+  {
+  public:
+    T * operator-> () const;
+  };
+}
 
 // Event rules
 %rename("chan") Event::get_chan();
@@ -38,11 +50,36 @@
 %bang Event::noteon();
 %bang Event::noteoff();
 
-%bang NoteBlock::reset();
-
 // NoteBlock rules
+%bang NoteBlock::reset();
 %bang NoteBlock::insert(unsigned int, Event *);
 %bang NoteBlock::remove(unsigned int, Event *);
+%rename("length") NoteBlock::get_length();
+%rename("length=") NoteBlock::set_length(unsigned int);
+
+// CurveBlock rules
+%bang CurveBlock::reset();
+%rename("length") CurveBlock::get_length();
+%rename("length=") CurveBlock::set_length(unsigned int);
+%rename("empty?") CurveBlock::is_empty();
+
+// Sector rules
+%bang Sector::merge(const Sector &);
+%bang Sector::reset();
+
+// Cluster rules
+%bang Cluster::merge(const Cluster &);
+%bang Cluster::reset();
+%rename("length") Cluster::get_length();
+%rename("length=") Cluster::set_length(unsigned int);
+
+// BlockDevice rules
+%rename("break_triggered?") BlockDevice::is_break_triggered();
+%rename("interrupt_triggered?") BlockDevice::is_interrupt_triggered();
+%bang BlockDevice::trigger_break();
+%bang BlockDevice::trigger_interrupt();
+%rename("interrupt_time") BlockDevice::interrupt_time();
+%rename("current_start_time") BlockDevice::current_start_time();
 
 // Timer rules
 %rename("bpm") Timer::get_bpm();
@@ -58,6 +95,7 @@
 %include "transport.hh"
 %include "transport_position.hh"
 %include "note_block.hh"
+%include "curve_block.hh"
 %include "event.hh"
 %include "chan_merger.hh"
 %include "note_scheduler.hh"
@@ -65,6 +103,11 @@
 %include "memory.hh"
 %include "kiara-config.h"
 %include "timer.hh"
+%include "sector.hh"
+%template(NoteBlockPtr) boost::shared_ptr<NoteBlock>;
+%template(CurveBlockPtr) boost::shared_ptr<CurveBlock>;
+%include "cluster.hh"
+%include "block_device.hh"
 
 %module PortMidi
 %{

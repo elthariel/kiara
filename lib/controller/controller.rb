@@ -24,8 +24,6 @@
 ##
 
 require 'controller/widget_controller'
-require 'controller/pattern_list'
-require 'controller/playlist'
 require 'controller/piano_roll'
 require 'controller/keymap'
 require 'controller/mapping'
@@ -37,13 +35,11 @@ require 'controller/mapping_loader'
 class Controller
   DEBUG = true
 
-  attr_reader :engine, :context, :patterns, :playlist, :pianoroll
+  attr_reader :engine, :context, :pianoroll
 
   def initialize(engine)
     @engine = engine
 
-    @patterns = PatternListController.new(self)
-    @playlist = PlaylistController.new(self)
     @pianoroll = PianoRollController.new(self)
 
     @context = MappingContext.new(self)

@@ -38,6 +38,10 @@ BlockDevice::BlockDevice(Cluster &a_loop_cluster,
     interrupt_cluster(a_interrupt_cluster)
 {
   current.set_length(0);
+
+  for (int i = 0; i < CHANNELS; ++i)
+    for (int j = 0; j < CURVE_POLY; ++j)
+      cc_numbers[i][j] = 71 + j;
 }
 
 BlockDevice::~BlockDevice()
@@ -86,6 +90,26 @@ TransportPosition     BlockDevice::get_current_start_time()
   return current_start_time;
 }
 
+void                  BlockDevice::set_cc_number(unsigned int chan,
+                                                 unsigned int lane_idx,
+                                                 unsigned char cc_number)
+{
+  assert (chan < CHANNELS);
+  assert (lane_idx < CURVE_POLY);
+  assert (cc_number < 128);
+
+  cc_numbers[chan][lane_idx] = cc_number;
+}
+
+unsigned char         BlockDevice::get_cc_number(unsigned int chan,
+                                                 unsigned int lane_idx)
+{
+  assert (chan < CHANNELS);
+  assert (lane_idx < CURVE_POLY);
+
+  return cc_numbers[chan][lane_idx];
+}
+
 
 
 
@@ -126,12 +150,12 @@ bool                  BlockDevice::new_bar(TransportPosition relative_pos)
   }
 
   if (interrupt_triggered)
-    apply_interrupt();
+    handle_interrupt();
 
   return res;
 }
 
-void                  BlockDevice::apply_interrupt()
+void                  BlockDevice::handle_interrupt()
 {
   interrupt_triggered = false;
   current += interrupt_cluster;
@@ -192,6 +216,28 @@ void                  BlockDevice::play_curve(TransportPosition pos,
                                               unsigned int chan,
                                               unsigned int track_id)
 {
+  if (m_bus[chan])
+    // We have to find a block starting here or an overlapping block
+    for (int i = pos.bar; i <= 0; --i)
+    {
+      Sector &sector = current[pos.bar];
+      if (sector.get_curve_at(chan, track_id) &&
+          i + sector.get_curve_at(chan, track_id)->get_length() > pos.bar)
+      {
+        CurveBlockPtr   block = sector.get_curve_at(chan, track_id);
+
+        if ((*block)[pos] >= 0)
+        {
+          Event           e;
+
+          e.cc();
+          e.set_data1(cc_numbers[chan][track_id]);
+          e.set_data2((*block)[pos]);
+          m_bus[chan]->send(e);
+        }
+        break; // We only play the first matching pattern. i.e. last overlaps first.
+      }
+    }
 }
 
 

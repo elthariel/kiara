@@ -13,8 +13,6 @@ Engine::Engine()
   Pm_Initialize();
   m_timer.set_transport(&m_transport);
   m_timer.set_scheduler(&m_scheduler);
-  // m_transport.connect(&m_playlist, 0);
-  // Memory::pattern().set_event_merger(m_merger);
   m_transport.connect(&m_device, 0);
   for (i = 0; i < CHANNELS; i++)
   {
@@ -55,18 +53,22 @@ MidiOut                       &Engine::midi_out()
 
 Cluster                       &Engine::loop()
 {
+  return m_loop;
 }
 
 Cluster                       &Engine::dabreak()
 {
+  return m_break;
 }
 
 Cluster                       &Engine::interrupt()
 {
+  return m_interrupt;
 }
 
 BlockDevice                   &Engine::device()
 {
+  return m_device;
 }
 
 void            Engine::start()

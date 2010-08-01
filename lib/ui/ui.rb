@@ -25,8 +25,6 @@
 
 require 'gtk2'
 require 'main_actions'
-require 'playlist'
-require 'pattern_list'
 require 'ui_settings'
 require 'piano_roll'
 
@@ -44,10 +42,12 @@ class Ui
   end
 
   def build
+
     unless RUBY_PLATFORM =~ /mingw|win32/
-	  Gtk::RC.parse "#{KIARA_ROOT}/gtk-theme/gtk-2.0/gtkrc"
-	end
+      Gtk::RC.parse "#{KIARA_ROOT}/gtk-theme/gtk-2.0/gtkrc"
+    end
     Gtk.init
+
     @builder = Gtk::Builder.new
     @builder.class.instance_eval "alias_method :o, :get_object"
     @builder << KIARA_ROOT + '/lib/ui/ui.glade'
@@ -56,14 +56,7 @@ class Ui
     @about = @builder.o 'aboutdialog'
     @tools = @builder.o 'maintoolbar'
     @settings = UiSettings.new(self, @builder.o('settings'))
-    @playlist = PlaylistView.new(self, @controller)
-    # @builder.o('vbx_edit').pack_start @playlist
-    # @builder.o('vbx_edit').reorder_child @playlist, 0
-    @builder.o('vp_playlist').add @playlist
-    @patterns = PatternList.new(self, @controller)
-    @builder.o('vp_patterns').add @patterns
     @roll = PianoRollView.new(self, @controller)
-    #    @builder.o('vp_pianoroll').add @roll
 
     @builder.o('spin_bpm').adjustment = @builder.o('adj_bpm')
     @builder.o('adj_bpm').value = 140

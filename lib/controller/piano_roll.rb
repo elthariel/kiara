@@ -23,12 +23,12 @@
 ## Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 ##
 
-require 'controller/phrase'
+require 'controller/note_block'
 
 class PianoRollController
   include WidgetAwareController
 
-  attr_reader :track, :mark, :selected, :pattern, :clipboard
+  attr_reader :track, :mark, :selected, :clipboard
   attr_accessor :note_duration, :note_velocity
 
   def initialize(controller)
@@ -47,9 +47,6 @@ class PianoRollController
     # being sotred as a relative position from cursor position
     # When deserialized the cursor position, which could have been moved, is added back.
     @clipboard = []
-    # same as cursor
-    @track = 0
-    @pattern = 1
     @mark = nil
 
     # Some states used by mapping
