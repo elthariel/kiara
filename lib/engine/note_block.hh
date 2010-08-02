@@ -1,5 +1,5 @@
 /*
-** phrase.hh
+** noteblock.hh
 ** Login : <elthariel@rincevent>
 ** Started on  Sat Jul 10 05:28:55 2010 elthariel
 ** $Id$
@@ -54,7 +54,8 @@ public:
    * Return the first found note that is at or overlaps the position
    * 'tick' It only search the first max_bar bars. The max_bar
    * parameter is mainly used to hint the function about the pattern
-   * length of which the phrase has no knowledge
+   * length of which the noteblock has no knowledge
+   * FIXME not necessary anymore, blocks knows their own length
    */
   Event         *get_note_on_tick(unsigned int tick,
                                   unsigned int max_bar,
@@ -67,12 +68,12 @@ public:
   /*
    * Used to improve save performance
    * Return the first tick >= tick where data[tick] != 0
-   *   or -1 the end of the phrase has been reached
+   *   or -1 the end of the noteblock has been reached
    */
   int           next_used_tick(unsigned int tick);
 
   /*
-   * Entirely empties the phrase. Used when loading a file.
+   * Entirely empties the noteblock. Used when loading a file.
    * Event are not deallocated, because memory pool is
    * reset as well when loading a file.
    */

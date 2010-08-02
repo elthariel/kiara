@@ -1,5 +1,5 @@
 ##
-## phrase_view.rb
+## noteblock_view.rb
 ## Login : <elthariel@rincevent>
 ## Started on  Sun Jul 25 18:46:31 2010 elthariel
 ## $Id$
@@ -33,9 +33,9 @@ class PhraseView < Gtk::DrawingArea
     @controller = controller
     @roll = roll
     @rollc = controller.pianoroll
-    @phrase = @controller.pianoroll.phrase
+    @noteblock = @controller.pianoroll.noteblock
 
-    psize = @phrase.pattern.get_size
+    psize = @noteblock.pattern.get_size
     set_size_request(@roll.blockw * 16 * psize, @roll.blockh * 128)
 
     self.signal_connect('expose-event') {|s, e| on_expose e}
@@ -43,9 +43,9 @@ class PhraseView < Gtk::DrawingArea
   end
 
   def redraw
-    @phrase = @controller.pianoroll.phrase
+    @noteblock = @controller.pianoroll.noteblock
 
-    psize = @phrase.pattern.get_size
+    psize = @noteblock.pattern.get_size
     set_size_request(@roll.blockw * 16 * psize, @roll.blockh * 128)
 
     full_redraw
@@ -63,7 +63,7 @@ class PhraseView < Gtk::DrawingArea
 
     # FIXME
     # Optimize this ! Cache values or implement observer
-    @phrase = @controller.pianoroll.phrase
+    @noteblock = @controller.pianoroll.noteblock
 
     # Background
     color.background unless @roll.focus?
@@ -82,7 +82,7 @@ class PhraseView < Gtk::DrawingArea
     a = allocation
 
     @cairo.set_line_width(0.5)
-    bars = @phrase.pattern.get_size
+    bars = @noteblock.pattern.get_size
     (0..bars * 16).each do |x|
       if x % 4 == 0
         color.vgrid_high
@@ -106,7 +106,7 @@ class PhraseView < Gtk::DrawingArea
   end
 
   def draw_notes(e)
-    @phrase.each_pos do |t, event|
+    @noteblock.each_pos do |t, event|
       #puts "draw_notes #{t}, #{event}"
       draw_note t, event if event.noteon?
     end

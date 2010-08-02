@@ -28,7 +28,7 @@ require 'colors'
 require 'piano_roll_attributes'
 require 'piano_view'
 require 'position_view'
-require 'phrase_view'
+require 'noteblock_view'
 require 'velocity_view'
 
 
@@ -49,7 +49,7 @@ class PianoRollView
   include PianoRollAttributes
 
   # Sub-widgets accessors
-  attr_reader :piano, :position, :phrase, :velocity
+  attr_reader :piano, :position, :noteblock, :velocity
   # Drawing configuration variables, also c.f. PianoRollAttributes
   attr_reader :pianow, :velh, :headh
 
@@ -73,7 +73,7 @@ class PianoRollView
     # Creating all widgets
     @piano = PianoView.new(ui, controller, self)
     @position = PositionView.new(ui, controller, self)
-    @phrase = PhraseView.new(ui, controller, self)
+    @noteblock = PhraseView.new(ui, controller, self)
     @velocity = VelocityView.new(ui, controller, self)
     @fillers = [Filler.new(ui, controller, self, @pianow, @headh),
                 Filler.new(ui, controller, self, @pianow, @velh)]
@@ -92,12 +92,12 @@ class PianoRollView
     @ui.builder.o('vp_piano').add @piano
     @ui.builder.o('vbox_piano').reorder_child @ui.builder.o('vp_piano'), 1
 
-    # Right part of the piano roll, the phrase, the velocity view and
+    # Right part of the piano roll, the noteblock, the velocity view and
     # the header with the positions
-    @ui.builder.o('vbox_phrase').pack_start @position, false
-    @ui.builder.o('vbox_phrase').pack_start @velocity, false
-    @ui.builder.o('vp_phrase').add @phrase
-    @ui.builder.o('vbox_phrase').reorder_child @ui.builder.o('vp_phrase'), 1
+    @ui.builder.o('vbox_noteblock').pack_start @position, false
+    @ui.builder.o('vbox_noteblock').pack_start @velocity, false
+    @ui.builder.o('vp_noteblock').add @noteblock
+    @ui.builder.o('vbox_noteblock').reorder_child @ui.builder.o('vp_noteblock'), 1
 
   end
 
@@ -106,7 +106,7 @@ class PianoRollView
     unless cursor == @old_cursor
       @old_cursor = cursor.clone
       hadj = @ui.builder.o('vp_roll').hadjustment
-      vadj = @ui.builder.o('vp_phrase').vadjustment
+      vadj = @ui.builder.o('vp_noteblock').vadjustment
       vadj_piano = @ui.builder.o('vp_piano').vadjustment
 
       # Used as reference for horizontal scroll
@@ -152,7 +152,7 @@ class PianoRollView
     @piano.redraw
     @position.redraw
     @velocity.redraw
-    @phrase.redraw
+    @noteblock.redraw
   end
 
   def focus?

@@ -1,5 +1,5 @@
 ##
-## phrase.rb
+## noteblock.rb
 ## Login : <elthariel@rincevent>
 ## Started on  Sat Jul 17 18:50:12 2010 elthariel
 ## $Id$
@@ -30,7 +30,7 @@ class NoteBlockController
     @controller = controller
     @roll = controller.pianoroll
     @block = block
-    # @phrase = @pattern.get(track_id)
+    # @noteblock = @pattern.get(track_id)
   end
 
   def alloc_event!
@@ -130,8 +130,8 @@ class NoteBlockController
     nil
   end
 
-  # phrase.each_pos { |event| ... } Iterates on all events of
-  # the phrase, passing each event to the given block
+  # noteblock.each_pos { |event| ... } Iterates on all events of
+  # the noteblock, passing each event to the given block
   def each
     iter = 0
     while (iter = @block.next_used_tick iter) >= 0 do
@@ -144,13 +144,13 @@ class NoteBlockController
     end
   end
 
-  # phrase.each_pos { |tick, event| ... } Iterates on all events of
-  # the phrase, passing the tick of the current event and the event to
+  # noteblock.each_pos { |tick, event| ... } Iterates on all events of
+  # the noteblock, passing the tick of the current event and the event to
   # the block
   def each_pos
     iter = 0
     while (iter = @block.next_used_tick iter) >= 0 do
-      e = @phrase.get(iter)
+      e = @noteblock.get(iter)
       while e do
         yield iter, e
         e = e.next

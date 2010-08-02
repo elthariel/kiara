@@ -31,12 +31,16 @@
 struct TransportPosition
 {
 public:
-  TransportPosition(unsigned int bar = 0,
-                    unsigned int beat = 0,
+  TransportPosition(unsigned int bar,
+                    unsigned int beat,
                     unsigned int tick = 0);
+  TransportPosition(unsigned int ticks);
+  TransportPosition();
 
   TransportPosition     &operator+=(TransportPosition&);
   TransportPosition     &operator-=(TransportPosition&);
+  TransportPosition     operator+(TransportPosition x);
+  TransportPosition     operator-(TransportPosition x);
   TransportPosition     &operator++();
   TransportPosition     &operator--();
   TransportPosition     &operator=(TransportPosition&);

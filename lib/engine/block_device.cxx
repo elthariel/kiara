@@ -191,7 +191,7 @@ void                  BlockDevice::play_note(TransportPosition pos,
 {
   if (m_bus[chan])
     // We have to find a block starting here or an overlapping block
-    for (int i = pos.bar; i <= 0; --i)
+    for (int i = pos.bar; i >= 0; --i)
     {
       Sector &sector = current[pos.bar];
       if (sector.get_note_at(chan) &&
@@ -218,7 +218,7 @@ void                  BlockDevice::play_curve(TransportPosition pos,
 {
   if (m_bus[chan])
     // We have to find a block starting here or an overlapping block
-    for (int i = pos.bar; i <= 0; --i)
+    for (int i = pos.bar; i >= 0; --i)
     {
       Sector &sector = current[pos.bar];
       if (sector.get_curve_at(chan, track_id) &&

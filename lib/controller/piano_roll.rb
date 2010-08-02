@@ -88,28 +88,27 @@ class PianoRollController
     selected_update
     redraw
   end
+  # FIXME 0.1.0 delete me
+  # def pattern=(id)
+  #   unless id == @pattern
+  #     id = 1 if id < 1
+  #     id = Kiara::KIARA_MAXPATTERNS if id > Kiara::KIARA_MAXPATTERNS
+  #     @pattern = id
+  #     selected_update
+  #     redraw
+  #   end
+  # end
 
-  def pattern=(id)
-    unless id == @pattern
-      id = 1 if id < 1
-      id = Kiara::KIARA_MAXPATTERNS if id > Kiara::KIARA_MAXPATTERNS
-      @pattern = id
-      selected_update
-      redraw
-    end
-  end
-
-  # Create and return a phrase controller for the specified phrase and pattern
+  # Create and return a noteblock controller for the specified noteblock and pattern
   # When a parameter is nil, the current selected item is used
-  def phrase(pattern = nil, phrase_id = nil)
-    pattern = @pattern unless pattern
-    phrase_id = track unless phrase_id
-    PhraseController.new(@controller, pattern, phrase_id)
+  def noteblock()
+    #PhraseController.new(@controller, pattern, noteblock_id)
+    NoteBlockController.new(@controller, Kiara::NoteBlock.new)
   end
 
   def select_all
     @selected = []
-    phrase.each_pos do |tick, event|
+    noteblock.each_pos do |tick, event|
       @selected.push [tick, event.data1] if event.noteon?
     end
     redraw
@@ -118,7 +117,7 @@ class PianoRollController
   # Serialize selection to clipboard for later use
   def to_clipboard
     @clipboard = []
-    p = self.phrase
+    p = self.noteblock
     last_tick = nil
     current_list = []
     @selected.each do |cursor|
@@ -136,7 +135,7 @@ class PianoRollController
   end
 
   def from_clipboard
-    p = phrase
+    p = noteblock
     @selected = []
     @clipboard.each do |tick|
       t = tick[0]
@@ -158,7 +157,7 @@ class PianoRollController
 
   # offset = [tick_offset, note offset]
   def move(offset)
-    p = self.phrase
+    p = self.noteblock
     @selected.each do |pos|
       npos = [pos[0] + offset[0], pos[1] + offset[1]]
       npos[0] = 0 if npos[0] < 0
@@ -179,7 +178,7 @@ class PianoRollController
 
   # Changes notes duration by offset ticks
   def resize(offset)
-    p = self.phrase
+    p = self.noteblock
     @selected.each do |pos|
       p.resize_note! pos, offset
     end
@@ -188,7 +187,7 @@ class PianoRollController
 
   protected
   def selected_update
-    p = self.phrase
+    p = self.noteblock
 
     if @mark
       @selected = []
@@ -219,6 +218,10 @@ class PianoRollController
         @selected = []
       end
     end
+  end
+
+  def method_missing(sym)
+    puts "0.1.0 refactor, pianoroll.#{sym} doesn't exists anymore"
   end
 end
 

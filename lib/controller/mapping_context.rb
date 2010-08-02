@@ -35,7 +35,7 @@ class MappingContext
     @controller = controller
 
     # internal state
-    @focus_list = [:pianoroll]
+    @focus_list = [:cluster, :devive, :blockbox, :pianoroll]
     @focus = 0
   end
 
@@ -74,6 +74,9 @@ class MappingContext
   def focused
     case @focus_list[@focus]
       when :pianoroll; @controller.pianoroll
+      when :cluster; @controller.cluster
+      when :device; @controller.device
+      when :blockbox; @controller.blockbox
     end
   end
 

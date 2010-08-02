@@ -1,5 +1,5 @@
 ##
-## mapping_phrase.rb
+## mapping_noteblock.rb
 ## Login : <elthariel@rincevent>
 ## Started on  Thu Jul 22 06:37:14 2010 elthariel
 ## $Id$
@@ -27,7 +27,7 @@
 on_chain 'space' do
   if_context :is? => :pianoroll
   action 'node-add' do |c|
-    p = c.pianoroll.phrase
+    p = c.pianoroll.noteblock
     pos = c.pianoroll.cursor
     unless p.occupied? (pos)
       e = p.alloc_event!
@@ -52,7 +52,7 @@ end
 on_chain 'C-space' do
   if_context :is? => :pianoroll
   action 'note-del-at-cursor' do |c|
-    p = c.pianoroll.phrase
+    p = c.pianoroll.noteblock
     pos = c.pianoroll.cursor
     e = p.delete_note_on_tick_overlapping!(pos)
     if e
@@ -66,7 +66,7 @@ on_chain 'Delete' do
   if_context :is? => :pianoroll
   if_context :has_selection? => true
   action 'roll-delete-selected' do |c|
-    p = c.pianoroll.phrase
+    p = c.pianoroll.noteblock
     c.pianoroll.selected.each do |item|
       p.delete_note_on_tick! item[0], item[1]
     end
@@ -85,7 +85,7 @@ end
     on_chain "#{power[1]}#{x[1]}" do
       if_context :is? => :pianoroll
       action "tr-edit-#{x[0]}-vel#{power[0]}" do |c|
-        p = c.pianoroll.phrase
+        p = c.pianoroll.noteblock
         cursor = c.pianoroll.cursor
         bar = (cursor[0] / (Kiara::PPQ * 4)) * Kiara::PPQ * 4
         pos = [bar + x[0] * (Kiara::PPQ / 4), cursor[1]]
@@ -230,7 +230,7 @@ end
     if_context :is? => :pianoroll
     if_context :has_selection? => true
     action "set-velocity-#{k[0]}" do |c|
-      p = c.pianoroll.phrase
+      p = c.pianoroll.noteblock
       c.pianoroll.selected.each do |pos|
         note = p.get_note pos
         note.data2 = k[0]

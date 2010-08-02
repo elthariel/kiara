@@ -25,6 +25,9 @@
 
 require 'controller/widget_controller'
 require 'controller/piano_roll'
+require 'controller/cluster'
+require 'controller/device'
+require 'controller/blockbox'
 require 'controller/keymap'
 require 'controller/mapping'
 require 'controller/mapping_engine'
@@ -35,12 +38,16 @@ require 'controller/mapping_loader'
 class Controller
   DEBUG = true
 
-  attr_reader :engine, :context, :pianoroll
+  attr_reader :engine, :context, :pianoroll, :device
+  attr_reader :cluser, :blockbox
 
   def initialize(engine)
     @engine = engine
 
     @pianoroll = PianoRollController.new(self)
+    @device = DeviceController.new(self)
+    @cluster = ClusterController.new(self)
+    @blockbox = BlockBoxController.new(self)
 
     @context = MappingContext.new(self)
     @map_engine = MappingEngine.new Mapping.get, self

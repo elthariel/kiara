@@ -157,42 +157,42 @@ end
 # PianoRoll Phrase Switch
 on_chain 'Page_Up' do
   if_context :is? => :pianoroll
-  action 'phrase-prev' do |c|
+  action 'noteblock-prev' do |c|
     c.pianoroll.track = c.pianoroll.track - 1
   end
 end
 
 on_chain 'Page_Down' do
   if_context :is? => :pianoroll
-  action 'phrase-prev' do |c|
+  action 'noteblock-prev' do |c|
     c.pianoroll.track = c.pianoroll.track + 1
   end
 end
 
 on_chain 'L-Left' do
   if_context :is? => :pianoroll
-  action 'phrase-prev' do |c|
+  action 'noteblock-prev' do |c|
     c.pianoroll.track = c.pianoroll.track - 1
   end
 end
 
 on_chain 'L-Right' do
   if_context :is? => :pianoroll
-  action 'phrase-prev' do |c|
+  action 'noteblock-prev' do |c|
     c.pianoroll.track = c.pianoroll.track + 1
   end
 end
 
 on_chain 'S-Page_Up' do
   if_context :is? => :pianoroll
-  action 'phrase-prev' do |c|
+  action 'noteblock-prev' do |c|
     c.pianoroll.track = c.pianoroll.track - 4
   end
 end
 
 on_chain 'S-Page_Down' do
   if_context :is? => :pianoroll
-  action 'phrase-prev' do |c|
+  action 'noteblock-prev' do |c|
     c.pianoroll.track = c.pianoroll.track + 4
   end
 end

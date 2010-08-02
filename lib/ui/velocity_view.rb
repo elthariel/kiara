@@ -33,18 +33,18 @@ class VelocityView < Gtk::DrawingArea
     @ui = ui
     @controller = controller
     @roll = roll
-    @phrase = @controller.pianoroll.phrase
+    @noteblock = @controller.pianoroll.noteblock
 
-    psize = @phrase.pattern.get_size
+    psize = @noteblock.pattern.get_size
     set_size_request(@roll.blockw * 16 * psize, @roll.velh)
 
     self.signal_connect('expose-event') {|s, e| on_expose e}
   end
 
   def redraw
-    @phrase = @controller.pianoroll.phrase
+    @noteblock = @controller.pianoroll.noteblock
 
-    psize = @phrase.pattern.get_size
+    psize = @noteblock.pattern.get_size
     set_size_request(@roll.blockw * 16 * psize, @roll.velh)
     full_redraw
   end
@@ -61,7 +61,7 @@ class VelocityView < Gtk::DrawingArea
 
     # FIXME
     # Optimize this ! Cache values or implement observer
-    @phrase = @controller.pianoroll.phrase
+    @noteblock = @controller.pianoroll.noteblock
 
     # Background
     color.background unless @roll.focus?
@@ -71,7 +71,7 @@ class VelocityView < Gtk::DrawingArea
 
     # Grid
     @cairo.set_line_width(0.5)
-    (0..(@phrase.pattern.get_size * 4)).each do |beat|
+    (0..(@noteblock.pattern.get_size * 4)).each do |beat|
       @cairo.move_to beat * @roll.blockw * 4, 0
       @cairo.line_to beat * @roll.blockw * 4, a.height
       if beat % 4 == 0
@@ -91,7 +91,7 @@ class VelocityView < Gtk::DrawingArea
     @cairo.set_line_width 2.5
     color.velocity
     @cairo.set_line_cap Cairo::LINE_CAP_ROUND
-    @phrase.each_pos do |tick, event|
+    @noteblock.each_pos do |tick, event|
       draw_velocity_bar(a, tick, event)
     end
   end

@@ -57,7 +57,7 @@ end
 
 class Kiara::Phrase
 
-  # Returns an array based reprensentation of the phrase which can be
+  # Returns an array based reprensentation of the noteblock which can be
   # used to serialize data using yaml or other stuff. The
   # representation is the following:
   # [[tick, [event], [event1]], [other_tick, [event2], [event3]], [...]].

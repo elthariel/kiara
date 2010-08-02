@@ -11,6 +11,18 @@ TransportPosition::TransportPosition(unsigned int a_bar,
 {
 }
 
+TransportPosition::TransportPosition(unsigned int ticks)
+{
+  (*this) = ticks;
+}
+
+TransportPosition::TransportPosition()
+  :bar(0),
+   beat(0),
+   tick(0)
+{
+}
+
 TransportPosition     &TransportPosition::operator+=(TransportPosition &tp)
 {
   // unsigned int        tmp;
@@ -32,6 +44,16 @@ TransportPosition     &TransportPosition::operator-=(TransportPosition  &other)
   else
     *this = (unsigned int)*this - (unsigned int)other;
   return *this;
+}
+
+TransportPosition     TransportPosition::operator+(TransportPosition x)
+{
+  return TransportPosition((unsigned int) (*this) + (unsigned int) x);
+}
+
+TransportPosition     TransportPosition::operator-(TransportPosition x)
+{
+  return TransportPosition((unsigned int) (*this) - (unsigned int) x);
 }
 
 TransportPosition     &TransportPosition::operator++()

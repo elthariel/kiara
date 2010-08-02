@@ -1,7 +1,7 @@
-#! /usr/bin/env ruby1.9
-## kiara.rb
+##
+## cluster.rb
 ## Login : <elthariel@rincevent>
-## Started on  Sun Jul 11 15:06:33 2010 elthariel
+## Started on  Mon Aug  2 01:01:04 2010 elthariel
 ## $Id$
 ##
 ## Author(s):
@@ -23,41 +23,12 @@
 ## Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 ##
 
-KIARA_ROOT = File.dirname(File.expand_path(__FILE__))
-KIARA_LIB = KIARA_ROOT + '/lib'
-KIARA_THEME = KIARA_ROOT + '/themes/'
-$:.unshift KIARA_LIB
-$:.unshift KIARA_LIB + '/ui'
+class ClusterController
+  include WidgetAwareController
 
-require 'logger'
-require 'profiler'
+  def initialize(controller)
+    @controller = controller
+  end
 
-require 'settings'
-require 'engine/kiara'
-require 'controller/controller'
-require 'ui'
-
-Settings.i
-$log = Logger.new(STDOUT)
-$log.progname = 'kiara'
-# FIXME $log.level = Logger.const_get Settings.i.loglevel.to_s
-$log.level = Logger::DEBUG
-
-sleep 2
-
-engine = Kiara::Engine.new
-controller = Controller.new(engine)
-Settings.i.init(controller, engine)
-ui = Ui.new(controller)
-
-Signal.trap('SIGINT') do
-  engine.stop
-  # Profiler__.print_profile STDOUT
-  exit 0
 end
-
-engine.start
-ui.run
-
-puts "Exiting Kiara Sequencer. Have a nice day !"
 

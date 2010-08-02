@@ -30,18 +30,18 @@ flags = 4
 ppq = 48
 bars = 32
 tracks = 16
-max_phrases = 300
+max_noteblocks = 300
 max_events = 10 ** 6
 
 # Event: a pointer + midievent + ?flags
 event = pointer + midi + flags
 # NoteBlock: pointer * ppq * 4 (using 4/4 signature) * bars
-phrase = pointer * ppq * 4 * bars * tracks
+noteblock = pointer * ppq * 4 * bars * tracks
 
-# max_patterns = max_phrases / 16
+# max_patterns = max_noteblocks / 16
 
 event_mem = event * max_events + max_events * uint32
-phrase_mem = phrase * max_phrases + max_phrases * uint32
+noteblock_mem = noteblock * max_noteblocks + max_noteblocks * uint32
 
 
 puts "Architechture: #{pointer * 8}bits."
@@ -50,18 +50,18 @@ puts "Flags and other: #{flags} bytes."
 puts "PPQ: #{ppq}."
 puts "Tracks: #{tracks}"
 puts "Max NoteBlocks Bars: #{bars}."
-puts "Max NoteBlocks: #{max_phrases}."
+puts "Max NoteBlocks: #{max_noteblocks}."
 puts "Max Notes: #{max_events}."
 # puts "=> Max Patterns: #{max_patterns}"
 puts "--------------------------------------"
 puts "Memory Consumption:"
-puts "\tNoteBlocks:\t#{phrase_mem / (1024*1024)} Mb."
+puts "\tNoteBlocks:\t#{noteblock_mem / (1024*1024)} Mb."
 puts "\tNotes:\t#{event_mem / (1024*1024)} Mb."
 # puts "--------------------------------------"
 # puts "--------------  Tests ----------------"
 # puts "--------------------------------------"
 
-# newphrase = pointer * ppq * 4 * bars * 127
-# puts newphrase / 1024
+# newnoteblock = pointer * ppq * 4 * bars * 127
+# puts newnoteblock / 1024
 
 
