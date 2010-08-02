@@ -103,16 +103,14 @@ Event         *NoteBlock::operator[](unsigned int tick)
 }
 
 Event         *NoteBlock::get_note_on_tick(unsigned int tick,
-                                        unsigned int max_bar,
-                                        unsigned char note)
+                                           unsigned char note)
 {
   unsigned int i;
   Event *iter = 0;
+  unsigned int max_bar = length;
 
-  assert(max_bar < MAX_BARS);
-
-  if (max_bar > length)
-    max_bar = length;
+  if (tick >= length * PPQ * 4)
+    return 0;
 
   for (i = 0; i < max_bar * 4 * PPQ; i++)
   {

@@ -52,13 +52,9 @@ public:
 
   /*
    * Return the first found note that is at or overlaps the position
-   * 'tick' It only search the first max_bar bars. The max_bar
-   * parameter is mainly used to hint the function about the pattern
-   * length of which the noteblock has no knowledge
-   * FIXME not necessary anymore, blocks knows their own length
+   * 'tick'
    */
   Event         *get_note_on_tick(unsigned int tick,
-                                  unsigned int max_bar,
                                   unsigned char note);
 
 
