@@ -55,7 +55,7 @@ class Ui
     @about = @builder.o 'aboutdialog'
     @tools = @builder.o 'maintoolbar'
     @settings = UiSettings.new(self, @builder.o('settings'))
-    # @roll = PianoRollView.new(self, @controller)
+    @roll = PianoRollView.new(self, @controller)
 
     @builder.o('spin_bpm').adjustment = @builder.o('adj_bpm')
     @builder.o('adj_bpm').value = 140

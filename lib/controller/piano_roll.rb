@@ -30,6 +30,7 @@ class PianoRollController
 
   attr_reader :track, :mark, :selected, :clipboard
   attr_accessor :note_duration, :note_velocity
+  attr_writer :noteblock
 
   def initialize(controller)
     @controller = controller
@@ -99,10 +100,10 @@ class PianoRollController
   #   end
   # end
 
-  # Create and return a noteblock controller for the specified noteblock and pattern
-  # When a parameter is nil, the current selected item is used
+  # Create a NoteBlockController for the current NoteBlock
   def noteblock()
-    #PhraseController.new(@controller, pattern, noteblock_id)
+    # FIXME initialize PianoRollController with a noteblock
+    #NoteBlockController.new(@controller, @noteblock)
     NoteBlockController.new(@controller, Kiara::NoteBlock.new)
   end
 

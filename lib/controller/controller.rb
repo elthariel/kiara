@@ -39,7 +39,7 @@ class Controller
   DEBUG = true
 
   attr_reader :engine, :context, :pianoroll, :device
-  attr_reader :cluser, :blockbox
+  attr_reader :cluster, :blockbox
 
   def initialize(engine)
     @engine = engine

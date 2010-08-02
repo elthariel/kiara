@@ -23,7 +23,7 @@
 ## Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 ##
 
-class PhraseView < Gtk::DrawingArea
+class NoteBlockView < Gtk::DrawingArea
   include ColorMixin
 
   def initialize(ui, controller, roll)
@@ -35,7 +35,7 @@ class PhraseView < Gtk::DrawingArea
     @rollc = controller.pianoroll
     @noteblock = @controller.pianoroll.noteblock
 
-    psize = @noteblock.pattern.get_size
+    psize = @noteblock.length
     set_size_request(@roll.blockw * 16 * psize, @roll.blockh * 128)
 
     self.signal_connect('expose-event') {|s, e| on_expose e}
@@ -45,7 +45,7 @@ class PhraseView < Gtk::DrawingArea
   def redraw
     @noteblock = @controller.pianoroll.noteblock
 
-    psize = @noteblock.pattern.get_size
+    psize = @noteblock.length
     set_size_request(@roll.blockw * 16 * psize, @roll.blockh * 128)
 
     full_redraw
@@ -82,7 +82,7 @@ class PhraseView < Gtk::DrawingArea
     a = allocation
 
     @cairo.set_line_width(0.5)
-    bars = @noteblock.pattern.get_size
+    bars = @noteblock.length
     (0..bars * 16).each do |x|
       if x % 4 == 0
         color.vgrid_high

@@ -5,6 +5,7 @@
 #include "engine.hh"
 #include "transport.hh"
 #include "transport_position.hh"
+#include "block.hh"
 #include "note_block.hh"
 #include "curve_block.hh"
 #include "event.hh"
@@ -50,17 +51,17 @@ namespace boost
 %bang Event::noteon();
 %bang Event::noteoff();
 
+// Block rules
+%rename("length") Block::get_length();
+%rename("length=") Block::set_length(unsigned int);
+
 // NoteBlock rules
 %bang NoteBlock::reset();
 %bang NoteBlock::insert(unsigned int, Event *);
 %bang NoteBlock::remove(unsigned int, Event *);
-%rename("length") NoteBlock::get_length();
-%rename("length=") NoteBlock::set_length(unsigned int);
 
 // CurveBlock rules
 %bang CurveBlock::reset();
-%rename("length") CurveBlock::get_length();
-%rename("length=") CurveBlock::set_length(unsigned int);
 %rename("empty?") CurveBlock::is_empty();
 
 // Sector rules
@@ -94,6 +95,7 @@ namespace boost
 %include "engine.hh"
 %include "transport.hh"
 %include "transport_position.hh"
+%include "block.hh"
 %include "note_block.hh"
 %include "curve_block.hh"
 %include "event.hh"

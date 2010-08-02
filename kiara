@@ -43,7 +43,7 @@ $log.progname = 'kiara'
 # FIXME $log.level = Logger.const_get Settings.i.loglevel.to_s
 $log.level = Logger::DEBUG
 
-sleep 2
+#sleep 2
 
 engine = Kiara::Engine.new
 controller = Controller.new(engine)

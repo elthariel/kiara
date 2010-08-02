@@ -73,7 +73,7 @@ class PianoRollView
     # Creating all widgets
     @piano = PianoView.new(ui, controller, self)
     @position = PositionView.new(ui, controller, self)
-    @noteblock = PhraseView.new(ui, controller, self)
+    @noteblock = NoteBlockView.new(ui, controller, self)
     @velocity = VelocityView.new(ui, controller, self)
     @fillers = [Filler.new(ui, controller, self, @pianow, @headh),
                 Filler.new(ui, controller, self, @pianow, @velh)]

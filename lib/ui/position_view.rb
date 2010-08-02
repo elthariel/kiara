@@ -35,7 +35,7 @@ class PositionView < Gtk::DrawingArea
     @roll = roll
     @noteblock = @controller.pianoroll.noteblock
 
-    psize = @noteblock.pattern.get_size
+    psize = @noteblock.length
     set_size_request(@roll.blockw * 16 * psize, @roll.headh)
 
     self.signal_connect('expose-event') {|s, e| on_expose e}
@@ -44,7 +44,7 @@ class PositionView < Gtk::DrawingArea
   def redraw
     @noteblock = @controller.pianoroll.noteblock
 
-    psize = @noteblock.pattern.get_size
+    psize = @noteblock.length
     set_size_request(@roll.blockw * 16 * psize, @roll.headh)
     full_redraw
   end
@@ -71,7 +71,7 @@ class PositionView < Gtk::DrawingArea
 
     # Grid
     @cairo.set_line_width(0.7)
-    (0..(@noteblock.pattern.get_size * 4)).each do |beat|
+    (0..(@noteblock.length * 4)).each do |beat|
       @cairo.move_to beat * @roll.blockw * 4, 0
       @cairo.line_to beat * @roll.blockw * 4, a.height
       if beat % 4 == 0

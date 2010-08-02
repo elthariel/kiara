@@ -30,7 +30,10 @@ class NoteBlockController
     @controller = controller
     @roll = controller.pianoroll
     @block = block
-    # @noteblock = @pattern.get(track_id)
+  end
+
+  def length
+    @block.length
   end
 
   def alloc_event!
@@ -48,7 +51,7 @@ class NoteBlockController
 
   # Pos has the same syntax than cursor
   def occupied?(pos)
-    @block.get_note_on_tick pos[0], @block.length, pos[1]
+    @block.get_note_on_tick pos[0], pos[1]
   end
 
   def get_note(pos)
