@@ -211,7 +211,7 @@ on_chain 'C-v' do
   action 'roll-paste' do |c|
     #puts "paste"
     c.pianoroll.from_clipboard
-    c.pianoroll.redraw
+    c.pianoroll.redraw!
   end
 end
 

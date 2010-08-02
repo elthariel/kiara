@@ -54,6 +54,11 @@ Sector                &BlockDevice::operator[](unsigned int idx)
   return current[idx];
 }
 
+unsigned int          BlockDevice::get_length()
+{
+  return current.get_length();
+}
+
 void                  BlockDevice::send(Event &e)
 {
   // the method is void to override default behavior which is to forward

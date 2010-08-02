@@ -35,6 +35,7 @@ class Ui
 
   attr_reader :status, :about, :tools, :playlist
   attr_reader :patterns, :builder, :controller, :roll
+  attr_reader :cluster, :device, :notebook
 
   def initialize(controller)
     @controller = controller
@@ -61,13 +62,12 @@ class Ui
     @roll = PianoRollView.new(self, @controller)
     @device = DeviceView.new(self, @controller)
     @builder.o('vp_device').add @device
-    @builder.o('vp_device').set_size_request -1, 400
     @cluster = ClusterView.new(self, @controller)
     @builder.o('vp_cluster').add @cluster
-    @builder.o('vp_cluster').set_size_request -1, 400
+    @notebook = @builder.o 'nb_edit'
 
     @builder.o('spin_bpm').adjustment = @builder.o('adj_bpm')
-    @builder.o('adj_bpm').value = 140
+    @builder.o('adj_bpm').value = Kiara::START_BPM
   end
 
   def run
@@ -90,6 +90,14 @@ class Ui
   def quit
     @controller.engine.stop
     Gtk.main_quit
+  end
+
+  def focus! (sym)
+    case sym
+      when :pianoroll; @notebook.page = 0
+      when :cluster; @notebook.page = 1
+      when :blockbox; @notebook.page = 2
+    end
   end
 
 end

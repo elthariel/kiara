@@ -41,15 +41,15 @@ class VelocityView < Gtk::DrawingArea
     self.signal_connect('expose-event') {|s, e| on_expose e}
   end
 
-  def redraw
+  def redraw!
     @noteblock = @controller.pianoroll.noteblock
 
     psize = @noteblock.length
     set_size_request(@roll.blockw * 16 * psize, @roll.velh)
-    full_redraw
+    full_redraw!
   end
 
-  def full_redraw
+  def full_redraw!
     queue_draw if realized?
   end
 

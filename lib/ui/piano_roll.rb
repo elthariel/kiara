@@ -148,15 +148,22 @@ class PianoRollView
     @ui.builder.o('piano_roll_label').set_text text
   end
 
-  def redraw
-    @piano.redraw
-    @position.redraw
-    @velocity.redraw
-    @noteblock.redraw
+  def redraw!
+    @piano.redraw!
+    @position.redraw!
+    @velocity.redraw!
+    @noteblock.redraw!
   end
 
   def focus?
     @controller.context.focus? :pianoroll
+  end
+
+  # Notifies the widget that he has focus.
+  # So he can switch the notebook :)
+  def focus!
+    @ui.focus! :pianoroll
+    redraw!
   end
 
 end

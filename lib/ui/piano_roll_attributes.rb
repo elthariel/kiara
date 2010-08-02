@@ -38,12 +38,12 @@ module PianoRollAttributes
 
   def zoomh=(z)
     @zoomh = z
-    full_redraw
+    full_redraw!
   end
 
   def zoomw=(z)
     @zoomw = z
-    full_redraw
+    full_redraw!
   end
 
   def tick_size

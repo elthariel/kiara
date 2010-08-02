@@ -92,8 +92,8 @@ on_chain 'C-x' do
         Zlib::GzipReader.open(filename) do |zf|
           puts "Saving to #{filename}"
           c.engine.from_yaml zf
-          c.pianoroll.redraw
-          c.playlist.redraw
+          c.pianoroll.redraw!
+          c.playlist.redraw!
         end
       end
       dialog.destroy

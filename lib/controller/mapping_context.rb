@@ -35,7 +35,7 @@ class MappingContext
     @controller = controller
 
     # internal state
-    @focus_list = [:device, :cluster, :pianoroll, :blockbox]
+    @focus_list = [:pianoroll, :cluster, :blockbox]
     @focus = 0
   end
 
@@ -58,8 +58,9 @@ class MappingContext
     if new_focus and new_focus != @focus
       old_focused = focused
       @focus = new_focus
-      old_focused.redraw
-      focused.redraw
+      #old_focused.redraw!
+      #focused.redraw!
+      focused.focus!
     end
   end
 
@@ -75,7 +76,6 @@ class MappingContext
     case @focus_list[@focus]
       when :pianoroll; @controller.pianoroll
       when :cluster; @controller.cluster
-      when :device; @controller.device
       when :blockbox; @controller.blockbox
     end
   end

@@ -44,7 +44,7 @@ Cluster       &Cluster::operator=(const Cluster &a_cluster)
   if (this == &a_cluster)
     return *this;
 
-  for (int i = 0; i < length; ++i)
+  for (int i = 0; i < a_cluster.length; ++i)
     sectors[i] = a_cluster.sectors[i];
   length = a_cluster.length;
   return *this;

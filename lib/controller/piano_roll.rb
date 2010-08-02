@@ -67,7 +67,7 @@ class PianoRollController
     @cursor = a
     selected_update
     @widget.scroll
-    redraw
+    redraw!
   end
 
   def cursor
@@ -76,12 +76,12 @@ class PianoRollController
 
   def mark_set
     @mark = self.cursor
-    redraw
+    redraw!
   end
 
   def mark_reset
     @mark = nil
-    redraw
+    redraw!
   end
 
   # Create a NoteBlockController for the current NoteBlock
@@ -93,7 +93,7 @@ class PianoRollController
 
   def noteblock=(block)
     @noteblock = block
-    redraw
+    redraw!
   end
 
   def select_all
@@ -101,7 +101,7 @@ class PianoRollController
     noteblock.each_pos do |tick, event|
       @selected.push [tick, event.data1] if event.noteon?
     end
-    redraw
+    redraw!
   end
 
   # Serialize selection to clipboard for later use
@@ -163,7 +163,7 @@ class PianoRollController
     end
     @cursor = [@cursor[0] + offset[0], @cursor[1] + offset[1]]
     @mark = [@mark[0] + offset[0], @mark[1] + offset[1]] if @mark
-    redraw
+    redraw!
   end
 
   # Changes notes duration by offset ticks
@@ -172,7 +172,7 @@ class PianoRollController
     @selected.each do |pos|
       p.resize_note! pos, offset
     end
-    redraw
+    redraw!
   end
 
   protected
@@ -210,9 +210,5 @@ class PianoRollController
     end
   end
 
-  # FIXME 0.1.0 delete after new code integration is done
-  def method_missing(sym)
-    puts "0.1.0 refactor, pianoroll.#{sym} doesn't exists anymore"
-  end
 end
 

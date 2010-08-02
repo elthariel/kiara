@@ -42,16 +42,16 @@ class NoteBlockView < Gtk::DrawingArea
     self.signal_connect('realize') {|s, e| roll.scroll}
   end
 
-  def redraw
+  def redraw!
     @noteblock = @controller.pianoroll.noteblock
 
     psize = @noteblock.length
     set_size_request(@roll.blockw * 16 * psize, @roll.blockh * 128)
 
-    full_redraw
+    full_redraw!
   end
 
-  def full_redraw
+  def full_redraw!
     queue_draw if realized?
   end
 

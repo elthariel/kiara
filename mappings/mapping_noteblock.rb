@@ -70,7 +70,7 @@ on_chain 'Delete' do
     c.pianoroll.selected.each do |item|
       p.delete_note_on_tick! item[0], item[1]
     end
-    c.pianoroll.redraw
+    c.pianoroll.redraw!
   end
 end
 
@@ -93,7 +93,7 @@ end
         if (p.occupied? pos)
           e = p.delete_note_on_tick_overlapping! pos
           p.dealloc_event! e
-          c.pianoroll.redraw
+          c.pianoroll.redraw!
         else
           e = p.alloc_event!
           e.noteon!
@@ -102,7 +102,7 @@ end
           e.data2 = power[0]
           e.duration = Kiara::PPQ / 4
           p.dealloc_event! e unless p.insert! pos[0], e
-          c.pianoroll.redraw
+          c.pianoroll.redraw!
         end
       end
     end

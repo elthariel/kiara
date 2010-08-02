@@ -24,14 +24,18 @@
 ##
 
 module WidgetAwareController
-  attr_accessor :widget
+  attr_writer :widget
 
   def initialize
     @widget = nil
   end
 
-  def redraw
-    @widget.redraw if @widget
+  def redraw!
+    @widget.redraw! if @widget
+  end
+
+  def focus!
+      @widget.focus! if @widget
   end
 end
 

@@ -28,8 +28,19 @@
 class DeviceController
   include WidgetAwareController
 
+  attr_reader :device
+
   def initialize(controller)
     @controller = controller
+    @device = controller.engine.device
+  end
+
+  def length
+    device.length
+  end
+
+  def get(idx)
+    device.get(idx)
   end
 
 end

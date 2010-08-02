@@ -45,7 +45,7 @@ class ClusterController
     else
       @focus = name_or_id % @focus_list.length
     end
-    redraw
+    redraw!
   end
 
   def prev

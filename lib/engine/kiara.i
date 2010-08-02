@@ -94,6 +94,7 @@ namespace boost
 %rename("length=") Cluster::set_length(unsigned int);
 
 // BlockDevice rules
+%rename("length") BlockDevice::get_length();
 %rename("break_triggered?") BlockDevice::is_break_triggered();
 %rename("interrupt_triggered?") BlockDevice::is_interrupt_triggered();
 %bang BlockDevice::trigger_break();

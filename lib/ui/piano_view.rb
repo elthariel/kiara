@@ -40,11 +40,11 @@ class PianoView < Gtk::DrawingArea
     self.signal_connect('expose-event') {|s, e| on_expose e}
   end
 
-  def redraw
-    full_redraw
+  def redraw!
+    full_redraw!
    end
 
-  def full_redraw
+  def full_redraw!
     queue_draw if realized?
   end
 

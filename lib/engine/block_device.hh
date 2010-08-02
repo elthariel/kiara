@@ -39,6 +39,7 @@ public:
 
   // FIXME const this!
   Sector                &operator[](unsigned int);
+  unsigned int          get_length();
 
   virtual void          send(Event &e);
   virtual void          tick(TransportPosition pos);
