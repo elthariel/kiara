@@ -28,7 +28,7 @@ require 'controller/note_block'
 class PianoRollController
   include WidgetAwareController
 
-  attr_reader :track, :mark, :selected, :clipboard
+  attr_reader :mark, :selected, :clipboard
   attr_accessor :note_duration, :note_velocity
   attr_writer :noteblock
 
@@ -58,8 +58,8 @@ class PianoRollController
   def cursor=(a)
     a[0] = 0 if a[0] < 0
     a[1] = 0 if a[1] < 0
-    if a[0] >= @controller.patterns.selected_size * Kiara::PPQ * 4
-    a[0] = @controller.patterns.selected_size * Kiara::PPQ * 4 - 1
+    if a[0] >= @noteblock.length * Kiara::PPQ * 4
+    a[0] = @noteblock.length * Kiara::PPQ * 4 - 1
     end
     a[1] = 127 if a[1] > 127
     @cursor = a
@@ -82,14 +82,14 @@ class PianoRollController
     redraw
   end
 
-  def track=(id)
-    id = 0 if id < 0
-    id = Kiara::CHANNELS - 1 if id >= Kiara::CHANNELS
-    @track = id
-    selected_update
-    redraw
-  end
   # FIXME 0.1.0 delete me
+  # def track=(id)
+  #   id = 0 if id < 0
+  #   id = Kiara::CHANNELS - 1 if id >= Kiara::CHANNELS
+  #   @track = id
+  #   selected_update
+  #   redraw
+  # end
   # def pattern=(id)
   #   unless id == @pattern
   #     id = 1 if id < 1
