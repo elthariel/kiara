@@ -28,7 +28,49 @@ class ClusterController
 
   def initialize(controller)
     @controller = controller
+
+    @focus_list = [:loop, :break, :interrupt]
+    @focus = 0
+
+    _create_first_block
   end
 
+  def focus
+    return @focus_list[@focus]
+  end
+
+  def focus=(name_or_id)
+    if name_or_id.class == Symbol
+      @focus = @focus_list.index(name_or_id)
+    else
+      @focus = name_or_id % @focus_list.length
+    end
+    redraw
+  end
+
+  def prev
+    @focus = (@focus - 1) % @focus_list.length
+  end
+
+  def next
+    @focus = (@focus + 1) % @focus_list.length
+  end
+
+  def cluster
+    case @focus_list[@focus]
+      when :loop; @controller.engine.loop
+      when :break; @controller.engine.dabreak
+      when :interrupt; @controller.engine.interrupt
+    end
+  end
+
+
+  protected
+  def _create_first_block
+    s = self.cluster.get(0)
+    b = Kiara::NoteBlock::create
+    s.set_note_at(0, b)
+    @controller.pianoroll.noteblock = b
+  end
 end
 

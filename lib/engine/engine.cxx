@@ -75,7 +75,7 @@ void            Engine::start()
 {
   std::cout << "Starting Kiara Engine" << std::endl;
   engine_thread = boost::thread(boost::ref(m_timer));
-  m_transport.start();
+  // m_transport.start();
 }
 
 void            Engine::stop()

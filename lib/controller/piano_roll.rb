@@ -30,7 +30,6 @@ class PianoRollController
 
   attr_reader :mark, :selected, :clipboard
   attr_accessor :note_duration, :note_velocity
-  attr_writer :noteblock
 
   def initialize(controller)
     @controller = controller
@@ -49,6 +48,9 @@ class PianoRollController
     # When deserialized the cursor position, which could have been moved, is added back.
     @clipboard = []
     @mark = nil
+    # The currently edited noteblock. It doesn't stay nil for long.
+    # See ClusterController::_create_first_block
+    @noteblock = nil
 
     # Some states used by mapping
     @note_duration = Kiara::PPQ / 4
@@ -82,29 +84,16 @@ class PianoRollController
     redraw
   end
 
-  # FIXME 0.1.0 delete me
-  # def track=(id)
-  #   id = 0 if id < 0
-  #   id = Kiara::CHANNELS - 1 if id >= Kiara::CHANNELS
-  #   @track = id
-  #   selected_update
-  #   redraw
-  # end
-  # def pattern=(id)
-  #   unless id == @pattern
-  #     id = 1 if id < 1
-  #     id = Kiara::KIARA_MAXPATTERNS if id > Kiara::KIARA_MAXPATTERNS
-  #     @pattern = id
-  #     selected_update
-  #     redraw
-  #   end
-  # end
-
   # Create a NoteBlockController for the current NoteBlock
   def noteblock()
     # FIXME initialize PianoRollController with a noteblock
     #NoteBlockController.new(@controller, @noteblock)
     NoteBlockController.new(@controller, Kiara::NoteBlock.new)
+  end
+
+  def noteblock=(block)
+    @noteblock = block
+    redraw
   end
 
   def select_all
@@ -221,6 +210,7 @@ class PianoRollController
     end
   end
 
+  # FIXME 0.1.0 delete after new code integration is done
   def method_missing(sym)
     puts "0.1.0 refactor, pianoroll.#{sym} doesn't exists anymore"
   end

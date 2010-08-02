@@ -53,7 +53,7 @@ Sector                        &Sector::operator=(const Sector &a_sector)
   {
     if (a_sector.notes[i])
     {
-      NoteBlockPtr nblock(new NoteBlock(*a_sector.notes[i]));
+      NoteBlockPtr nblock = NoteBlock::create(*a_sector.notes[i]);
       notes[i] = nblock;
     }
     else
@@ -62,7 +62,7 @@ Sector                        &Sector::operator=(const Sector &a_sector)
     for (int j = 0; j < CURVE_POLY; ++j)
       if (a_sector.curves[i][j])
       {
-        CurveBlockPtr nblock(new CurveBlock(*a_sector.curves[i][j]));
+        CurveBlockPtr nblock = CurveBlock::create(*a_sector.curves[i][j]);
         curves[i][j] = nblock;
       }
       else
@@ -84,14 +84,14 @@ void                          Sector::merge(const Sector &a_sector)
   {
     if (a_sector.notes[i])
     {
-      NoteBlockPtr nblock(new NoteBlock(*a_sector.notes[i]));
+      NoteBlockPtr nblock = NoteBlock::create(*a_sector.notes[i]);
       notes[i] = nblock;
     }
 
     for (int j = 0; j < CURVE_POLY; ++j)
       if (a_sector.curves[i][j])
       {
-        CurveBlockPtr nblock(new CurveBlock(*a_sector.curves[i][j]));
+        CurveBlockPtr nblock = CurveBlock::create(*a_sector.curves[i][j]);
         curves[i][j] = nblock;
       }
   }

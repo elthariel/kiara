@@ -70,7 +70,7 @@
  *  The number of curve you could play concurrently on each
  *  track.
  */
-#define         CURVE_POLY              4
+#define         CURVE_POLY              3
 
 /*
  * The bpm when the application starts.

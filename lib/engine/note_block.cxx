@@ -92,6 +92,21 @@ void          NoteBlock::operator delete(void *p)
     Memory::note_block().dealloc((NoteBlock *)p);
 }
 
+NoteBlockPtr NoteBlock::create()
+{
+  NoteBlockPtr ptr(new NoteBlock);
+
+  return ptr;
+}
+
+NoteBlockPtr NoteBlock::create(const NoteBlock &block)
+{
+  NoteBlockPtr ptr(new NoteBlock(block));
+
+  return ptr;
+}
+
+
 Event         *NoteBlock::operator[](unsigned int tick)
 {
   assert (tick < PPQ * 4 * MAX_BARS);

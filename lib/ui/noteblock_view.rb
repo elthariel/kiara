@@ -101,8 +101,6 @@ class NoteBlockView < Gtk::DrawingArea
       @cairo.line_to a.width, y * @roll.blockh
       @cairo.stroke
     end
-
-
   end
 
   def draw_notes(e)

@@ -35,7 +35,7 @@ class MappingContext
     @controller = controller
 
     # internal state
-    @focus_list = [:cluster, :devive, :blockbox, :pianoroll]
+    @focus_list = [:device, :cluster, :pianoroll, :blockbox]
     @focus = 0
   end
 

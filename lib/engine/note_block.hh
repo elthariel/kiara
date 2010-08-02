@@ -27,11 +27,15 @@
 # define   	NOTE_BLOCK_HH_
 
 # include <stdint.h>
+# include <boost/shared_ptr.hpp>
 
 # include "kiara-config.h"
 
 # include "block.hh"
 # include "event.hh"
+
+class NoteBlock;
+typedef boost::shared_ptr<NoteBlock>    NoteBlockPtr;
 
 class NoteBlock : public Block
 {
@@ -47,6 +51,14 @@ public:
   void          *operator new(size_t);
   void          operator delete(void *);
 
+  /*
+   * Helper methods, mainly to avoid swig data ownership
+   * management. It simply create an object and wrap it into a
+   * shared_ptr.
+   */
+  static NoteBlockPtr create();
+  // same as above but with copy constructor
+  static NoteBlockPtr create(const NoteBlock &a_block);
 
   Event         *operator[](unsigned int tick);
 

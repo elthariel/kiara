@@ -27,6 +27,8 @@ require 'gtk2'
 require 'main_actions'
 require 'ui_settings'
 require 'piano_roll'
+require 'device_view'
+require 'cluster_view.rb'
 
 class Ui
   include MainActions
@@ -52,10 +54,17 @@ class Ui
     @builder << KIARA_ROOT + '/lib/ui/ui.glade'
 
     @mw = @builder.o('mainw')
+    @mw.fullscreen
     @about = @builder.o 'aboutdialog'
     @tools = @builder.o 'maintoolbar'
     @settings = UiSettings.new(self, @builder.o('settings'))
     @roll = PianoRollView.new(self, @controller)
+    @device = DeviceView.new(self, @controller)
+    @builder.o('vp_device').add @device
+    @builder.o('vp_device').set_size_request -1, 400
+    @cluster = ClusterView.new(self, @controller)
+    @builder.o('vp_cluster').add @cluster
+    @builder.o('vp_cluster').set_size_request -1, 400
 
     @builder.o('spin_bpm').adjustment = @builder.o('adj_bpm')
     @builder.o('adj_bpm').value = 140

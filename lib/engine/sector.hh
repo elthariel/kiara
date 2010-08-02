@@ -26,13 +26,8 @@
 #ifndef   	SECTOR_HH_
 # define   	SECTOR_HH_
 
-# include <boost/shared_ptr.hpp>
-
 # include "note_block.hh"
 # include "curve_block.hh"
-
-typedef boost::shared_ptr<NoteBlock>    NoteBlockPtr;
-typedef boost::shared_ptr<CurveBlock>   CurveBlockPtr;
 
 class Sector
 {

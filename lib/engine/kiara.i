@@ -19,20 +19,39 @@
 #include "sector.hh"
 #include "cluster.hh"
 #include "block_device.hh"
+// #include "boost/shared_ptr.hpp"
 %}
 
 
 // General rules
 %rename("get") operator[](unsigned int);
+%rename("valid?") valid();
+%rename("nil?") nil();
 
 namespace boost
 {
+  template<class T> T * get_pointer(shared_ptr<T> const & p);
   template<class T> class shared_ptr
   {
   public:
-    T * operator-> () const;
+    T * operator->() const;
+    %extend {
+      bool      valid()
+      {
+        return boost::get_pointer<T>(*$self) != 0;
+      }
+    }
+    %extend {
+      bool      nil()
+      {
+        return boost::get_pointer<T>(*$self) == 0;
+      }
+    }
   };
 }
+
+%ignore boost::shared_ptr::get();
+%ignore NoteBlockPtr::get();
 
 // Event rules
 %rename("chan") Event::get_chan();
@@ -98,6 +117,13 @@ namespace boost
 %include "block.hh"
 %include "note_block.hh"
 %include "curve_block.hh"
+%template(NoteBlockPtr) boost::shared_ptr<NoteBlock>;
+%template(CurveBlockPtr) boost::shared_ptr<CurveBlock>;
+// shared_ptr rules
+/* %rename ("valid?") NoteBlockPtr::valid(); */
+/* %rename ("nil?") NoteBlockPtr::nil(); */
+/* %rename ("valid?") CurveBlockPtr::valid(); */
+/* %rename ("nil?") CurveBlockPtr::nil(); */
 %include "event.hh"
 %include "chan_merger.hh"
 %include "note_scheduler.hh"
@@ -106,8 +132,6 @@ namespace boost
 %include "kiara-config.h"
 %include "timer.hh"
 %include "sector.hh"
-%template(NoteBlockPtr) boost::shared_ptr<NoteBlock>;
-%template(CurveBlockPtr) boost::shared_ptr<CurveBlock>;
 %include "cluster.hh"
 %include "block_device.hh"
 

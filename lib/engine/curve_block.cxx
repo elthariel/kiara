@@ -52,6 +52,22 @@ void          CurveBlock::operator delete(void *p)
     Memory::curve_block().dealloc((CurveBlock *)p);
 }
 
+CurveBlockPtr CurveBlock::create()
+{
+  CurveBlockPtr ptr(new CurveBlock);
+
+  return ptr;
+}
+
+CurveBlockPtr CurveBlock::create(const CurveBlock &block)
+{
+  CurveBlockPtr ptr(new CurveBlock(block));
+
+  return ptr;
+}
+
+
+CurveBlockPtr create(const CurveBlock &a_block);
 
 char          &CurveBlock::operator[](unsigned int idx)
 {

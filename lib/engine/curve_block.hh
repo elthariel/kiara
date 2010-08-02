@@ -26,14 +26,21 @@
 #ifndef   	CURVE_BLOCK_HH_
 # define   	CURVE_BLOCK_HH_
 
+# include <boost/shared_ptr.hpp>
+
+# include "kiara-config.h"
+
 # include "block.hh"
+
+class CurveBlock;
+typedef boost::shared_ptr<CurveBlock>   CurveBlockPtr;
 
 class CurveBlock : public Block
 {
-public:
   CurveBlock();
   // deep copy (if it means anything for such data
   CurveBlock(const CurveBlock &a_block);
+public:
   ~CurveBlock();
   /*
    * Overload new and delete operator to avoid calls to malloc but
@@ -41,6 +48,15 @@ public:
    */
   void          *operator new(size_t);
   void          operator delete(void *);
+
+  /*
+   * Helper methods, mainly to avoid swig data ownership
+   * management. It simply create an object and wrap it into a
+   * shared_ptr.
+   */
+  static CurveBlockPtr create();
+  // same as above but with copy constructor
+  static CurveBlockPtr create(const CurveBlock &a_block);
 
 
   char          &operator[](unsigned int idx);
