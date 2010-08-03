@@ -32,7 +32,8 @@ on_chain 'space' do
     unless p.occupied? (pos)
       e = p.alloc_event!
       e.noteon!
-      e.chan = p.track_id
+      # This should be handled by the chan_mapper (former event_merger)
+      #e.chan = p.track_id
       e.data1 = pos[1]
       e.data2 = c.pianoroll.note_velocity
       e.duration = c.pianoroll.note_duration
@@ -97,7 +98,7 @@ end
         else
           e = p.alloc_event!
           e.noteon!
-          e.chan = p.track_id
+          # e.chan = p.track_id
           e.data1 = pos[1]
           e.data2 = power[0]
           e.duration = Kiara::PPQ / 4

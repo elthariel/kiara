@@ -39,72 +39,63 @@ on_chain 'C-S-Tab' do
     controller.context.prev
   end
 end
-on_chain 'L-Up' do
-  action 'prev-pattern' do |c|
-    c.patterns.prev
-  end
-end
-on_chain 'L-Down' do
-  action 'next-pattern' do |c|
-    c.patterns.next
-  end
-end
 
+# Keep this code as example until BlockBoxStorage is implemented
 # File Management, Exit and stuff like that
-on_chain 'C-x' do
-  on_chain 'C-s' do
-    action 'save' do |c|
-      dialog = Gtk::FileChooserDialog.new("Open Kiara Project...", @mw,
-                                          Gtk::FileChooser::ACTION_SAVE, nil,
-                                          [Gtk::Stock::CANCEL, Gtk::Dialog::RESPONSE_CANCEL],
-                                          [Gtk::Stock::SAVE, Gtk::Dialog::RESPONSE_ACCEPT])
-      filter = Gtk::FileFilter.new
-      filter.name = "Kiara Projects"
-      filter.add_pattern("*.kseq")
-      dialog.add_filter filter
-      if dialog.run == Gtk::Dialog::RESPONSE_ACCEPT
-        filename = dialog.filename
-        filename += ".kseq" unless filename =~ /.kseq\Z/
+# on_chain 'C-x' do
+#   on_chain 'C-s' do
+#     action 'save' do |c|
+#       dialog = Gtk::FileChooserDialog.new("Open Kiara Project...", @mw,
+#                                           Gtk::FileChooser::ACTION_SAVE, nil,
+#                                           [Gtk::Stock::CANCEL, Gtk::Dialog::RESPONSE_CANCEL],
+#                                           [Gtk::Stock::SAVE, Gtk::Dialog::RESPONSE_ACCEPT])
+#       filter = Gtk::FileFilter.new
+#       filter.name = "Kiara Projects"
+#       filter.add_pattern("*.kseq")
+#       dialog.add_filter filter
+#       if dialog.run == Gtk::Dialog::RESPONSE_ACCEPT
+#         filename = dialog.filename
+#         filename += ".kseq" unless filename =~ /.kseq\Z/
 
-        File.open(filename, "w") do |f|
-          puts "Saving to #{filename}"
-          zf = Zlib::GzipWriter.new(f, 3, 0)
-          zf << c.engine.to_yaml
-          zf.close
-        end
-      end
-      dialog.destroy
-    end
-  end
-  on_chain 'C-f' do
-    action 'open' do |c|
-      dialog = Gtk::FileChooserDialog.new("Open Kiara Project...", @mw,
-                                          Gtk::FileChooser::ACTION_OPEN, nil,
-                                          [Gtk::Stock::CANCEL, Gtk::Dialog::RESPONSE_CANCEL],
-                                          [Gtk::Stock::OPEN, Gtk::Dialog::RESPONSE_ACCEPT])
-      filter = Gtk::FileFilter.new
-      filter.name = "Kiara Projects"
-      filter.add_pattern("*.kseq")
-      dialog.add_filter filter
-      if dialog.run == Gtk::Dialog::RESPONSE_ACCEPT
-        filename = dialog.filename
-        puts "filename = #{filename}"
-        Zlib::GzipReader.open(filename) do |zf|
-          puts "Saving to #{filename}"
-          c.engine.from_yaml zf
-          c.pianoroll.redraw!
-          c.playlist.redraw!
-        end
-      end
-      dialog.destroy
-    end
-  end
-  on_chain 'C-c' do
-    action 'quit' do |c|
-      c.engine.stop
-      Gtk.main_quit
-    end
-  end
-end
+#         File.open(filename, "w") do |f|
+#           puts "Saving to #{filename}"
+#           zf = Zlib::GzipWriter.new(f, 3, 0)
+#           zf << c.engine.to_yaml
+#           zf.close
+#         end
+#       end
+#       dialog.destroy
+#     end
+#   end
+#   on_chain 'C-f' do
+#     action 'open' do |c|
+#       dialog = Gtk::FileChooserDialog.new("Open Kiara Project...", @mw,
+#                                           Gtk::FileChooser::ACTION_OPEN, nil,
+#                                           [Gtk::Stock::CANCEL, Gtk::Dialog::RESPONSE_CANCEL],
+#                                           [Gtk::Stock::OPEN, Gtk::Dialog::RESPONSE_ACCEPT])
+#       filter = Gtk::FileFilter.new
+#       filter.name = "Kiara Projects"
+#       filter.add_pattern("*.kseq")
+#       dialog.add_filter filter
+#       if dialog.run == Gtk::Dialog::RESPONSE_ACCEPT
+#         filename = dialog.filename
+#         puts "filename = #{filename}"
+#         Zlib::GzipReader.open(filename) do |zf|
+#           puts "Saving to #{filename}"
+#           c.engine.from_yaml zf
+#           c.pianoroll.redraw!
+#           c.playlist.redraw!
+#         end
+#       end
+#       dialog.destroy
+#     end
+#   end
+#   on_chain 'C-c' do
+#     action 'quit' do |c|
+#       c.engine.stop
+#       Gtk.main_quit
+#     end
+#   end
+# end
 
 

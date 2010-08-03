@@ -81,6 +81,9 @@ class BlockBoxView
     end
   end
 
+  def update_blocks
+  end
+
   def focus?
     @controller.context.focus? :blockbox
   end

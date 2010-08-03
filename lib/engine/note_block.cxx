@@ -143,7 +143,7 @@ Event         *NoteBlock::get_note_on_tick(unsigned int tick,
 bool          NoteBlock::insert(unsigned int tick, Event *e)
 {
   assert(tick < MAX_BARS * PPQ * 4);
-  assert(e == 0);
+  assert(e);
 
   if (tick >= MAX_BARS * PPQ * 4 || e == 0)
     return false;
@@ -159,7 +159,7 @@ bool          NoteBlock::insert(unsigned int tick, Event *e)
 bool          NoteBlock::remove(unsigned int tick, Event *e)
 {
   assert(tick < MAX_BARS * PPQ * 4);
-  assert(e == 0);
+  assert(e);
 
   if (tick > MAX_BARS * PPQ * 4 || e == 0)
     return false;

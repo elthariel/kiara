@@ -153,7 +153,7 @@ class NoteBlockController
   def each_pos
     iter = 0
     while (iter = @block.next_used_tick iter) >= 0 do
-      e = @noteblock.get(iter)
+      e = @block.get(iter)
       while e do
         yield iter, e
         e = e.next

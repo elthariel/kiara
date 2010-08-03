@@ -87,8 +87,8 @@ class PianoRollController
   # Create a NoteBlockController for the current NoteBlock
   def noteblock()
     # FIXME initialize PianoRollController with a noteblock
-    #NoteBlockController.new(@controller, @noteblock)
-    NoteBlockController.new(@controller, Kiara::NoteBlock.new)
+    NoteBlockController.new(@controller, @noteblock)
+    #NoteBlockController.new(@controller, Kiara::NoteBlock.new)
   end
 
   def noteblock=(block)
