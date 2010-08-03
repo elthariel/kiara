@@ -67,6 +67,23 @@ hierarchy is the following:
 - [...]
 - STORAGE_ROOT/x/x/ -> "" begin by xx
 
+== BlockBoxStorage Format
+
+The storage format is the result of the serialization of a hash with this keys :
+  {
+   :version => 0 #for later use
+   :xapian_id => the_xapian_id,
+   # We store this in case the index get corrupt or lost
+   :type => 0 of note,
+   :tags => ['tag1', 'tag2', 'tag3', [...]]
+   :name => "the name of the block",
+   # The actual block data (this example is for noteblock)
+   # The content of data is a the result of Kiara::NoteBlock.to_a
+   :data => [[tick, [event], [event1]],
+              other_tick, [event2], [event3]],
+              [...]]
+  }
+
 == BlockBoxIndex
 
 The index does mainly 3 things :
@@ -81,6 +98,9 @@ The xapian database is located at STORAGE_ROOT/blockbox.db
 =end
 
 require 'lib_uuid'
+require 'yaml'
+
+require 'controller/serialization'
 
 module BlockBox
 
@@ -95,13 +115,33 @@ module BlockBox
     #
     # block must be a CurveBlockPtr or a NoteBlockPtr
     #
+    # uuid is a string like this one 6e9dbdbb-4ab7-4a86-9aee-93d15d243e76
     # If the uuid argument is given, use it as the file's name and
     # overwrite any existing block with that name
     # If not, a new one is generated
     #
     # Returns nil if the operation failed
     # or the block's uuid if everyting went well.
-    def store(block, uuid = nil)
+    def store(block, metadata, uuid = nil)
+      uuid = generate_uuid if uuid.nil?
+      path = get_path_from_uuid(uuid)
+
+      data = block.to_a
+      to_serialize = metadata.dup
+      to_serialize[:version] = 0
+      to_serialize[:data] = data
+
+      begin
+        Zlib::GzipWriter.open(path, 3, 0) do |zf|
+          puts "Saving a block to #{path}"
+          zf << to_serialize.to_yaml
+        end
+      rescue => e
+        puts e
+        puts e.backtrace
+        nil
+      end
+      uuid
     end
 
     # Takes an uuid, load and unserialize the file with that name
@@ -109,9 +149,38 @@ module BlockBox
     # Return nil if the file doesn't exists or an error was
     # encountered. Return a Curve/NoteBlockPtr otherwise.
     def load(uuid)
+      path = get_path_from_uuid(uuid)
+      yaml = nil
+
+      begin
+        Zlib::GzipReader.open(path) do |zf|
+          puts "Loading #{path}"
+          yaml = YAML.load zf
+        end
+      rescue => e
+        puts e
+        puts e.backtrace
+        nil
+      end
+
+      if yaml['version'] == 0
+        block = Kiara::NoteBlock::create
+        block.from_a yaml['data']
+        block
+      else
+        nil
+      end
     end
 
     protected
+    def generate_uuid
+      LibUUID::UUID.new.to_guid
+    end
+
+    def get_path_from_uuid(uuid)
+      "#{STORE}/#{uuid[0]}/#{uuid[1]}/#{uuid}.block.gz"
+    end
+
     def create_hierarchy
       dirs = []
       ('0'..'9').each { |x| dirs.push x }

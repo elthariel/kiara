@@ -31,7 +31,7 @@ require 'yaml'
 # compressed.
 
 class Kiara::Event
-  # Return a array representing the Event.
+  # Return a array representing the Event. It's self describing
   def to_a
     [
      status,
@@ -55,12 +55,22 @@ class Kiara::Event
   end
 end
 
-class Kiara::Phrase
+class Kiara::NoteBlock
 
   # Returns an array based reprensentation of the noteblock which can be
   # used to serialize data using yaml or other stuff. The
   # representation is the following:
-  # [[tick, [event], [event1]], [other_tick, [event2], [event3]], [...]].
+  # {
+  #  :version => 0 #for later use
+  #  :xapian_id => the_xapian_id,
+  #  :type => 0 of note,
+  #  :tags => ['tag1', 'tag2', 'tag3', [...]] # We store this in case the index get corrupt or lost
+  #  :name => "the name of the block",
+  #  :data => [[tick, [event], [event1]],
+  #             other_tick, [event2], [event3]],
+  #             [...]]
+  # }
+  #
   # Please refer to Kiara::Event#to_a implementation for the format of
   # [eventx]
   def to_a
@@ -94,34 +104,6 @@ class Kiara::Phrase
   end
 end
 
-class Kiara::Pattern
-  def to_a(id)
-    res = []
-    (0...Kiara::CHANNELS).each { |x| res.push get(x).to_a }
-    res
-  end
-
-  def from_a(a)
-    (0...Kiara::CHANNELS).each { |i| get(i).from_a a[i] }
-  end
-end
-
-class Kiara::PatternStorage
-  def to_a
-    res = []
-    (1..Kiara::KIARA_MAXPATTERNS).each do |x|
-      res.push get(x).to_a(x)
-    end
-    res
-  end
-
-  def from_a(a)
-    (1..Kiara::KIARA_MAXPATTERNS).each do |i|
-      get(i).from_a a[i - 1]
-    end
-  end
-end
-
 class Kiara::TransportPosition
   def to_a
     [bar, beat, tick]
@@ -134,49 +116,22 @@ class Kiara::TransportPosition
   end
 end
 
-class Kiara::Playlist
-  def to_a
-    res = []
-    (0...Kiara::KIARA_PLSCHANNELS).each do |track_id|
-      track = []
-      (0...Kiara::KIARA_PLSLEN).each do |bar|
-        track.push get_pos(track_id, bar)
-      end
-      res.push track
-    end
-    res
-  end
+# # Note sure this is still really necessary
+# class Kiara::Engine
+#   def to_yaml
+#     yaml = {}
+#     yaml['version'] = 1
+#     yaml['bpm'] = timer.bpm
+#     yaml['looping'] = transport.is_looping
+#     yaml['loop_start'] = transport.get_loop_start.to_a
+#     yaml['loop_end'] = transport.get_loop_end.to_a
+#     yaml.to_yaml
+#   end
 
-  def from_a(a)
-    (0...Kiara::KIARA_PLSCHANNELS).each do |track_id|
-      (0...Kiara::KIARA_PLSLEN).each do |bar|
-        set_pos(track_id, bar, a[track_id][bar])
-      end
-    end
-  end
-end
-
-class Kiara::Engine
-  def to_yaml
-    yaml = {}
-    yaml['version'] = 1
-    yaml['bpm'] = timer.bpm
-    yaml['looping'] = transport.is_looping
-    yaml['loop_start'] = transport.get_loop_start.to_a
-    yaml['loop_end'] = transport.get_loop_end.to_a
-    yaml['playlist'] = playlist.to_a
-    yaml['patterns'] = Kiara::Memory.pattern.to_a
-    yaml.to_yaml
-  end
-
-  def from_yaml(io)
-    yaml = YAML.load io
-    timer.bpm = yaml['bpm']
-    Kiara::Memory.event.reset
-    playlist.reset!
-    playlist.from_a yaml['playlist']
-    Kiara::Memory.pattern.reset!
-    Kiara::Memory.pattern.from_a yaml['patterns']
-  end
-end
+#   def from_yaml(io)
+#     yaml = YAML.load io
+#     timer.bpm = yaml['bpm']
+#     # Kiara::Memory.event.reset
+#   end
+# end
 

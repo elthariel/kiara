@@ -29,12 +29,15 @@
 using namespace std;
 
 Block::Block()
+  : m_xapian_id(INVALID_ID)
 {
   reset();
 }
 
 Block::Block(const Block &a_block)
-  :length(a_block.length)
+  : length(a_block.length),
+    m_modified(a_block.m_modified),
+    m_xapian_id(a_block.m_xapian_id)
 {
 }
 
@@ -51,13 +54,37 @@ unsigned int  Block::get_length()
 void          Block::set_length(unsigned int newlen)
 {
   if (newlen > MAX_BARS)
-    length = MAX_BARS;
-  else
+    newlen = MAX_BARS;
+  else if (newlen != length)
+  {
     length = newlen;
+    m_modified = true;
+  }
 }
 
 void          Block::reset()
 {
+  m_modified = true;
   length = 1;
+}
+
+bool          Block::get_modified()
+{
+  return m_modified;
+}
+
+void          Block::set_modified(bool is_modified)
+{
+  m_modified = is_modified;
+}
+
+Block::Id     Block::get_xapian_id()
+{
+  return m_xapian_id;
+}
+
+void          Block::set_xapian_id(Block::Id new_id)
+{
+  m_xapian_id = new_id;
 }
 

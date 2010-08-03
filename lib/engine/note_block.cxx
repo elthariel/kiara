@@ -33,6 +33,7 @@
 using namespace std;
 
 NoteBlock::NoteBlock()
+  : Block()
 {
   reset();
 }
@@ -153,6 +154,7 @@ bool          NoteBlock::insert(unsigned int tick, Event *e)
   e->next = data[tick];
   data[tick] = e;
 
+  set_modified(true);
   return true;
 }
 
@@ -169,6 +171,7 @@ bool          NoteBlock::remove(unsigned int tick, Event *e)
   if (iter == e)
   {
     data[tick] = iter->next;
+    set_modified(true);
     return true;
   }
 
@@ -177,6 +180,7 @@ bool          NoteBlock::remove(unsigned int tick, Event *e)
     if (iter->next == e)
     {
       iter->next = iter->next->next;
+      set_modified(true);
       return true;
     }
     iter = iter->next;

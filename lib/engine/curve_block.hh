@@ -58,7 +58,9 @@ public:
   // same as above but with copy constructor
   static CurveBlockPtr create(const CurveBlock &a_block);
 
-
+  /*
+   * const this and implement a setter to control the modified state.
+   */
   char          &operator[](unsigned int idx);
 
   bool          is_empty();
