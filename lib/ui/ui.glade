@@ -405,9 +405,11 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkLabel" id="label9">
+                      <object class="GtkHBox" id="hb_blockbox">
                         <property name="visible">True</property>
-                        <property name="label" translatable="yes">notin' yet</property>
+                        <child>
+                          <placeholder/>
+                        </child>
                       </object>
                       <packing>
                         <property name="position">2</property>

@@ -23,11 +23,18 @@
 ## Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 ##
 
+require 'controller/blockbox_storage'
+require 'controller/blockbox_indexer'
+
 class BlockBoxController
   include WidgetAwareController
 
+  attr_reader :storage, :index
+
   def initialize(controller)
     @controller = controller
+    @storage = BlockBox::Storage.new
+    @index = BlockBox::Index.new
   end
 
 end

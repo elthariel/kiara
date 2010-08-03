@@ -29,6 +29,10 @@ end
 class MappingEngine
   DEBUG = false
 
+  CHAIN_NOT_HANDLED = 0
+  CHAIN_HANDLED = 1
+  CHAIN_WAITING = 2
+
   def initialize(mappings, controller)
     @controller = controller
     @map = mappings
@@ -63,8 +67,9 @@ class MappingEngine
   end
 
   # Recursively browse the mapping tree trying to find a corresponding mapping
-  # Return true if a mapping still could be find (unexplored nodes) should not reset_chain
-  # Return false if an action was executed or of there is no mapping (the branch doesn't exist)
+  # Return WAITING if a mapping still could be find (unexplored nodes) should not reset_chain
+  # Return HANDLED if an action was executed
+  # Return NOT_HANDLED of there is no mapping (the branch doesn't exist)
   def rec_eval(chain, node)
     # found!, chain.len == 0, and has_key? :action and valid_context
     # continue!, chain.len == 0 and node.has_key? :subchains
@@ -74,29 +79,37 @@ class MappingEngine
     if @controller.context.valid_context? node
       puts "Valid context #{chain}" if DEBUG
       if chain.length == 0 and node.has_key? :action
-        puts "Calling action" if DEBUG
+        puts "[CHAIN_HANDLED] Calling action" if DEBUG
         node[:action].call @controller
         reset_chain
-        true
+        #true
+        CHAIN_HANDLED
       elsif chain.length == 0 and node.has_key? :subchains
-        puts "Still having unexplored subkeys" if DEBUG
-        true
+        puts "[CHAIN_WAITING] Still having unexplored subkeys" if DEBUG
+        #true
+        CHAIN_WAITING
       elsif chain.length == 0
-        puts "Not any subchains to explore" if DEBUG
-        false
+        puts "[CHAIN_NOT_HANDLED] Not any subchains to explore" if DEBUG
+        #false
+        CHAIN_NOT_HANDLED
       elsif chain.length > 0 and node.has_key? chain[0]
         puts "find the current chain #{chain[0]}, iterating child" if DEBUG
         node[chain[0]].each do |o|
-          return true if rec_eval chain[1..-1], o
+          res = rec_eval chain[1..-1], o
+          # return if res
+          return res if res > CHAIN_NOT_HANDLED
         end
-        false
+        #false
+        CHAIN_NOT_HANDLED
       else
-        puts "The chain we are looking for doesn't exists" if DEBUG
-        false
+        puts "[CHAIN_NOT_HANDLED] The chain we are looking for doesn't exists" if DEBUG
+        #false
+        CHAIN_NOT_HANDLED
       end
     else
-      puts "Invalid context #{chain}" if DEBUG
-      false
+      puts "[CHAIN_NOT_HANDLED] Invalid context #{chain}" if DEBUG
+      #false
+      CHAIN_NOT_HANDLED
     end
   end
 
@@ -107,14 +120,24 @@ class MappingEngine
 
     begin
       puts chain if DEBUG
-      result = !rec_eval(@keychain, @map)
-      reset_chain if result
-      result
+      result = rec_eval(@keychain, @map)
+      reset_chain unless result == CHAIN_WAITING
+      if result == CHAIN_NOT_HANDLED
+        # if the chain is not handled by the mapping engine
+        # tell gtk it can forward it normally.
+        false
+      else
+        # Don't transmit the chain to gtk subsystem since we either
+        # handled it or stored it waiting for the next event.
+        true
+      end
     rescue => e
       reset_chain
       puts e
       puts e.backtrace
-      false
+      # If we raised an exception this is probably due to an event handler
+      # So we kind of "handled" the event ==> don't forward it to gtk
+      true
     end
   end
 end

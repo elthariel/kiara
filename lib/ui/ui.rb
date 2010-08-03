@@ -29,13 +29,14 @@ require 'ui_settings'
 require 'piano_roll'
 require 'device_view'
 require 'cluster_view.rb'
+require 'blockbox_view'
 
 class Ui
   include MainActions
 
   attr_reader :status, :about, :tools, :playlist
   attr_reader :patterns, :builder, :controller, :roll
-  attr_reader :cluster, :device, :notebook
+  attr_reader :cluster, :device, :notebook, :blockbox
 
   def initialize(controller)
     @controller = controller
@@ -65,6 +66,7 @@ class Ui
     @cluster = ClusterView.new(self, @controller)
     @builder.o('vp_cluster').add @cluster
     @notebook = @builder.o 'nb_edit'
+    @blockbox = BlockBoxView.new(self, @controller)
 
     @builder.o('spin_bpm').adjustment = @builder.o('adj_bpm')
     @builder.o('adj_bpm').value = Kiara::START_BPM

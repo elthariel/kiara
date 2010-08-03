@@ -57,8 +57,15 @@ class Controller
   # Here we convert Gdk::EventKey structure into our own simpler
   # representation
   def entry_point(native_event)
-    @map_engine.event @km.map_key native_event
-    true
+    # A gtk key-press event handler should return true if it handles the keystroke.
+    # If not, the event is handled normally by gtk
+    res = @map_engine.event @km.map_key native_event
+    # if res
+    #   puts "we keep the event"
+    # else
+    #   puts "no it's ok we don't handle this event you can forward it"
+    # end
+    res
   end
 
 end

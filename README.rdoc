@@ -41,7 +41,9 @@ to be controlled only by keyboard.
 * ruby cairo gem (build this before building ruby gtk2)
 * ruby-gtk2, with cairo support (you'll probably need to build it yourself for ruby1.9)
 * glade 3 if you want to hack the gui code.
-* boost (utility.hpp and boost::thread currently)
+* boost (utility.hpp, shared_ptr.hpp and boost::thread currently)
+* libuuidrb gem
+* libxapian-dev and xapian gem OR just xapian-full gem
 
 == Build and run (*nix)
 
